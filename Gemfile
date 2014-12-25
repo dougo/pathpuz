@@ -35,6 +35,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use HAML for view templates
 gem 'haml-rails'
 
+# Use MVC in Opal
+gem 'opal-vienna'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

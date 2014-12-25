@@ -129,6 +129,10 @@ GEM
       rails (>= 3.2.13, < 5.0)
     opal-rspec (0.3.0.beta3)
       opal (>= 0.6.0, < 1.0.0)
+    opal-vienna (0.7.0)
+      opal (>= 0.5.0, < 1.0.0)
+      opal-activesupport
+      opal-jquery
     poltergeist (1.5.1)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -222,6 +226,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   minitest-rails-capybara
   opal-rails
+  opal-vienna
   poltergeist
   rails (= 4.2.0)
   sass-rails (~> 5.0)
