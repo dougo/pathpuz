@@ -46,3 +46,10 @@ group :development, :test do
   gem 'spring'
 end
 
+group :test do
+  # Test the front end.
+  gem 'minitest-rails-capybara'
+
+  # Headless driver for Capybara.
+  gem 'poltergeist'
+end

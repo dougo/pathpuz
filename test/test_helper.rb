@@ -1,6 +1,10 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'minitest/rails/capybara'
+require 'capybara/poltergeist'
+
+Capybara.default_driver = Capybara.javascript_driver = :poltergeist
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
