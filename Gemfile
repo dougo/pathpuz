@@ -55,4 +55,7 @@ group :test do
 
   # Headless driver for Capybara.
   gem 'poltergeist'
+
+  # Opal unit testing.
+  gem 'opal-minitest'
 end
