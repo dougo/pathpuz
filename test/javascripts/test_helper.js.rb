@@ -1,5 +1,6 @@
 require 'jquery'
 require 'opal-jquery'
+require 'opal-haml'
 
 require 'active_support/testing/declarative'
 

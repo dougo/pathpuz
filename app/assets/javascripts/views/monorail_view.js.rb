@@ -1,11 +1,10 @@
-require 'vienna'
+require 'vienna/template_view'
+require 'templates/monorail'
 
-class MonorailView < Vienna::View
+class MonorailView < Vienna::TemplateView
+  template :monorail
+
   def tag_name
     'p'
-  end
-
-  def render
-    element.html = 'Soon there will be a puzzle here.'
   end
 end

@@ -34,6 +34,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use HAML for view templates
 gem 'haml-rails'
+gem 'opal-haml'
 
 # Use MVC in Opal
 gem 'opal-vienna'

@@ -8,6 +8,8 @@ class MonorailViewTest < Minitest::Test
   test 'render' do
     view = MonorailView.new
     view.render
-    assert_equal 'Soon there will be a puzzle here.', view.element.html
+    cells = view.element.find('td')
+    assert_equal 4, cells.length
+    cells.each { |cell| assert_equal '@', cell.text }
   end
 end
