@@ -30,7 +30,7 @@ class MonorailTemplateTest < Minitest::Test
     assert_equal 4, lines.length
     lines.each do |line|
       assert_equal '3', line['stroke-width']
-      assert_equal :black, line[:stroke]
+      assert_equal :transparent, line[:stroke]
     end
     assert_equal 2, lines.select { |line| line[:x1] == line[:x2] }.length
     assert_equal 2, lines.select { |line| line[:y1] == line[:y2] }.length
