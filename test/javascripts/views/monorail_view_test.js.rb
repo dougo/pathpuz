@@ -11,7 +11,8 @@ class MonorailViewTest < Minitest::Test
 
   test 'is svg' do
     assert_equal :svg, el.tag_name
-    assert_equal 'http://www.w3.org/2000/svg', el[:xmlns]
+    assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+    assert_equal SVGElement::NS, el[:xmlns]
   end
 
   test 'has four DotViews' do
@@ -21,7 +22,7 @@ class MonorailViewTest < Minitest::Test
   end
 
   test 'renders four dots' do
-    dots = view.element.find(:circle)
+    dots = el.find(:circle)
     assert_equal 2, dots.filter('[cx=10]').length
     assert_equal 2, dots.filter('[cx=40]').length
     assert_equal 2, dots.filter('[cy=10]').length
@@ -35,7 +36,7 @@ class MonorailViewTest < Minitest::Test
   end
 
   test 'renders four lines' do
-    lines = view.element.find(:line)
+    lines = el.find(:line)
     assert_equal 2, lines.select { |line| line[:x1] == line[:x2] }.length
     assert_equal 2, lines.select { |line| line[:y1] == line[:y2] }.length
     assert_equal 2, lines.filter('[x1=10][y1=10]').length

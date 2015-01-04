@@ -5,7 +5,7 @@ module Monorail
     tag_name :circle
 
     def create_element
-      el = `$(document.createElementNS('http://www.w3.org/2000/svg', #{tag_name}))`
+      el = SVGElement.new(tag_name)
       el.append_to parent.element
     end
 

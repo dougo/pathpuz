@@ -4,8 +4,7 @@ class MonorailView < Vienna::View
   tag_name :svg
 
   def create_element
-    el = `$(document.createElementNS('http://www.w3.org/2000/svg', #{tag_name}))`
-    el[:xmlns] = 'http://www.w3.org/2000/svg'
+    SVGElement.new(tag_name)
   end
 
   attr_accessor :dots, :lines
