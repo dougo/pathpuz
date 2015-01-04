@@ -12,10 +12,23 @@ module Monorail
       self.model = view.model
     end
 
-    test 'element is a SVG line' do
+    test 'element is a transparent wide SVG line' do
+      assert_equal :line, el.tag_name
+      assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+      assert_equal :transparent, el[:stroke]
+      assert_equal '10', el['stroke-width']
+      assert_equal '10', el[:x1]
+      assert_equal '20', el[:y1]
+      assert_equal '30', el[:x2]
+      assert_equal '40', el[:y2]
+    end
+
+    test 'line_element is a strokeless narrow SVG line' do
+      el = view.line_element
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal '3', el['stroke-width']
+      assert_equal :round, el['stroke-linecap']
       assert_equal '10', el[:x1]
       assert_equal '20', el[:y1]
       assert_equal '30', el[:x2]
@@ -28,9 +41,10 @@ module Monorail
       assert_equal coords, view.coords
     end
 
-    test 'render' do
+    test 'render gets line_element stroke from model' do
+      el = view.line_element
       view.render
-      assert_equal :transparent, el[:stroke]
+      refute el.has_attribute? :stroke
 
       model.present? = true
       view.render
@@ -40,10 +54,10 @@ module Monorail
     test 'can be clicked' do
       el.trigger(:click)
       assert_equal true, model.present?
-      assert_equal :black, el[:stroke]
+      assert_equal :black, view.line_element[:stroke]
       el.trigger(:click)
       assert_nil model.present?
-      assert_equal :transparent, el[:stroke]
+      refute view.line_element.has_attribute? :stroke
     end
   end
 end
