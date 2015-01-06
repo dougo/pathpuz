@@ -31,7 +31,7 @@ module Monorail
         assert_kind_of DotView, dot_view
         assert_equal view, dot_view.parent
         dot = dot_view.model
-        assert_equal dots[dot[:row]][dot[:col]], dot
+        assert_equal dots[dot.row][dot.col], dot
       end
     end
 
