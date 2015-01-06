@@ -10,7 +10,7 @@ module Monorail
 
     def create_element
       el = SVGElement.new(tag_name)
-      el[:transform] = 'translate(10 10)'
+      el[:transform] = 'translate(10 10) scale(30)'
       el.append_to parent.element
     end
 

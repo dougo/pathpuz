@@ -18,9 +18,9 @@ module Monorail
 
     def render
       element[:fill] = :gray
-      element[:r] = 5
-      element[:cx] = model[:col] * 30
-      element[:cy] = model[:row] * 30
+      element[:r] = 0.2
+      element[:cx] = model[:col]
+      element[:cy] = model[:row]
     end
   end
 end

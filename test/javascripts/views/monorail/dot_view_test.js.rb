@@ -24,9 +24,9 @@ module Monorail
     test 'render' do
       view.render
       assert_equal :gray, el[:fill]
-      assert_equal '5', el[:r]
-      assert_equal '60', el[:cx]
-      assert_equal '30', el[:cy]
+      assert_equal '0.2', el[:r]
+      assert_equal '2', el[:cx]
+      assert_equal '1', el[:cy]
     end
   end
 end

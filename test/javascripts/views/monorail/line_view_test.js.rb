@@ -16,23 +16,23 @@ module Monorail
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal :transparent, el[:stroke]
-      assert_equal '10', el['stroke-width']
-      assert_equal '30', el[:x1]
+      assert_equal '0.4', el['stroke-width']
+      assert_equal '1', el[:x1]
       assert_equal '0', el[:y1]
-      assert_equal '90', el[:x2]
-      assert_equal '60', el[:y2]
+      assert_equal '3', el[:x2]
+      assert_equal '2', el[:y2]
     end
 
     test 'line_element is a strokeless narrow SVG line' do
       el = view.line_element
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
-      assert_equal '3', el['stroke-width']
+      assert_equal '0.12', el['stroke-width']
       assert_equal :round, el['stroke-linecap']
-      assert_equal '30', el[:x1]
+      assert_equal '1', el[:x1]
       assert_equal '0', el[:y1]
-      assert_equal '90', el[:x2]
-      assert_equal '60', el[:y2]
+      assert_equal '3', el[:x2]
+      assert_equal '2', el[:y2]
     end
 
     test 'initialize' do
