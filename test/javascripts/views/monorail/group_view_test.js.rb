@@ -19,7 +19,7 @@ module Monorail
     test 'element is an SVG g' do
       assert_equal :g, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
-      assert_equal 'translate(10 10) scale(30)', el[:transform]
+      assert_equal 'translate(30 30) scale(90)', el[:transform]
       # assert_equal parent.element, el.parent # TODO: why does this fail??
     end
 

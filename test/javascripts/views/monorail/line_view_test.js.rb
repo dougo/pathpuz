@@ -16,7 +16,7 @@ module Monorail
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal :transparent, el[:stroke]
-      assert_equal '0.4', el['stroke-width']
+      assert_equal '0.3', el['stroke-width']
       assert_equal '1', el[:x1]
       assert_equal '0', el[:y1]
       assert_equal '3', el[:x2]
@@ -27,7 +27,7 @@ module Monorail
       el = view.line_element
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
-      assert_equal '0.12', el['stroke-width']
+      assert_equal '0.1', el['stroke-width']
       assert_equal :round, el['stroke-linecap']
       assert_equal '1', el[:x1]
       assert_equal '0', el[:y1]

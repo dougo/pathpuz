@@ -7,7 +7,7 @@ module Monorail
     def create_element
       el = SVGElement.new(tag_name)
       # Fat, transparent line to catch clicks
-      el['stroke-width'] = 0.4
+      el['stroke-width'] = 0.3
       el[:stroke] = :transparent
       init_coords(el)
       el.append_to parent.element
@@ -16,7 +16,7 @@ module Monorail
     def create_line_element
       el = SVGElement.new(tag_name)
       # Narrow line to show the actual stroke
-      el['stroke-width'] = 0.12
+      el['stroke-width'] = 0.1
       el['stroke-linecap'] = :round
       init_coords(el)
       el.append_to parent.element
