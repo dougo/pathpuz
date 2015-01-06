@@ -2,15 +2,20 @@ require 'views/monorail/puzzle_view'
 
 module Monorail
   class PuzzleViewTest < Minitest::Test
-    attr_accessor :view, :el
+    attr_accessor :model, :view, :el
 
     def setup
-      self.view = PuzzleView.new
+      self.model = Puzzle.new
+      self.view = PuzzleView.new(model)
       view.render
       self.el = view.element
     end
 
-    test 'is svg' do
+    test 'initialize' do
+      assert_equal model, view.model
+    end
+
+    test 'element is svg' do
       assert_equal :svg, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal SVGElement::NS, el[:xmlns]

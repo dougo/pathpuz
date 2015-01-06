@@ -17,11 +17,7 @@ module Monorail
     attr_accessor :dots, :lines
 
     def render
-      dot_models = (0..1).map do |row|
-        (0..1).map do |col|
-          Monorail::Dot.new(row: row, col: col)
-        end
-      end
+      dot_models = parent.model.dots
       
       line_models = [Monorail::Line.new(dot1: dot_models[0][0], dot2: dot_models[0][1]),
                      Monorail::Line.new(dot1: dot_models[0][0], dot2: dot_models[1][0]),
