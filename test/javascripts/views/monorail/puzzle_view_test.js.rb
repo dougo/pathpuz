@@ -15,15 +15,10 @@ module Monorail
       assert_equal model, view.model
     end
 
-    test 'element is svg' do
-      assert_equal :svg, el.tag_name
-      assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
-      assert_equal SVGElement::NS, el[:xmlns]
-    end
-
     test 'render' do
-      assert_kind_of GroupView, view.group
-      assert_equal view, view.group.parent
+      assert_equal 'Build a monorail loop that visits every dot.', el.text
+      assert_kind_of SVGView, view.svg
+      assert_equal view, view.svg.parent
     end
   end
 end

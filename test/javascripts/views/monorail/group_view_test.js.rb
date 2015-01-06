@@ -6,7 +6,7 @@ module Monorail
 
     def setup
       self.puzzle = Puzzle.new
-      self.parent = PuzzleView.new(puzzle)
+      self.parent = SVGView.new(PuzzleView.new(puzzle))
       self.view = GroupView.new(parent)
       view.render
       self.el = view.element
@@ -14,6 +14,7 @@ module Monorail
 
     test 'initialize' do
       assert_equal parent, view.parent
+      assert_equal puzzle, view.puzzle
     end
 
     test 'element is an SVG g' do

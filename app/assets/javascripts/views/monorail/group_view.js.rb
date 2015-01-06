@@ -16,14 +16,18 @@ module Monorail
 
     attr_accessor :dots, :lines
 
+    def puzzle
+      parent.parent.model
+    end
+
     def render
-      self.dots = parent.model.dots.flat_map do |row|
+      self.dots = puzzle.dots.flat_map do |row|
         row.map do |dot|
           Monorail::DotView.new(dot, self)
         end
       end
 
-      self.lines = parent.model.lines.map do |line|
+      self.lines = puzzle.lines.map do |line|
         Monorail::LineView.new(line, self)
       end
 

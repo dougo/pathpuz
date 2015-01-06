@@ -2,21 +2,16 @@ require 'vienna'
 
 module Monorail
   class PuzzleView < Vienna::View
-    tag_name :svg
-
-    attr_accessor :model, :group
+    attr_accessor :model, :svg
 
     def initialize(model)
       self.model = model
     end
 
-    def create_element
-      SVGElement.new(tag_name)
-    end
-
     def render
-      self.group = Monorail::GroupView.new(self)
-      group.render
+      element.append Element.new(:p).text('Build a monorail loop that visits every dot.')
+      self.svg = SVGView.new(self)
+      svg.render
     end
   end
 end
