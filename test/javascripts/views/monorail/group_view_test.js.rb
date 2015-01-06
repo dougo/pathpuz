@@ -35,21 +35,14 @@ module Monorail
       end
     end
 
-    test 'has four LineViews' do
-      lines = view.lines
-      assert_equal 4, lines.length
-      lines.each do |line|
-        assert_kind_of LineView, line
-        assert_equal view, line.parent
+    test 'has one LineView per Line in puzzle' do
+      lines = puzzle.lines
+      line_views = view.lines
+      lines.zip(line_views).each do |line, line_view|
+        assert_kind_of LineView, line_view
+        assert_equal view, line_view.parent
+        assert_equal line, line_view.model
       end
-    end
-
-    test 'lines form a square' do
-      lines = view.lines
-      assert_equal 2, lines.select { |line| line.model.dot1[:row] == line.model.dot2[:row] }.length
-      assert_equal 2, lines.select { |line| line.model.dot1[:col] == line.model.dot2[:col] }.length
-      assert_equal 2, lines.select { |line| line.model.dot1[:row] == 0 && line.model.dot1[:col] == 0 }.length
-      assert_equal 2, lines.select { |line| line.model.dot2[:row] == 1 && line.model.dot2[:col] == 1 }.length
     end
   end
 end

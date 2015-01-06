@@ -17,5 +17,14 @@ module Monorail
         end
       end
     end
+
+    test 'lines form a lattice' do
+      lines = Puzzle.new.lines
+      assert_equal 4, lines.length
+      assert_equal 2, lines.select { |line| line.dot1[:row] == line.dot2[:row] }.length
+      assert_equal 2, lines.select { |line| line.dot1[:col] == line.dot2[:col] }.length
+      assert_equal 2, lines.select { |line| line.dot1[:row] == 0 && line.dot1[:col] == 0 }.length
+      assert_equal 2, lines.select { |line| line.dot2[:row] == 1 && line.dot2[:col] == 1 }.length
+    end
   end
 end
