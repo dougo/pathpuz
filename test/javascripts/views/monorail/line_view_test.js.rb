@@ -2,14 +2,14 @@ require 'views/monorail/line_view'
 
 module Monorail
   class LineViewTest < Minitest::Test
-    attr_accessor *%i(parent coords view el model)
+    attr_accessor *%i(parent view el model)
 
     def setup
+      self.model = Monorail::Line.new(dot1: Monorail::Dot.new(row: 0, col: 1),
+                                      dot2: Monorail::Dot.new(row: 2, col: 3))
       self.parent = MonorailView.new
-      self.coords = { x1: 10, y1: 20, x2: 30, y2: 40 }
-      self.view = Monorail::LineView.new(parent, coords)
+      self.view = Monorail::LineView.new(model, parent)
       self.el = view.element
-      self.model = view.model
     end
 
     test 'element is a transparent wide SVG line' do
@@ -17,10 +17,10 @@ module Monorail
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal :transparent, el[:stroke]
       assert_equal '10', el['stroke-width']
-      assert_equal '10', el[:x1]
-      assert_equal '20', el[:y1]
-      assert_equal '30', el[:x2]
-      assert_equal '40', el[:y2]
+      assert_equal '40', el[:x1]
+      assert_equal '10', el[:y1]
+      assert_equal '100', el[:x2]
+      assert_equal '70', el[:y2]
     end
 
     test 'line_element is a strokeless narrow SVG line' do
@@ -29,16 +29,15 @@ module Monorail
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal '3', el['stroke-width']
       assert_equal :round, el['stroke-linecap']
-      assert_equal '10', el[:x1]
-      assert_equal '20', el[:y1]
-      assert_equal '30', el[:x2]
-      assert_equal '40', el[:y2]
+      assert_equal '40', el[:x1]
+      assert_equal '10', el[:y1]
+      assert_equal '100', el[:x2]
+      assert_equal '70', el[:y2]
     end
 
     test 'initialize' do
-      assert_kind_of Line, model
+      assert_equal model, view.model
       assert_equal parent, view.parent
-      assert_equal coords, view.coords
     end
 
     test 'render gets line_element stroke from model' do

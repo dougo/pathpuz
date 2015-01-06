@@ -2,7 +2,7 @@ require 'views/monorail/dot_view'
 
 module Monorail
   class DotViewTest < Minitest::Test
-    attr_accessor *%i(model parent coords view el)
+    attr_accessor *%i(model parent view el)
 
     def setup
       self.model = Dot.new(row: 1, col: 2)

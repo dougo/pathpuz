@@ -9,10 +9,7 @@ module Monorail
       # Fat, transparent line to catch clicks
       el['stroke-width'] = 10
       el[:stroke] = :transparent
-      el[:x1] = coords[:x1]
-      el[:y1] = coords[:y1]
-      el[:x2] = coords[:x2]
-      el[:y2] = coords[:y2]
+      init_coords(el)
       el.append_to parent.element
     end
 
@@ -21,10 +18,7 @@ module Monorail
       # Narrow line to show the actual stroke
       el['stroke-width'] = 3
       el['stroke-linecap'] = :round
-      el[:x1] = coords[:x1]
-      el[:y1] = coords[:y1]
-      el[:x2] = coords[:x2]
-      el[:y2] = coords[:y2]
+      init_coords(el)
       el.append_to parent.element
     end
 
@@ -32,12 +26,11 @@ module Monorail
       @line_element ||= create_line_element
     end
 
-    attr_accessor :model, :coords
+    attr_accessor :model
 
-    def initialize(parent, coords)
-      self.model = Line.new
+    def initialize(model, parent)
+      self.model = model
       self.parent = parent
-      self.coords = coords
       line_element
       element # Add this second so that the click target will be on top of the stroke.
     end
@@ -50,6 +43,15 @@ module Monorail
       evt.prevent
       model.present? = model.present? ? nil : true
       render
+    end
+
+    private
+
+    def init_coords(el)
+      el[:x1] = model.dot1[:col] * 30 + 10
+      el[:y1] = model.dot1[:row] * 30 + 10
+      el[:x2] = model.dot2[:col] * 30 + 10
+      el[:y2] = model.dot2[:row] * 30 + 10
     end
   end
 end

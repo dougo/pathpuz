@@ -37,9 +37,9 @@ class MonorailViewTest < Minitest::Test
 
   test 'lines form a square' do
     lines = view.lines
-    assert_equal 2, lines.select { |line| line.coords[:x1] == line.coords[:x2] }.length
-    assert_equal 2, lines.select { |line| line.coords[:y1] == line.coords[:y2] }.length
-    assert_equal 2, lines.select { |line| line.coords[:x1] == 10 && line.coords[:y1] == 10 }.length
-    assert_equal 2, lines.select { |line| line.coords[:x2] == 40 && line.coords[:y2] == 40 }.length
+    assert_equal 2, lines.select { |line| line.model.dot1[:row] == line.model.dot2[:row] }.length
+    assert_equal 2, lines.select { |line| line.model.dot1[:col] == line.model.dot2[:col] }.length
+    assert_equal 2, lines.select { |line| line.model.dot1[:row] == 0 && line.model.dot1[:col] == 0 }.length
+    assert_equal 2, lines.select { |line| line.model.dot2[:row] == 1 && line.model.dot2[:col] == 1 }.length
   end
 end

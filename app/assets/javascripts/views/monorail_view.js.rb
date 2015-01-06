@@ -10,19 +10,28 @@ class MonorailView < Vienna::View
   attr_accessor :dots, :lines
 
   def render
-    self.dots = []
-    (0..1).each do |row|
-      (0..1).each do |col|
-        dots << Monorail::DotView.new(Monorail::Dot.new(row: row, col: col), self)
+    dot_models = (0..1).map do |row|
+      (0..1).map do |col|
+        Monorail::Dot.new(row: row, col: col)
       end
     end
-    dots.each &:render
+    
+    line_models = [Monorail::Line.new(dot1: dot_models[0][0], dot2: dot_models[0][1]),
+                   Monorail::Line.new(dot1: dot_models[0][0], dot2: dot_models[1][0]),
+                   Monorail::Line.new(dot1: dot_models[0][1], dot2: dot_models[1][1]),
+                   Monorail::Line.new(dot1: dot_models[1][0], dot2: dot_models[1][1])]
 
-    self.lines = []
-    lines << Monorail::LineView.new(self, x1: 10, y1: 10, x2: 40, y2: 10)
-    lines << Monorail::LineView.new(self, x1: 10, y1: 10, x2: 10, y2: 40)
-    lines << Monorail::LineView.new(self, x1: 40, y1: 10, x2: 40, y2: 40)
-    lines << Monorail::LineView.new(self, x1: 10, y1: 40, x2: 40, y2: 40)
+    self.dots = dot_models.flat_map do |row|
+      row.map do |dot|
+        Monorail::DotView.new(dot, self)
+      end
+    end
+
+    self.lines = line_models.map do |line|
+      Monorail::LineView.new(line, self)
+    end
+
+    dots.each &:render
     lines.each &:render
   end
 end
