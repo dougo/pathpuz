@@ -21,12 +21,12 @@ class MonorailViewTest < Minitest::Test
     dots.each { |dot| assert_kind_of Monorail::DotView, dot }
   end
 
-  test 'renders four dots' do
-    dots = el.find(:circle)
-    assert_equal 2, dots.filter('[cx=10]').length
-    assert_equal 2, dots.filter('[cx=40]').length
-    assert_equal 2, dots.filter('[cy=10]').length
-    assert_equal 2, dots.filter('[cy=40]').length
+  test 'dots form a square' do
+    dots = view.dots
+    assert_equal 2, dots.select { |dot| dot.coords[:cx] == 10 }.length
+    assert_equal 2, dots.select { |dot| dot.coords[:cx] == 40 }.length
+    assert_equal 2, dots.select { |dot| dot.coords[:cy] == 10 }.length
+    assert_equal 2, dots.select { |dot| dot.coords[:cy] == 40 }.length
   end
 
   test 'has four LineViews' do
@@ -35,11 +35,11 @@ class MonorailViewTest < Minitest::Test
     lines.each { |line| assert_kind_of Monorail::LineView, line }
   end
 
-  test 'renders four lines' do
-    lines = el.find(:line)
-    assert_equal 2, lines.select { |line| line[:x1] == line[:x2] }.length
-    assert_equal 2, lines.select { |line| line[:y1] == line[:y2] }.length
-    assert_equal 2, lines.filter('[x1=10][y1=10]').length
-    assert_equal 2, lines.filter('[x2=40][y2=40]').length
+  test 'lines form a square' do
+    lines = view.lines
+    assert_equal 2, lines.select { |line| line.coords[:x1] == line.coords[:x2] }.length
+    assert_equal 2, lines.select { |line| line.coords[:y1] == line.coords[:y2] }.length
+    assert_equal 2, lines.select { |line| line.coords[:x1] == 10 && line.coords[:y1] == 10 }.length
+    assert_equal 2, lines.select { |line| line.coords[:x2] == 40 && line.coords[:y2] == 40 }.length
   end
 end
