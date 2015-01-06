@@ -50,12 +50,19 @@ module Monorail
       assert_equal :black, el[:stroke]
     end
 
-    test 'can be clicked' do
+    test 'update the model when clicked' do
       el.trigger(:click)
       assert_equal true, model.present?
-      assert_equal :black, view.line_element[:stroke]
+
       el.trigger(:click)
       assert_nil model.present?
+    end
+
+    test 'render when the model changes' do
+      model.present? = true
+      assert_equal :black, view.line_element[:stroke]
+      
+      model.present? = false
       refute view.line_element.has_attribute? :stroke
     end
   end

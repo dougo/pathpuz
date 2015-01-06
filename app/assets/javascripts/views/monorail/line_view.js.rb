@@ -31,6 +31,7 @@ module Monorail
     def initialize(model, parent)
       self.model = model
       self.parent = parent
+      model.add_observer(:present?) { render }
     end
 
     def render
@@ -39,9 +40,7 @@ module Monorail
     end
 
     on :click do |evt|
-      evt.prevent
       model.present? = model.present? ? nil : true
-      render
     end
 
     private
