@@ -5,7 +5,7 @@ module Monorail
     attr_accessor :parent, :view, :el
 
     def setup
-      self.parent = MonorailView.new
+      self.parent = PuzzleView.new
       self.view = GroupView.new(parent)
       view.render
       self.el = view.element

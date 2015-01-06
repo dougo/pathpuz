@@ -7,7 +7,7 @@ module Monorail
     def setup
       self.model = Line.new(dot1: Dot.new(row: 0, col: 1),
                             dot2: Dot.new(row: 2, col: 3))
-      self.parent = MonorailView.new
+      self.parent = GroupView.new(PuzzleView.new)
       self.view = LineView.new(model, parent)
       self.el = view.element
     end
