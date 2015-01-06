@@ -9,18 +9,18 @@ module Monorail
       el.append_to parent.element
     end
 
-    attr_accessor :coords
+    attr_accessor :model
 
-    def initialize(parent, coords)
+    def initialize(model, parent)
+      self.model = model
       self.parent = parent
-      self.coords = coords
     end
 
     def render
       element[:fill] = :gray
       element[:r] = 5
-      element[:cx] = coords[:cx]
-      element[:cy] = coords[:cy]
+      element[:cx] = model[:col] * 30 + 10
+      element[:cy] = model[:row] * 30 + 10
     end
   end
 end

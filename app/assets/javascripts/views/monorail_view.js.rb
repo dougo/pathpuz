@@ -11,10 +11,11 @@ class MonorailView < Vienna::View
 
   def render
     self.dots = []
-    dots << Monorail::DotView.new(self, cx: 10, cy: 10)
-    dots << Monorail::DotView.new(self, cx: 40, cy: 10)
-    dots << Monorail::DotView.new(self, cx: 10, cy: 40)
-    dots << Monorail::DotView.new(self, cx: 40, cy: 40)
+    (0..1).each do |row|
+      (0..1).each do |col|
+        dots << Monorail::DotView.new(Monorail::Dot.new(row: row, col: col), self)
+      end
+    end
     dots.each &:render
 
     self.lines = []

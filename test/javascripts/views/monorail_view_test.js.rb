@@ -23,10 +23,10 @@ class MonorailViewTest < Minitest::Test
 
   test 'dots form a square' do
     dots = view.dots
-    assert_equal 2, dots.select { |dot| dot.coords[:cx] == 10 }.length
-    assert_equal 2, dots.select { |dot| dot.coords[:cx] == 40 }.length
-    assert_equal 2, dots.select { |dot| dot.coords[:cy] == 10 }.length
-    assert_equal 2, dots.select { |dot| dot.coords[:cy] == 40 }.length
+    assert_equal 2, dots.select { |dot| dot.model[:row] == 0 }.length
+    assert_equal 2, dots.select { |dot| dot.model[:row] == 1 }.length
+    assert_equal 2, dots.select { |dot| dot.model[:col] == 0 }.length
+    assert_equal 2, dots.select { |dot| dot.model[:col] == 1 }.length
   end
 
   test 'has four LineViews' do
