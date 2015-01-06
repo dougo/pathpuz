@@ -48,10 +48,10 @@ module Monorail
     private
 
     def init_coords(el)
-      el[:x1] = model.dot1[:col] * 30 + 10
-      el[:y1] = model.dot1[:row] * 30 + 10
-      el[:x2] = model.dot2[:col] * 30 + 10
-      el[:y2] = model.dot2[:row] * 30 + 10
+      el[:x1] = model.dot1[:col] * 30
+      el[:y1] = model.dot1[:row] * 30
+      el[:x2] = model.dot2[:col] * 30
+      el[:y2] = model.dot2[:row] * 30
     end
   end
 end

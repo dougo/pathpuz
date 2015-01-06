@@ -7,7 +7,7 @@ module Monorail
     def setup
       self.model = Dot.new(row: 1, col: 2)
       self.parent = MonorailView.new
-      self.view = Monorail::DotView.new(model, parent)
+      self.view = DotView.new(model, parent)
       self.el = view.element
     end
 
@@ -25,8 +25,8 @@ module Monorail
       view.render
       assert_equal :gray, el[:fill]
       assert_equal '5', el[:r]
-      assert_equal '70', el[:cx]
-      assert_equal '40', el[:cy]
+      assert_equal '60', el[:cx]
+      assert_equal '30', el[:cy]
     end
   end
 end
