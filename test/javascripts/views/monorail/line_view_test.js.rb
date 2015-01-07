@@ -59,7 +59,7 @@ module Monorail
       assert_nil model.present?
     end
 
-    test 'render when the model changes' do
+    test 'render when the model presence changes' do
       model.present? = true
       assert_equal :black, view.line_element[:stroke]
       

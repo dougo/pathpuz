@@ -8,14 +8,31 @@ class MonorailTest < Capybara::Rails::TestCase
 
   test 'solve the trivial puzzle' do
     visit root_path
-    lines_to_click = all('line[cursor="pointer"]')
     assert_equal 4, lines_to_click.length
     lines_to_click.each do |line|
       # line.click # doesn't work: https://github.com/teampoltergeist/poltergeist/issues/331
       line.trigger(:click)
     end
-    painted_lines = all('line[stroke="black"]')
     assert_equal 4, painted_lines.length
     # TODO: win message?
+  end
+
+  test 'skip to the next puzzle' do
+    visit root_path
+    lines_to_click.first.trigger(:click)
+    assert_equal 1, painted_lines.length
+    click_on 'Next puzzle'
+    assert_equal 4, lines_to_click.length
+    assert_empty painted_lines
+  end
+
+  private
+
+  def lines_to_click
+    all('line[cursor="pointer"]')
+  end
+
+  def painted_lines
+    all('line[stroke="black"]')
   end
 end
