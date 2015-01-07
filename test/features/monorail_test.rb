@@ -8,7 +8,7 @@ class MonorailTest < Capybara::Rails::TestCase
 
   test 'solve the trivial puzzle' do
     visit root_path
-    lines_to_click = all('line[stroke="transparent"]')
+    lines_to_click = all('line[cursor="pointer"]')
     assert_equal 4, lines_to_click.length
     lines_to_click.each do |line|
       # line.click # doesn't work: https://github.com/teampoltergeist/poltergeist/issues/331

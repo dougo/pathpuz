@@ -9,6 +9,7 @@ module Monorail
       # Fat, transparent line to catch clicks
       el['stroke-width'] = 0.3
       el[:stroke] = :transparent
+      el[:cursor] = :pointer
       init_coords(el)
       el.append_to parent.element
     end
