@@ -20,6 +20,8 @@ module Monorail
       assert_kind_of SVGView, view.svg
       assert_equal view, view.svg.parent
       assert_equal 'Next puzzle', el.find(:button).text
+      assert_kind_of SolvedView, view.solved
+      assert_equal model, view.solved.model
     end
 
     test 'new puzzle on button click' do

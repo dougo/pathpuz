@@ -9,12 +9,13 @@ class MonorailTest < Capybara::Rails::TestCase
   test 'solve the trivial puzzle' do
     visit root_path
     assert_equal 4, lines_to_click.length
+    refute_text page, 'Solved!'
     lines_to_click.each do |line|
       # line.click # doesn't work: https://github.com/teampoltergeist/poltergeist/issues/331
       line.trigger(:click)
     end
     assert_equal 4, painted_lines.length
-    # TODO: win message?
+    assert_text page, 'Solved!'
   end
 
   test 'skip to the next puzzle' do
