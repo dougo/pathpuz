@@ -57,6 +57,9 @@ group :test do
   # Headless driver for Capybara.
   gem 'poltergeist'
 
+  # Support 'save_and_open_screenshot' when debugging tests.
+  gem 'launchy'
+
   # Opal unit testing.
   gem 'opal-minitest'
 end
