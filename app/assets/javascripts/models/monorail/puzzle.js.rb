@@ -53,6 +53,7 @@ module Monorail
       dot_rows.first.length
     end
 
+    # Is there a single looping path that visits every dot?
     def solved?
       first_dot = dot(0, 0)
       dot = first_dot
@@ -60,13 +61,20 @@ module Monorail
       line = dot.lines.select(&:present?).first
       return false unless line
       loop do
+        # Follow the line.
         dot = ([line.dot1, line.dot2] - [dot]).first # TODO: factor out ... maybe Line#other_dot(dot)?
         if dot == first_dot
-          return true # TODO: num_dots_visited == dots.length
+          # We've made a complete loop; has every dot been visited?
+          return num_dots_visited == dots.length
         end
         num_dots_visited += 1
+
+        # Find the next line to follow.
         lines = dot.lines.select(&:present?) - [line]
-        return false if lines.empty? # TODO: unless lines.length == 1
+        unless lines.length == 1
+          # If there's not exactly one line to follow, the path either ends or branches.
+          return false
+        end
         line = lines.first
       end
     end
