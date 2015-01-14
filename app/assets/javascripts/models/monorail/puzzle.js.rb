@@ -54,7 +54,21 @@ module Monorail
     end
 
     def solved?
-      lines.all? &:present?
+      first_dot = dot(0, 0)
+      dot = first_dot
+      num_dots_visited = 1
+      line = dot.lines.select(&:present?).first
+      return false unless line
+      loop do
+        dot = ([line.dot1, line.dot2] - [dot]).first # TODO: factor out ... maybe Line#other_dot(dot)?
+        if dot == first_dot
+          return true # TODO: num_dots_visited == dots.length
+        end
+        num_dots_visited += 1
+        lines = dot.lines.select(&:present?) - [line]
+        return false if lines.empty? # TODO: unless lines.length == 1
+        line = lines.first
+      end
     end
   end
 end

@@ -86,6 +86,16 @@ module Monorail
       assert event
     end
 
+    test 'solved? for 2x3' do
+      subject = Puzzle.new
+      subject.dot_rows << [Dot.new(row: 2, col: 0), Dot.new(row: 2, col: 1)]
+      subject.connect(subject.dot(1, 0), subject.dot(2, 0))
+      subject.connect(subject.dot(1, 1), subject.dot(2, 1))
+      subject.connect(subject.dot(2, 0), subject.dot(2, 1))
+      [0, 1, 2, 4, 5, 6].each { |i| subject.lines[i].present? = true }
+      assert subject.solved?
+    end
+
     private
 
     def assert_has_grid_of_dots(puzzle, size)
