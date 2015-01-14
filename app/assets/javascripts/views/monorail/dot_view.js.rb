@@ -5,15 +5,13 @@ module Monorail
     tag_name :circle
 
     def create_element
-      el = SVGElement.new(tag_name)
-      el.append_to parent.element
+      SVGElement.new(tag_name)
     end
 
     attr_accessor :model
 
-    def initialize(model, parent)
+    def initialize(model)
       self.model = model
-      self.parent = parent
     end
 
     def render

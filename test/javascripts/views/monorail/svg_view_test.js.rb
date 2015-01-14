@@ -2,19 +2,17 @@ require 'views/monorail/svg_view'
 
 module Monorail
   class SVGViewTest < Minitest::Test
-    attr_accessor :puzzle, :parent, :view, :el
+    attr_accessor :model, :view, :el
 
     def setup
-      self.puzzle = Puzzle.new
-      self.parent = PuzzleView.new(puzzle)
-      self.view = SVGView.new(parent)
+      self.model = Puzzle.new
+      self.view = SVGView.new(model)
       view.render
       self.el = view.element
     end
 
     test 'initialize' do
-      assert_equal parent, view.parent
-      assert_equal puzzle, view.puzzle
+      assert_equal model, view.model
     end
 
     test 'element is svg' do
@@ -27,24 +25,26 @@ module Monorail
     end
 
     test 'has one DotView per Dot in puzzle' do
-      dots = puzzle.dots
+      dots = model.dots
       dot_views = view.dots
       assert_equal dots.length * dots.first.length, dot_views.length
       dot_views.each do |dot_view|
         assert_kind_of DotView, dot_view
-        assert_equal view, dot_view.parent
         dot = dot_view.model
         assert_equal dots[dot.row][dot.col], dot
+        # TODO: is there a better way to test that dot_view.element was added and dot_view was rendered?
+        assert_equal 1, view.element.find("circle[cx=#{dot.col}][cy=#{dot.row}]").length
       end
     end
 
     test 'has one LineView per Line in puzzle' do
-      lines = puzzle.lines
+      lines = model.lines
       line_views = view.lines
       lines.zip(line_views).each do |line, line_view|
         assert_kind_of LineView, line_view
-        assert_equal view, line_view.parent
         assert_equal line, line_view.model
+        # TODO: is there a better way to test that line_view.element and line_view.line_element were added and line_view was rendered?
+        assert_equal 2, view.element.find("line[x1=#{line.dot1.col}][y1=#{line.dot1.row}][x2=#{line.dot2.col}][y2=#{line.dot2.row}]").length
       end
     end
   end

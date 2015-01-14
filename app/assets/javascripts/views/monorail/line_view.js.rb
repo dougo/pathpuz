@@ -11,7 +11,7 @@ module Monorail
       el[:stroke] = :transparent
       el[:cursor] = :pointer
       init_coords(el)
-      el.append_to parent.element
+      el
     end
 
     def create_line_element
@@ -20,7 +20,7 @@ module Monorail
       el['stroke-width'] = 0.1
       el['stroke-linecap'] = :round
       init_coords(el)
-      el.append_to parent.element
+      el
     end
 
     def line_element
@@ -29,15 +29,13 @@ module Monorail
 
     attr_accessor :model
 
-    def initialize(model, parent)
+    def initialize(model)
       self.model = model
-      self.parent = parent
       model.add_observer(:present?) { render }
     end
 
     def render
       line_element[:stroke] = model.present? ? :black : nil
-      element # Add this second so that the click target will be on top of the stroke.
     end
 
     on :click do |evt|

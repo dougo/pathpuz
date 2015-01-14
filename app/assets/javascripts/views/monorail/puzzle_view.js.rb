@@ -11,8 +11,9 @@ module Monorail
     def render
       element.empty
       element.append(Element.new(:p).text('Build a monorail loop that visits every dot.'))
-      self.svg = SVGView.new(self)
+      self.svg = SVGView.new(model)
       svg.render
+      element.append(svg.element)
       next_button = Element.new(:button).text('Next puzzle')
       element.append(Element.new(:div).append(next_button))
       self.solved = SolvedView.new(model)

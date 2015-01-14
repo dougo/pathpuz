@@ -18,10 +18,12 @@ module Monorail
     test 'render' do
       assert_equal 'Build a monorail loop that visits every dot.', el.find(:p).first.text
       assert_kind_of SVGView, view.svg
-      assert_equal view, view.svg.parent
+      assert_equal model, view.svg.model
+      assert view.element.find('svg')
       assert_equal 'Next puzzle', el.find(:button).text
       assert_kind_of SolvedView, view.solved
       assert_equal model, view.solved.model
+      assert view.element.find('.solved')
     end
 
     test 'new puzzle on button click' do

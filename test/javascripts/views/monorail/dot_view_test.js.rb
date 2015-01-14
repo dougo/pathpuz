@@ -2,12 +2,11 @@ require 'views/monorail/dot_view'
 
 module Monorail
   class DotViewTest < Minitest::Test
-    attr_accessor *%i(model parent view el)
+    attr_accessor *%i(model view el)
 
     def setup
       self.model = Dot.new(row: 1, col: 2)
-      self.parent = SVGView.new(PuzzleView.new)
-      self.view = DotView.new(model, parent)
+      self.view = DotView.new(model)
       self.el = view.element
     end
 
@@ -18,7 +17,6 @@ module Monorail
 
     test 'initialize' do
       assert_equal model, view.model
-      assert_equal parent, view.parent
     end
 
     test 'render' do

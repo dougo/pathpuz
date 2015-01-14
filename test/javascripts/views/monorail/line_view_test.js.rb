@@ -2,13 +2,12 @@ require 'views/monorail/line_view'
 
 module Monorail
   class LineViewTest < Minitest::Test
-    attr_accessor *%i(parent view el model)
+    attr_accessor *%i(view el model)
 
     def setup
       self.model = Line.new(dot1: Dot.new(row: 0, col: 1),
                             dot2: Dot.new(row: 2, col: 3))
-      self.parent = SVGView.new(PuzzleView.new)
-      self.view = LineView.new(model, parent)
+      self.view = LineView.new(model)
       self.el = view.element
     end
 
@@ -38,7 +37,6 @@ module Monorail
 
     test 'initialize' do
       assert_equal model, view.model
-      assert_equal parent, view.parent
     end
 
     test 'render gets line_element stroke from model' do

@@ -5,10 +5,10 @@ module Monorail
   class SVGView < Vienna::View
     tag_name :svg
 
-    attr_accessor :dots, :lines
+    attr_accessor :model, :dots, :lines
 
-    def initialize(parent)
-      self.parent = parent
+    def initialize(model)
+      self.model = model
     end
 
     def create_element
@@ -18,26 +18,27 @@ module Monorail
       # jQuery.attr downcases attribute names: http://bugs.jquery.com/ticket/11166
       # So we have to use raw setAttribute instead.
       `#{el}[0].setAttribute('viewBox', '-1 -1 3 3')`
-      el.append_to parent.element
-    end
-
-    def puzzle
-      parent.model
+      el
     end
 
     def render
-      self.dots = puzzle.dots.flat_map do |row|
+      self.dots = model.dots.flat_map do |row|
         row.map do |dot|
-          Monorail::DotView.new(dot, self)
+          Monorail::DotView.new(dot)
         end
       end
 
-      self.lines = puzzle.lines.map do |line|
-        Monorail::LineView.new(line, self)
+      self.lines = model.lines.map do |line|
+        Monorail::LineView.new(line)
       end
 
-      dots.each &:render
-      lines.each &:render
+      dots.each { |dot| dot.render; element.append(dot.element) }
+      lines.each do |line|
+        line.render
+        element.append(line.line_element)
+        # Add this second so that the click target will be on top of the stroke.
+        element.append(line.element)
+      end
     end
   end
 end
