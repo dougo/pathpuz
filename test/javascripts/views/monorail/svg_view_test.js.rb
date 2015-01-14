@@ -48,7 +48,7 @@ module Monorail
       lines.zip(line_views).each do |line, line_view|
         assert_kind_of LineView, line_view
         assert_equal line, line_view.model
-        # TODO: is there a better way to test that line_view.element and line_view.line_element were added and line_view was rendered?
+        # TODO: is there a better way to test that line_view.element was added and line_view was rendered?
         assert_equal 2, view.element.find("line[x1=#{line.dot1.col}][y1=#{line.dot1.row}][x2=#{line.dot2.col}][y2=#{line.dot2.row}]").length
       end
     end

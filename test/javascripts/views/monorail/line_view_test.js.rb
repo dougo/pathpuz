@@ -11,7 +11,14 @@ module Monorail
       self.el = view.element
     end
 
-    test 'element is a transparent wide SVG line' do
+    test 'element is a g' do
+      assert_equal :g, el.tag_name
+      assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+      assert_equal 2, el.find('line').length
+    end
+
+    test 'clickable_element is a transparent wide SVG line' do
+      el = view.clickable_element
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal :transparent, el[:stroke]

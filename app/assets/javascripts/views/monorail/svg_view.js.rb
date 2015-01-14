@@ -33,12 +33,7 @@ module Monorail
       end
 
       dots.each { |dot| element.append(dot.render.element) }
-      lines.each do |line|
-        line.render
-        element.append(line.line_element)
-        # Add this second so that the click target will be on top of the stroke.
-        element.append(line.element)
-      end
+      lines.each { |line| element.append(line.render.element) }
 
       self
     end

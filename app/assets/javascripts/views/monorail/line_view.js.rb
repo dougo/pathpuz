@@ -2,32 +2,28 @@ require 'vienna'
 
 module Monorail
   class LineView < Vienna::View
-    tag_name :line
+    tag_name :g
+
+    attr_accessor :model, :clickable_element, :line_element
 
     def create_element
       el = SVGElement.new(tag_name)
+
+      self.clickable_element = SVGElement.new(:line)
       # Fat, transparent line to catch clicks
-      el['stroke-width'] = 0.3
-      el[:stroke] = :transparent
-      el[:cursor] = :pointer
-      init_coords(el)
-      el
-    end
+      clickable_element['stroke-width'] = 0.3
+      clickable_element[:stroke] = :transparent
+      clickable_element[:cursor] = :pointer
+      init_coords(clickable_element)
 
-    def create_line_element
-      el = SVGElement.new(tag_name)
+      self.line_element = SVGElement.new(:line)
       # Narrow line to show the actual stroke
-      el['stroke-width'] = 0.1
-      el['stroke-linecap'] = :round
-      init_coords(el)
-      el
-    end
+      line_element['stroke-width'] = 0.1
+      line_element['stroke-linecap'] = :round
+      init_coords(line_element)
 
-    def line_element
-      @line_element ||= create_line_element
+      el.append(line_element).append(clickable_element)
     end
-
-    attr_accessor :model
 
     def initialize(model)
       self.model = model
@@ -35,6 +31,7 @@ module Monorail
     end
 
     def render
+      element
       line_element[:stroke] = model.present? ? :black : nil
       self
     end
