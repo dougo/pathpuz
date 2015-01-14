@@ -9,5 +9,13 @@ module Monorail
     test 'attributes' do
       assert_equal %i(dot1 dot2 present?), Line.columns
     end
+
+    test 'add to dots' do
+      dot1 = Dot.new
+      dot2 = Dot.new
+      subject = Line.new(dot1: dot1, dot2: dot2)
+      assert_equal [subject], dot1.lines
+      assert_equal [subject], dot2.lines
+    end
   end
 end
