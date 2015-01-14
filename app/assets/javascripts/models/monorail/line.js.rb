@@ -12,5 +12,9 @@ module Monorail
       dot1.lines << self if dot1
       dot2.lines << self if dot2
     end
+
+    def other_dot(dot)
+      dot == dot1 ? dot2 : dot1
+    end
   end
 end

@@ -10,5 +10,9 @@ module Monorail
       super
       @lines = []
     end
+
+    def present_lines
+      lines.select(&:present?)
+    end
   end
 end

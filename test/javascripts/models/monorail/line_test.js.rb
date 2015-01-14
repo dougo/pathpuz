@@ -17,5 +17,13 @@ module Monorail
       assert_equal [subject], dot1.lines
       assert_equal [subject], dot2.lines
     end
+
+    test 'other_dot' do
+      dot1 = Dot.new
+      dot2 = Dot.new
+      subject = Line.new(dot1: dot1, dot2: dot2)
+      assert_equal dot2, subject.other_dot(dot1)
+      assert_equal dot1, subject.other_dot(dot2)
+    end
   end
 end

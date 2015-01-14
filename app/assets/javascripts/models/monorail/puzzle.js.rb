@@ -58,11 +58,11 @@ module Monorail
       first_dot = dot(0, 0)
       dot = first_dot
       num_dots_visited = 1
-      line = dot.lines.select(&:present?).first
+      line = dot.present_lines.first
       return false unless line
       loop do
         # Follow the line.
-        dot = ([line.dot1, line.dot2] - [dot]).first # TODO: factor out ... maybe Line#other_dot(dot)?
+        dot = line.other_dot(dot)
         if dot == first_dot
           # We've made a complete loop; has every dot been visited?
           return num_dots_visited == dots.length
@@ -70,7 +70,7 @@ module Monorail
         num_dots_visited += 1
 
         # Find the next line to follow.
-        lines = dot.lines.select(&:present?) - [line]
+        lines = dot.present_lines - [line]
         unless lines.length == 1
           # If there's not exactly one line to follow, the path either ends or branches.
           return false

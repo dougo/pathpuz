@@ -13,5 +13,15 @@ module Monorail
       subject.lines << line
       assert_equal [line], subject.lines
     end
+
+    test 'present_lines' do
+      subject = Dot.new
+      subject.lines << Line.new
+      assert_equal [], subject.present_lines
+
+      line = Line.new(:present? => true)
+      subject.lines << line
+      assert_equal [line], subject.present_lines
+    end
   end
 end
