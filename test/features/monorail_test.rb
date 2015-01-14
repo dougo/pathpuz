@@ -4,6 +4,7 @@ class MonorailTest < Capybara::Rails::TestCase
   test 'sanity' do
     visit root_path
     assert_selector page, 'svg'
+    assert find('svg')[:viewBox]
   end
 
   test 'solve the trivial puzzle' do
