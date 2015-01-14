@@ -29,7 +29,7 @@ module Monorail
     test 'new puzzle on button click' do
       el.find(:button).trigger(:click)
       refute_equal model, view.model
-      assert_equal 4, view.model.lines.length
+      assert_equal 10, view.model.lines.length
     end
 
     test 'render when the model changes' do

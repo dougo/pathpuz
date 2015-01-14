@@ -33,6 +33,14 @@ module Monorail
       end
     end
 
+    def height
+      dots.length
+    end
+
+    def width
+      dots.first.length
+    end
+
     def solved?
       lines.all? &:present?
     end

@@ -22,7 +22,7 @@ module Monorail
     end
 
     on :click, :button do
-      self.model = Puzzle.new
+      self.model = Puzzle.new(model.height + 1)
     end
 
     def model=(model)

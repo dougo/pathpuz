@@ -24,7 +24,7 @@ class MonorailTest < Capybara::Rails::TestCase
     lines_to_click.first.trigger(:click)
     assert_equal 1, painted_lines.length
     click_on 'Next puzzle'
-    assert_equal 4, lines_to_click.length
+    assert_equal 10, lines_to_click.length
     assert_empty painted_lines
   end
 

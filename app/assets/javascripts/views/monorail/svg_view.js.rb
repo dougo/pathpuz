@@ -15,9 +15,10 @@ module Monorail
       el = SVGElement.new(tag_name)
       el[:height] = 500
       el[:width] = 500
+      viewBox = "-1 -1 #{model.width + 1} #{model.height + 1}"
       # jQuery.attr downcases attribute names: http://bugs.jquery.com/ticket/11166
       # So we have to use raw setAttribute instead.
-      `#{el}[0].setAttribute('viewBox', '-1 -1 3 3')`
+      `#{el}[0].setAttribute('viewBox', #{viewBox})`
       el
     end
 

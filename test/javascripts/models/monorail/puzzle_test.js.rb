@@ -34,6 +34,22 @@ module Monorail
       assert_adjacent_dots_are_connected subject
     end
 
+    test 'width and height' do
+      subject = Puzzle.new(3)
+      assert_equal 3, subject.width
+      assert_equal 3, subject.height
+
+      # Add a new row:
+      subject.dots << [Dot.new(row: 3, col: 2)]
+      assert_equal 3, subject.width
+      assert_equal 4, subject.height
+
+      # Add a dot to the first row:
+      subject.dots.first << Dot.new(row: 0, col: 3)
+      assert_equal 4, subject.width
+      assert_equal 4, subject.height
+    end
+
     test 'solved?' do
       subject = Puzzle.new
       event = nil

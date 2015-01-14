@@ -23,6 +23,17 @@ module Monorail
       assert_equal '-1 -1 3 3', `#{el}[0].getAttribute('viewBox')`
     end
 
+    test 'viewBox depends on puzzle size' do
+      model = Puzzle.new(3)
+      el = SVGView.new(model).element
+      assert_equal '-1 -1 4 4', `#{el}[0].getAttribute('viewBox')`
+
+      # Add a fourth row:
+      model.dots << [Dot.new(row: 3, col: 1)]
+      el = SVGView.new(model).element
+      assert_equal '-1 -1 4 5', `#{el}[0].getAttribute('viewBox')`
+    end
+
     test 'render' do
       assert_equal view, view.render
     end
@@ -31,7 +42,7 @@ module Monorail
       view.render
       dots = model.dots
       dot_views = view.dots
-      assert_equal dots.length * dots.first.length, dot_views.length
+      assert_equal model.height * model.width, dot_views.length
       dot_views.each do |dot_view|
         assert_kind_of DotView, dot_view
         dot = dot_view.model
