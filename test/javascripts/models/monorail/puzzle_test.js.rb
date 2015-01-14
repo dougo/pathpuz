@@ -3,7 +3,7 @@ require 'models/monorail/puzzle'
 module Monorail
   class PuzzleTest < Minitest::Test
     test 'attributes' do
-      assert_equal %i(dots lines), Puzzle.columns
+      assert_equal %i(dot_rows lines), Puzzle.columns
     end
 
     test 'size 2' do
@@ -34,18 +34,40 @@ module Monorail
       assert_adjacent_dots_are_connected subject
     end
 
+    test 'connect' do
+      subject = Puzzle.new
+      dot1 = Dot.new(row: 1, col: 2)
+      dot2 = Dot.new(row: 3, col: 4)
+      subject.connect(dot1, dot2)
+      line = subject.lines.last
+      assert_kind_of Line, line
+      assert_equal dot1, line.dot1
+      assert_equal dot2, line.dot2
+    end
+
+    test 'dot' do
+      subject = Puzzle.new
+      dot = subject.dot(1, 0)
+      assert_equal 1, dot.row
+      assert_equal 0, dot.col
+      assert_equal subject.dot_rows[1][0], dot
+    end
+
+    test 'dots' do
+      subject = Puzzle.new
+      assert_equal [subject.dot(0, 0), subject.dot(0, 1), subject.dot(1, 0), subject.dot(1, 1)], subject.dots
+    end
+
     test 'width and height' do
       subject = Puzzle.new(3)
       assert_equal 3, subject.width
       assert_equal 3, subject.height
 
-      # Add a new row:
-      subject.dots << [Dot.new(row: 3, col: 2)]
+      subject.dot_rows << [Dot.new(row: 3, col: 2)]
       assert_equal 3, subject.width
       assert_equal 4, subject.height
 
-      # Add a dot to the first row:
-      subject.dots.first << Dot.new(row: 0, col: 3)
+      subject.dot_rows.first << Dot.new(row: 0, col: 3)
       assert_equal 4, subject.width
       assert_equal 4, subject.height
     end
@@ -67,8 +89,8 @@ module Monorail
     private
 
     def assert_has_grid_of_dots(puzzle, size)
-      assert_equal size, puzzle.dots.length
-      puzzle.dots.each_with_index do |row, r|
+      assert_equal size, puzzle.height
+      puzzle.dot_rows.each_with_index do |row, r|
         assert_equal size, row.length
         row.each_with_index do |dot, c|
           assert_equal r, dot.row
@@ -78,13 +100,13 @@ module Monorail
     end
 
     def assert_bottom_right_dot_is_omitted(puzzle, size)
-      assert_equal size, puzzle.dots.length
-      assert_equal size, puzzle.dots.first.length
-      assert_equal size-1, puzzle.dots.last.length
+      assert_equal size, puzzle.height
+      assert_equal size, puzzle.width
+      assert_equal size-1, puzzle.dot_rows.last.length
     end
 
     def assert_adjacent_dots_are_connected(puzzle)
-      dots = puzzle.dots
+      dots = puzzle.dot_rows
       lines = puzzle.lines
       (0...dots.length).each do |r|
         row = dots[r]

@@ -23,16 +23,10 @@ module Monorail
     end
 
     def render
-      self.dots = model.dots.flat_map do |row|
-        row.map do |dot|
-          Monorail::DotView.new(dot)
-        end
-      end
+      self.dots = model.dots.map { |dot| Monorail::DotView.new(dot) }
+      self.lines = model.lines.map { |line| Monorail::LineView.new(line) }
 
-      self.lines = model.lines.map do |line|
-        Monorail::LineView.new(line)
-      end
-
+      element.empty
       dots.each { |dot| element.append(dot.render.element) }
       lines.each { |line| element.append(line.render.element) }
 

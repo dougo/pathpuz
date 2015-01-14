@@ -2,11 +2,11 @@ require 'vienna'
 
 module Monorail
   class Puzzle < Vienna::Model
-    attributes :dots, :lines
+    attributes :dot_rows, :lines
 
     def initialize(size = 2)
       maxrow = size - 1
-      self.dots = (0..maxrow).map do |row|
+      self.dot_rows = (0..maxrow).map do |row|
         maxcol = size - 1
         if size.odd?
           # To make an even number of dots total, omit the last dot of the last row.
@@ -18,11 +18,11 @@ module Monorail
       end
 
       self.lines = []
-      (0...dots.length).each do |r|
-        row = dots[r]
+      (0...height).each do |r|
+        row = dot_rows[r]
         (0...row.length).each do |c|
-          lines << connect(dots[r][c], dots[r][c+1]) unless c+1 == row.length
-          lines << connect(dots[r][c], dots[r+1][c]) unless r+1 == dots.length || c == dots[r+1].length
+          connect(dot(r, c), dot(r, c+1)) unless c+1 == row.length
+          connect(dot(r, c), dot(r+1, c)) unless r+1 == height || c == dot_rows[r+1].length
         end
       end
 
@@ -33,22 +33,28 @@ module Monorail
       end
     end
 
+    def connect(dot1, dot2)
+      lines << Line.new(dot1: dot1, dot2: dot2)
+    end
+
+    def dot(r, c)
+      dot_rows[r][c]
+    end
+
+    def dots
+      dot_rows.flatten
+    end
+
     def height
-      dots.length
+      dot_rows.length
     end
 
     def width
-      dots.first.length
+      dot_rows.first.length
     end
 
     def solved?
       lines.all? &:present?
-    end
-
-    private
-
-    def connect(dot1, dot2)
-      Line.new(dot1: dot1, dot2: dot2)
     end
   end
 end

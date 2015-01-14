@@ -28,8 +28,7 @@ module Monorail
       el = SVGView.new(model).element
       assert_equal '-1 -1 4 4', `#{el}[0].getAttribute('viewBox')`
 
-      # Add a fourth row:
-      model.dots << [Dot.new(row: 3, col: 1)]
+      model.dot_rows << [Dot.new(row: 3, col: 1)]
       el = SVGView.new(model).element
       assert_equal '-1 -1 4 5', `#{el}[0].getAttribute('viewBox')`
     end
@@ -40,13 +39,12 @@ module Monorail
 
     test 'has one DotView per Dot in puzzle' do
       view.render
-      dots = model.dots
       dot_views = view.dots
-      assert_equal model.height * model.width, dot_views.length
+      assert_equal model.dots.length, dot_views.length
       dot_views.each do |dot_view|
         assert_kind_of DotView, dot_view
         dot = dot_view.model
-        assert_equal dots[dot.row][dot.col], dot
+        assert_equal model.dot(dot.row, dot.col), dot
         # TODO: is there a better way to test that dot_view.element was added and dot_view was rendered?
         assert_equal 1, view.element.find("circle[cx=#{dot.col}][cy=#{dot.row}]").length
       end
