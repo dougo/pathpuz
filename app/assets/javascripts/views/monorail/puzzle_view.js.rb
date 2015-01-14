@@ -9,16 +9,16 @@ module Monorail
     end
 
     def render
-      element.empty
-      element.append(Element.new(:p).text('Build a monorail loop that visits every dot.'))
+      instructions = Element.new(:p).text('Build a monorail loop that visits every dot.')
       self.svg = SVGView.new(model)
-      svg.render
-      element.append(svg.element)
-      next_button = Element.new(:button).text('Next puzzle')
-      element.append(Element.new(:div).append(next_button))
+      next_button = Element.new(:div).append(Element.new(:button).text('Next puzzle'))
       self.solved = SolvedView.new(model)
-      solved.render
-      element.append(solved.element)
+
+      element.empty
+      element.append(instructions)
+      element.append(svg.render.element)
+      element.append(next_button)
+      element.append(solved.render.element)
     end
 
     on :click, :button do

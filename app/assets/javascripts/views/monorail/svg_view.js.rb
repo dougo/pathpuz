@@ -32,13 +32,15 @@ module Monorail
         Monorail::LineView.new(line)
       end
 
-      dots.each { |dot| dot.render; element.append(dot.element) }
+      dots.each { |dot| element.append(dot.render.element) }
       lines.each do |line|
         line.render
         element.append(line.line_element)
         # Add this second so that the click target will be on top of the stroke.
         element.append(line.element)
       end
+
+      self
     end
   end
 end

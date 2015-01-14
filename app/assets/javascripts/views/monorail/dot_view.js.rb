@@ -19,6 +19,7 @@ module Monorail
       element[:r] = 0.15
       element[:cx] = model.col
       element[:cy] = model.row
+      self
     end
   end
 end

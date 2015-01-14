@@ -41,7 +41,7 @@ module Monorail
 
     test 'render gets line_element stroke from model' do
       el = view.line_element
-      view.render
+      assert_equal view, view.render
       refute el.has_attribute? :stroke
 
       model.present? = true

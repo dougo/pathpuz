@@ -20,7 +20,7 @@ module Monorail
     end
 
     test 'render' do
-      view.render
+      assert_equal view, view.render
       assert_equal :gray, el[:fill]
       assert_equal '0.15', el[:r]
       assert_equal '2', el[:cx]

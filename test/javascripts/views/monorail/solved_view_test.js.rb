@@ -20,7 +20,7 @@ module Monorail
     end
 
     test 'render unsolved' do
-      view.render
+      assert_equal view, view.render
       assert_equal '', el.text
     end
 

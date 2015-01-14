@@ -7,7 +7,6 @@ module Monorail
     def setup
       self.model = Puzzle.new
       self.view = SVGView.new(model)
-      view.render
       self.el = view.element
     end
 
@@ -24,7 +23,12 @@ module Monorail
       assert_equal '-1 -1 3 3', `#{el}[0].getAttribute('viewBox')`
     end
 
+    test 'render' do
+      assert_equal view, view.render
+    end
+
     test 'has one DotView per Dot in puzzle' do
+      view.render
       dots = model.dots
       dot_views = view.dots
       assert_equal dots.length * dots.first.length, dot_views.length
@@ -38,6 +42,7 @@ module Monorail
     end
 
     test 'has one LineView per Line in puzzle' do
+      view.render
       lines = model.lines
       line_views = view.lines
       lines.zip(line_views).each do |line, line_view|

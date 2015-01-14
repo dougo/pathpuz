@@ -36,6 +36,7 @@ module Monorail
 
     def render
       line_element[:stroke] = model.present? ? :black : nil
+      self
     end
 
     on :click do |evt|

@@ -17,6 +17,7 @@ module Monorail
 
     def render
       element.text = model.lines.all?(&:present?) ? 'Solved!' : ''
+      self
     end
   end
 end
