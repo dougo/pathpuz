@@ -9,14 +9,11 @@ module Monorail
 
     def initialize(model)
       self.model = model
-      # TODO: have the model send a single solved event
-      model.lines.each do |line|
-        line.add_observer(:present?) { render }
-      end
+      model.on(:solved) { render }
     end
 
     def render
-      element.text = model.lines.all?(&:present?) ? 'Solved!' : ''
+      element.text = model.solved? ? 'Solved!' : ''
       self
     end
   end

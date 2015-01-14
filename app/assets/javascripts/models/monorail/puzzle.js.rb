@@ -25,6 +25,16 @@ module Monorail
           lines << connect(dots[r][c], dots[r+1][c]) unless r+1 == dots.length || c == dots[r+1].length
         end
       end
+
+      lines.each do |line|
+        line.add_observer(:present?) do
+          trigger(:solved) if solved?
+        end
+      end
+    end
+
+    def solved?
+      lines.all? &:present?
     end
 
     private

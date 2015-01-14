@@ -34,6 +34,20 @@ module Monorail
       assert_adjacent_dots_are_connected subject
     end
 
+    test 'solved?' do
+      subject = Puzzle.new
+      event = nil
+      subject.on(:solved) { event = true }
+      subject.lines[0].present? = true
+      subject.lines[1].present? = true
+      subject.lines[2].present? = true
+      refute subject.solved?
+      refute event
+      subject.lines[3].present? = true
+      assert subject.solved?
+      assert event
+    end
+
     private
 
     def assert_has_grid_of_dots(puzzle, size)
