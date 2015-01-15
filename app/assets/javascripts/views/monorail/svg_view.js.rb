@@ -5,7 +5,7 @@ module Monorail
   class SVGView < Vienna::View
     tag_name :svg
 
-    attr_accessor :model, :dots, :lines
+    attr_accessor :model, :dots, :lines, :solved
 
     def initialize(model)
       self.model = model
@@ -23,12 +23,14 @@ module Monorail
     end
 
     def render
-      self.dots = model.dots.map { |dot| Monorail::DotView.new(dot) }
-      self.lines = model.lines.map { |line| Monorail::LineView.new(line) }
+      self.dots = model.dots.map { |dot| DotView.new(dot) }
+      self.lines = model.lines.map { |line| LineView.new(line) }
+      self.solved = SolvedView.new(model)
 
       element.empty
       dots.each { |dot| element.append(dot.render.element) }
       lines.each { |line| element.append(line.render.element) }
+      element.append(solved.render.element)
 
       self
     end

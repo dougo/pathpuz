@@ -10,30 +10,71 @@ module Monorail
       self.el = view.element
     end
 
-    test 'element is a p' do
-      assert_equal :p, el.tag_name
-      assert_equal :solved, el.class_name
-    end
-
     test 'initialize' do
       assert_equal model, view.model
     end
 
+    test 'element is a g' do
+      assert_equal :g, el.tag_name
+      assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+    end
+
     test 'render unsolved' do
       assert_equal view, view.render
-      assert_equal '', el.text
+      assert_empty el.children
     end
 
     test 'render solved' do
       model.lines.each { |line| line.present? = true }
+      view = SolvedView.new(model)
+      el = view.element
+
+      # The bounding box of the text can only be calculated if the element is already part of the SVG,
+      # so we have to add it to a root element before rendering.
+      svg = SVGElement.new(:svg).append_to_body.append(el)
+      svg[:height] = 500
+      svg[:width] = 500
+      viewBox = '-1 -1 3 3'
+      `svg[0].setAttribute('viewBox', viewBox)`
       view.render
-      assert_equal 'Solved!', el.text
+
+      rect = el.find(:rect)
+      assert_equal :transparent, rect[:fill]
+
+      # The rect should cover the entire viewport.
+      bbox = `rect[0].getBBox()`
+      assert_equal -1, `bbox.x`
+      assert_equal -1, `bbox.y`
+      assert_equal 3, `bbox.width`
+      assert_equal 3, `bbox.height`
+
+      text = el.find(:text)
+      assert_equal :solved, text[:class]
+      assert_equal 'Solved!', text.text
+
+      bbox = `text[0].getBBox()` # Note that this is the untransformed bounding box!
+      assert_equal 0, `bbox.x`
+      assert_equal 0, `bbox.y`
+      assert_equal 50, `bbox.width`
+      assert_equal 19, `bbox.height`
+
+      # The text width should be scaled to the width of the viewport.
+      scale = 3/50
+
+      # The left edge of the text should be at the left edge of the viewport.
+      dx = -1
+
+      # The text should be vertically centered, so its top should be halfway down the viewport minus half the
+      # (scaled) text height.
+      dy = (-1 + 3/2) - (19*scale / 2)
+
+      assert_equal "translate(#{dx} #{dy}) scale(#{scale})", text[:transform]
     end
 
     test 're-render when solved' do
       view.render
       model.lines.each { |line| line.present? = true }
-      assert_equal 'Solved!', el.text
+      refute_empty el.children
     end
   end
 end

@@ -35,6 +35,9 @@ module Monorail
 
     test 'render' do
       assert_equal view, view.render
+      assert_kind_of SolvedView, view.solved
+      assert_equal model, view.solved.model
+      assert view.element.find('.solved')
     end
 
     test 'has one DotView per Dot in puzzle' do
