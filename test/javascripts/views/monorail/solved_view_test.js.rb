@@ -50,23 +50,23 @@ module Monorail
 
       text = el.find(:text)
       assert_equal :solved, text[:class]
-      assert_equal 'Solved!', text.text
+      assert_equal 'SOLVED', text.text
 
       bbox = `text[0].getBBox()` # Note that this is the untransformed bounding box!
       assert_equal 0, `bbox.x`
       assert_equal 0, `bbox.y`
-      assert_equal 50, `bbox.width`
+      assert_equal 64, `bbox.width`
       assert_equal 19, `bbox.height`
 
       # The text width should be scaled to the width of the viewport.
-      scale = 3/50
+      scale = 3 / `bbox.width`
 
       # The left edge of the text should be at the left edge of the viewport.
       dx = -1
 
       # The text should be vertically centered, so its top should be halfway down the viewport minus half the
       # (scaled) text height.
-      dy = (-1 + 3/2) - (19*scale / 2)
+      dy = (-1 + 3/2) - (scale * `bbox.height` / 2)
 
       assert_equal "translate(#{dx} #{dy}) scale(#{scale})", text[:transform]
     end
