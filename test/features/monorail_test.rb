@@ -10,13 +10,13 @@ class MonorailTest < Capybara::Rails::TestCase
 
   test 'solve the trivial puzzle' do
     assert_equal 4, lines_to_click.length
-    refute_text page, 'Solved!'
+    refute_text page, 'SOLVED'
     lines_to_click.each do |line|
       # line.click # doesn't work: https://github.com/teampoltergeist/poltergeist/issues/331
       line.trigger(:click)
     end
     assert_equal 4, painted_lines.length
-    assert_text page, 'Solved!'
+    assert_text page, 'SOLVED'
   end
 
   test 'skip to the next puzzle' do
@@ -37,10 +37,10 @@ class MonorailTest < Capybara::Rails::TestCase
     # 7 8    | |
     #  9     o-o
     [0, 1, 2, 4, 6, 7, 8].each { |i| lines[i].trigger(:click) }
-    refute_text page, 'Solved!'
+    refute_text page, 'SOLVED'
     lines[9].trigger(:click)
     assert_equal 8, painted_lines.length
-    assert_text page, 'Solved!'
+    assert_text page, 'SOLVED'
   end
 
   private
