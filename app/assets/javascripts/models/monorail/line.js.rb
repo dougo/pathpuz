@@ -5,7 +5,7 @@ module Monorail
   class Line < Vienna::Model
     include Vienna::Observable
 
-    attributes :dot1, :dot2, :present?
+    attributes :dot1, :dot2, :present?, :fixed?
 
     def initialize(attrs = nil)
       super

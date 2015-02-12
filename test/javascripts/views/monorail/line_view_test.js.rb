@@ -11,7 +11,11 @@ module Monorail
       self.el = view.element
     end
 
-    test 'element is a g' do
+    test 'initialize' do
+      assert_equal model, view.model
+    end
+
+    test 'element is an SVG g with two lines' do
       assert_equal :g, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal 2, el.find('line').length
@@ -34,6 +38,7 @@ module Monorail
       el = view.line_element
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+      assert_empty el[:stroke]
       assert_equal '0.1', el['stroke-width']
       assert_equal :round, el['stroke-linecap']
       assert_equal '1', el[:x1]
@@ -42,8 +47,12 @@ module Monorail
       assert_equal '2', el[:y2]
     end
 
-    test 'initialize' do
-      assert_equal model, view.model
+    test 'fixed line has no clickable element' do
+      model.fixed? = true
+      view = LineView.new(model)
+      el = view.element
+      assert_equal 1, el.find('line').length
+      assert_nil view.clickable_element
     end
 
     test 'render gets line_element stroke from model' do
@@ -54,9 +63,14 @@ module Monorail
       model.present? = true
       view.render
       assert_equal :black, el[:stroke]
+
+      model.fixed? = true
+      view.render
+      assert_equal :gray, el[:stroke]
     end
 
-    test 'update the model when clicked' do
+    test 'update the model when clickable element is clicked' do
+      el = view.clickable_element
       el.trigger(:click)
       assert_equal true, model.present?
 

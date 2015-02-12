@@ -31,6 +31,14 @@ module Monorail
           trigger(:solved) if solved?
         end
       end
+
+      if size == 4
+        # Add some fixed lines to make a unique solution. TODO: load these from JSON...
+        [2, 12, 16].each do |i|
+          lines[i].fixed? = true
+          lines[i].present? = true
+        end
+      end
     end
 
     def connect(dot1, dot2)
