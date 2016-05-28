@@ -61,5 +61,5 @@ group :test do
   gem 'launchy'
 
   # Opal unit testing.
-  gem 'opal-minitest'
+  gem 'opal-minitest', github: 'dougo/opal-minitest'
 end

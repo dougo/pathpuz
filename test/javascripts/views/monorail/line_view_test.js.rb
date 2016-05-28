@@ -38,7 +38,7 @@ module Monorail
       el = view.line_element
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
-      assert_empty el[:stroke]
+      assert_nil el[:stroke]
       assert_equal '0.1', el['stroke-width']
       assert_equal :round, el['stroke-linecap']
       assert_equal '1', el[:x1]
