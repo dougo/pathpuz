@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class MonorailTest < Capybara::Rails::TestCase
-  setup { visit root_path }
+  setup { visit pathpuz.root_path }
 
   test 'sanity' do
     assert_selector page, 'svg'

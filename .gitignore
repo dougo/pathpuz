@@ -19,3 +19,10 @@
 # Ignore the generated Gemfile.lock, since this is a gem not an app.
 # http://yehudakatz.com/2010/12/16/clarifying-the-roles-of-the-gemspec-and-gemfile/
 Gemfile.lock
+
+# Ignore stuff in the dummy test app.
+/test/dummy/log/*
+!/test/dummy/log/.keep
+/test/dummy/tmp
+/test/dummy/db/*.sqlite3
+/test/dummy/db/*.sqlite3-journal
