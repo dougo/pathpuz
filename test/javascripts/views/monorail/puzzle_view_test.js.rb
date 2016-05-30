@@ -1,4 +1,4 @@
-require 'views/monorail/puzzle_view'
+require 'views/pathpuz/monorail/puzzle_view'
 
 module Monorail
   class PuzzleViewTest < Minitest::Test

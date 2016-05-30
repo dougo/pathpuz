@@ -1,4 +1,4 @@
-require 'models/monorail/line'
+require 'models/pathpuz/monorail/line'
 
 module Monorail
   class LineTest < Minitest::Test

@@ -1,4 +1,4 @@
-require 'svg_element'
+require 'pathpuz/svg_element'
 
 class SVGElementTest < Minitest::Test
   test 'NS' do

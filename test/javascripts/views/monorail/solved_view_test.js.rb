@@ -1,4 +1,4 @@
-require 'views/monorail/solved_view'
+require 'views/pathpuz/monorail/solved_view'
 
 module Monorail
   class SolvedViewTest < Minitest::Test

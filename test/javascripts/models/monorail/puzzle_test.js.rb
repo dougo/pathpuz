@@ -1,4 +1,4 @@
-require 'models/monorail/puzzle'
+require 'models/pathpuz/monorail/puzzle'
 
 module Monorail
   class PuzzleTest < Minitest::Test

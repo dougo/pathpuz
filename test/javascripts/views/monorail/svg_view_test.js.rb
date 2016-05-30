@@ -1,4 +1,4 @@
-require 'views/monorail/svg_view'
+require 'views/pathpuz/monorail/svg_view'
 
 module Monorail
   class SVGViewTest < Minitest::Test

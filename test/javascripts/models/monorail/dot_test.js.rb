@@ -1,4 +1,4 @@
-require 'models/monorail/dot'
+require 'models/pathpuz/monorail/dot'
 
 module Monorail
   class DotTest < Minitest::Test

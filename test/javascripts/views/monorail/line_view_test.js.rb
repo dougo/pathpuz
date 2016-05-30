@@ -1,4 +1,4 @@
-require 'views/monorail/line_view'
+require 'views/pathpuz/monorail/line_view'
 
 module Monorail
   class LineViewTest < Minitest::Test

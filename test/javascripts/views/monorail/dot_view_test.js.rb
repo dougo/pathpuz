@@ -1,4 +1,4 @@
-require 'views/monorail/dot_view'
+require 'views/pathpuz/monorail/dot_view'
 
 module Monorail
   class DotViewTest < Minitest::Test
