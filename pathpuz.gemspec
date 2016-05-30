@@ -15,13 +15,12 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
-  # TODO: loosen the requirements
-  s.add_dependency 'rails', '4.2.6'
+  s.add_dependency 'rails'
   s.add_dependency 'sass-rails'
   s.add_dependency 'uglifier'
   s.add_dependency 'turbolinks'
 
-  s.add_dependency 'opal-rails', '~> 0.8.1'
+  s.add_dependency 'opal-rails'
   s.add_dependency 'haml-rails'
   s.add_dependency 'opal-haml'
   s.add_dependency 'opal-vienna'
