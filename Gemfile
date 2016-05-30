@@ -4,7 +4,7 @@ gemspec
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  gem 'web-console'
 end
 
 group :development, :test do
@@ -16,12 +16,6 @@ group :development, :test do
 end
 
 group :test do
-  # Test the front end.
-  gem 'minitest-rails-capybara'
-
-  # Headless driver for Capybara.
-  gem 'poltergeist'
-
   # Support 'save_and_open_screenshot' when debugging tests.
   gem 'launchy'
 
