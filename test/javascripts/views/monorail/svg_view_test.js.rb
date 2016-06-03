@@ -64,5 +64,12 @@ module Monorail
         assert_equal 2, view.element.find("line[x1=#{line.dot1.col}][y1=#{line.dot1.row}][x2=#{line.dot2.col}][y2=#{line.dot2.row}]").length
       end
     end
+
+    test 'renders fixed lines first so that they have lower z-index' do
+      model.lines.last.fixed? = true
+      model.lines.last.present? = true # TODO: maybe make this automatic if fixed is true?
+      view.render
+      assert_equal 'gray', view.element.find(:line).first[:stroke]
+    end
   end
 end

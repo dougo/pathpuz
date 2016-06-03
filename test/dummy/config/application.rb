@@ -5,8 +5,6 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 require "pathpuz"
 
-# require "opal-rails" # TODO: this seems to be needed to get OpalHelper?
-
 module Dummy
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.

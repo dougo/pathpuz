@@ -29,7 +29,13 @@ module Monorail
 
       element.empty
       dots.each { |dot| element.append(dot.render.element) }
-      lines.each { |line| element.append(line.render.element) }
+
+      # Render fixed lines first, so that they have lower z-index and appear underneath user-drawn lines.
+      fixed, unfixed = lines.partition { |l| l.model.fixed? }
+      [fixed, unfixed].each do |lines|
+        lines.each { |line| element.append(line.render.element) }
+      end
+
       element.append(solved.render.element)
 
       self
