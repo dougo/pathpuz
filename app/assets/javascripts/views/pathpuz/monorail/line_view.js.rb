@@ -4,7 +4,7 @@ module Monorail
   class LineView < Vienna::View
     tag_name :g
 
-    attr_accessor :model, :clickable_element, :line_element
+    attr_accessor :model, :clickable_element, :line_element, :x_element
 
     def initialize(model)
       self.model = model
@@ -15,17 +15,24 @@ module Monorail
       el = SVGElement.new(tag_name)
       self.clickable_element = create_clickable_element unless model.fixed?
       self.line_element = create_line_element
-      el.append(line_element).append(clickable_element)
+      self.x_element = create_x_element
+      el.append(line_element).append(x_element).append(clickable_element)
     end
 
     def render
       element
-      line_element[:stroke] = stroke
+      line_element[:stroke] = line_stroke
+      x_element[:stroke] = x_stroke
       self
     end
 
     on :click, '[cursor=pointer]' do |evt|
-      model.state = model.present? ? nil : :present
+      model.state = case model.state
+                    when nil
+                      :present
+                    when :present
+                      :absent
+                    end
     end
 
     private
@@ -55,10 +62,26 @@ module Monorail
       el[:y2] = model.dot2.row
     end
 
-    def stroke
+    def line_stroke
       if model.present?
         model.fixed? ? :gray : :black
       end
     end
+
+    def create_x_element
+      el = SVGElement.new(:path)
+      el['stroke-width'] = 0.05
+      # Calculate the midpoint of the line:
+      x = (model.dot1.col + model.dot2.col)/2
+      y = (model.dot1.row + model.dot2.row)/2
+      el[:d] =
+        "M#{x-0.1} #{y-0.1}L#{x+0.1} #{y+0.1}" + # \
+        "M#{x+0.1} #{y-0.1}L#{x-0.1} #{y+0.1}"   # /
+    end
+
+    def x_stroke
+      model.absent? ? :red : nil
+    end
+
   end
 end

@@ -14,12 +14,21 @@ module Monorail
       refute Line.new.present?
       assert Line.new(state: :present).present?
       assert Line.new(state: :fixed).present?
+      refute Line.new(state: :absent).present?
     end
 
     test 'fixed?' do
       refute Line.new.fixed?
       refute Line.new(state: :present).fixed?
       assert Line.new(state: :fixed).fixed?
+      refute Line.new(state: :absent).fixed?
+    end
+
+    test 'absent?' do
+      refute Line.new.absent?
+      refute Line.new(state: :present).absent?
+      refute Line.new(state: :fixed).absent?
+      assert Line.new(state: :absent).absent?
     end
 
     test 'add to dots' do

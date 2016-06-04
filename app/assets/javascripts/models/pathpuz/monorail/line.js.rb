@@ -21,6 +21,10 @@ module Monorail
       state == :fixed
     end
 
+    def absent?
+      state == :absent
+    end
+
     def other_dot(dot)
       dot == dot1 ? dot2 : dot1
     end
