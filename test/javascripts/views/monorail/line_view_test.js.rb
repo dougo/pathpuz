@@ -58,12 +58,14 @@ module Monorail
       assert_equal 'M1.9 0.9L2.1 1.1M2.1 0.9L1.9 1.1', el[:d]
     end
 
-    test 'fixed line has no clickable element' do
+    test 'fixed line has no clickable element or X element' do
       model.state = :fixed
       view = LineView.new(model)
       el = view.element
       assert_equal 1, el.find('line').length
       assert_nil view.clickable_element
+      assert_empty el.find('path')
+      assert_nil view.x_element
     end
 
     test 'render gets line_element stroke from model' do

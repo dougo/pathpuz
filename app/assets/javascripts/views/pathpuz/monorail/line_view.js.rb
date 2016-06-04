@@ -13,16 +13,22 @@ module Monorail
 
     def create_element
       el = SVGElement.new(tag_name)
-      self.clickable_element = create_clickable_element unless model.fixed?
       self.line_element = create_line_element
-      self.x_element = create_x_element
-      el.append(line_element).append(x_element).append(clickable_element)
+      el.append(line_element)
+      unless model.fixed?
+        self.x_element = create_x_element
+        self.clickable_element = create_clickable_element
+        el.append(x_element).append(clickable_element)
+      end
+      el
     end
 
     def render
       element
       line_element[:stroke] = line_stroke
-      x_element[:stroke] = x_stroke
+      if x_element
+        x_element[:stroke] = x_stroke
+      end
       self
     end
 
