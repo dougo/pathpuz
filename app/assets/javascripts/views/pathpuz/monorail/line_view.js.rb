@@ -8,7 +8,7 @@ module Monorail
 
     def initialize(model)
       self.model = model
-      model.add_observer(:present?) { render }
+      model.add_observer(:state) { render }
     end
 
     def create_element
@@ -25,7 +25,7 @@ module Monorail
     end
 
     on :click, '[cursor=pointer]' do |evt|
-      model.present? = model.present? ? nil : true
+      model.state = model.present? ? nil : :present
     end
 
     private

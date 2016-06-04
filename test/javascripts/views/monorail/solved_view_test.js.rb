@@ -26,7 +26,7 @@ module Monorail
 
     test 'render solved' do
       skip 'calculation of text size is flaky'
-      model.lines.each { |line| line.present? = true }
+      model.lines.each { |line| line.state = :present }
       view = SolvedView.new(model)
       el = view.element
 
@@ -76,7 +76,7 @@ module Monorail
 
     test 're-render when solved' do
       view.render
-      model.lines.each { |line| line.present? = true }
+      model.lines.each { |line| line.state = :present }
       refute_empty el.children
     end
   end

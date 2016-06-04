@@ -27,17 +27,14 @@ module Monorail
       end
 
       lines.each do |line|
-        line.add_observer(:present?) do
+        line.add_observer(:state) do
           trigger(:solved) if solved?
         end
       end
 
       if size == 4
         # Add some fixed lines to make a unique solution. TODO: load these from JSON...
-        [2, 12, 16].each do |i|
-          lines[i].fixed? = true
-          lines[i].present? = true
-        end
+        [2, 12, 16].each { |i| lines[i].state = :fixed }
       end
     end
 

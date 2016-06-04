@@ -7,7 +7,19 @@ module Monorail
     end
 
     test 'attributes' do
-      assert_equal %i(dot1 dot2 present? fixed?), Line.columns
+      assert_equal %i(dot1 dot2 state), Line.columns
+    end
+
+    test 'present?' do
+      refute Line.new.present?
+      assert Line.new(state: :present).present?
+      assert Line.new(state: :fixed).present?
+    end
+
+    test 'fixed?' do
+      refute Line.new.fixed?
+      refute Line.new(state: :present).fixed?
+      assert Line.new(state: :fixed).fixed?
     end
 
     test 'add to dots' do

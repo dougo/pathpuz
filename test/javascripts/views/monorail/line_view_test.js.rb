@@ -48,7 +48,7 @@ module Monorail
     end
 
     test 'fixed line has no clickable element' do
-      model.fixed? = true
+      model.state = :fixed
       view = LineView.new(model)
       el = view.element
       assert_equal 1, el.find('line').length
@@ -60,11 +60,11 @@ module Monorail
       assert_equal view, view.render
       refute el.has_attribute? :stroke
 
-      model.present? = true
+      model.state = :present
       view.render
       assert_equal :black, el[:stroke]
 
-      model.fixed? = true
+      model.state = :fixed
       view.render
       assert_equal :gray, el[:stroke]
     end
@@ -72,17 +72,17 @@ module Monorail
     test 'update the model when clickable element is clicked' do
       el = view.clickable_element
       el.trigger(:click)
-      assert_equal true, model.present?
+      assert model.present?
 
       el.trigger(:click)
-      assert_nil model.present?
+      refute model.present?
     end
 
     test 'render when the model presence changes' do
-      model.present? = true
+      model.state = :present
       assert_equal :black, view.line_element[:stroke]
       
-      model.present? = false
+      model.state = nil
       refute view.line_element.has_attribute? :stroke
     end
   end

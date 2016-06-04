@@ -66,8 +66,7 @@ module Monorail
     end
 
     test 'renders fixed lines first so that they have lower z-index' do
-      model.lines.last.fixed? = true
-      model.lines.last.present? = true # TODO: maybe make this automatic if fixed is true?
+      model.lines.last.state = :fixed
       view.render
       assert_equal 'gray', view.element.find(:line).first[:stroke]
     end

@@ -80,10 +80,10 @@ module Monorail
       subject = Puzzle.new
       event = nil
       subject.on(:solved) { event = true }
-      (0..2).each { |i| subject.lines[i].present? = true }
+      (0..2).each { |i| subject.lines[i].state = :present }
       refute subject.solved?
       refute event
-      subject.lines[3].present? = true
+      subject.lines[3].state = :present
       assert subject.solved?
       assert event
     end
@@ -95,13 +95,13 @@ module Monorail
       subject.connect(subject.dot(1, 1), subject.dot(2, 1))
       subject.connect(subject.dot(2, 0), subject.dot(2, 1))
 
-      (0..3).each { |i| subject.lines[i].present? = true }
+      (0..3).each { |i| subject.lines[i].state = :present }
       refute subject.solved?, 'Not all dots are connected.'
 
-      (4..6).each { |i| subject.lines[i].present? = true }
+      (4..6).each { |i| subject.lines[i].state = :present }
       refute subject.solved?, 'Path contains branches.'
 
-      subject.lines[3].present? = false
+      subject.lines[3].state = nil
       assert subject.solved?
     end
 

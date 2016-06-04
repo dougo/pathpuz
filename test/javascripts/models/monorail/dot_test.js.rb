@@ -19,7 +19,7 @@ module Monorail
       subject.lines << Line.new
       assert_equal [], subject.present_lines
 
-      line = Line.new(:present? => true)
+      line = Line.new(state: :present)
       subject.lines << line
       assert_equal [line], subject.present_lines
     end
