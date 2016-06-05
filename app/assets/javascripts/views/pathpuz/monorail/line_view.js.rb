@@ -41,6 +41,8 @@ module Monorail
                     end
     end
 
+    on :selectstart, &:kill # don't select text on double or triple click!
+
     private
 
     def create_clickable_element

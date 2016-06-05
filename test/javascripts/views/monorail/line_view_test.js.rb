@@ -113,6 +113,16 @@ module Monorail
       model.state = nil
       refute view.line_element.has_attribute? :stroke
     end
+
+    test 'double click does not select text' do
+      el = (SVGView.new(Puzzle.new).render).element
+      # I don't know how to actually cause text to be selected, so let's just test that the selectstart event is
+      # not propagated:
+      selection = nil
+      el.on(:selectstart) { selection = true }
+      el.find('line[cursor=pointer]').first.trigger(:selectstart)
+      assert_nil selection
+    end
   end
 end
 
