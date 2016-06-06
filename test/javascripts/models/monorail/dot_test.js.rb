@@ -60,6 +60,15 @@ module Monorail
       assert subject.lines[2].absent?
     end
 
+    test 'complete! with two present lines makes unknown lines absent' do
+      subject.lines << Line.new << Line.new(state: :present) << Line.new << Line.new(state: :present)
+      subject.complete!
+      assert subject.lines[0].absent?
+      assert subject.lines[1].present?
+      assert subject.lines[2].absent?
+      assert subject.lines[3].present?
+    end
+
     private
 
     def subject
