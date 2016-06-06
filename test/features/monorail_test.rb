@@ -20,6 +20,13 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_text page, 'SOLVED'
   end
 
+  test 'solve the trivial puzzle by clicking on dots' do
+    dots.first.click
+    dots.last.click
+    assert_equal 4, black_lines.length
+    assert_text page, 'SOLVED'
+  end
+
   test 'skip to the next puzzle' do
     lines_to_click.first.trigger(:click)
     assert_equal 1, black_lines.length
@@ -42,6 +49,21 @@ class MonorailTest < Capybara::Rails::TestCase
     [0, 2, 4, 7, 8, 9, 6].each { |i| lines[i].trigger(:click) }
     refute_text page, 'SOLVED'
     lines[1].trigger(:click)
+    assert_equal 8, black_lines.length
+    assert_text page, 'SOLVED'
+  end
+
+  test 'solve the 3x3 puzzle by clicking on dots' do
+    click_on 'Next puzzle'
+    # Dots are numbered like so:
+    # 0 1 2  o-o-o
+    #        | | |
+    # 3 4 5  o-o-o
+    #        | |
+    # 6 7    o-o
+    [0, 2, 5, 6].each { |i| dots[i].click }
+    refute_text page, 'SOLVED'
+    dots[7].click
     assert_equal 8, black_lines.length
     assert_text page, 'SOLVED'
   end

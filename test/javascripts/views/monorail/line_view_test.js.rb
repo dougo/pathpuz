@@ -27,12 +27,30 @@ module Monorail
       assert_equal :line, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal :transparent, el[:stroke]
-      assert_equal '0.3', el['stroke-width']
+      assert_equal 0.3, el['stroke-width'].to_f
       assert_equal :pointer, el[:cursor]
-      assert_equal '1', el[:x1]
-      assert_equal '0', el[:y1]
-      assert_equal '3', el[:x2]
-      assert_equal '2', el[:y2]
+      assert_equal 1+0.15, el[:x1].to_f
+      assert_equal 0+0.15, el[:y1].to_f
+      assert_equal 3-0.15, el[:x2].to_f
+      assert_equal 2-0.15, el[:y2].to_f
+    end
+
+    test 'clickable_element is straight when horizontal' do
+      model.dot2.row = 0
+      el = view.create_clickable_element
+      assert_equal 1+0.15, el[:x1].to_f
+      assert_equal 0,      el[:y1].to_f
+      assert_equal 3-0.15, el[:x2].to_f
+      assert_equal 0,      el[:y2].to_f
+    end
+
+    test 'clickable_element is straight when vertical' do
+      model.dot2.col = 1
+      el = view.create_clickable_element
+      assert_equal 1,      el[:x1].to_f
+      assert_equal 0+0.15, el[:y1].to_f
+      assert_equal 1,      el[:x2].to_f
+      assert_equal 2-0.15, el[:y2].to_f
     end
 
     test 'line_element is a strokeless narrow SVG line' do
@@ -42,6 +60,7 @@ module Monorail
       assert_nil el[:stroke]
       assert_equal '0.1', el['stroke-width']
       assert_equal :round, el['stroke-linecap']
+      assert_equal :none, el['pointer-events']
       assert_equal '1', el[:x1]
       assert_equal '0', el[:y1]
       assert_equal '3', el[:x2]

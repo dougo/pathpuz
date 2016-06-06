@@ -51,7 +51,7 @@ module Monorail
       el['stroke-width'] = 0.3
       el[:stroke] = :transparent
       el[:cursor] = :pointer
-      init_coords(el)
+      init_coords(el, 0.15) # leave room to avoid overlapping the dots
     end
 
     def create_line_element
@@ -60,14 +60,17 @@ module Monorail
       el['stroke-width'] = 0.1
       el['stroke-linecap'] = :round
       el[:stroke] = :gray if model.fixed?
+      el['pointer-events'] = :none # let the underlying dot handle clicks
       init_coords(el)
     end
 
-    def init_coords(el)
-      el[:x1] = model.dot1.col
-      el[:y1] = model.dot1.row
-      el[:x2] = model.dot2.col
-      el[:y2] = model.dot2.row
+    def init_coords(el, buffer = 0)
+      col_buffer = model.dot1.col == model.dot2.col ? 0 : buffer
+      row_buffer = model.dot1.row == model.dot2.row ? 0 : buffer
+      el[:x1] = model.dot1.col + col_buffer
+      el[:y1] = model.dot1.row + row_buffer
+      el[:x2] = model.dot2.col - col_buffer
+      el[:y2] = model.dot2.row - row_buffer
     end
 
     def line_stroke

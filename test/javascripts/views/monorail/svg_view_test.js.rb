@@ -48,9 +48,8 @@ module Monorail
         assert_kind_of DotView, dot_view
         dot = dot_view.model
         assert_equal model.dot(dot.row, dot.col), dot
-        # TODO: is there a better way to test that dot_view.element was added and dot_view was rendered?
-        assert_equal 1, view.element.find("circle[cx=#{dot.col}][cy=#{dot.row}]").length
       end
+      assert_equal dot_views.length, el.find('circle').length
     end
 
     test 'has one LineView per Line in puzzle' do
@@ -60,15 +59,32 @@ module Monorail
       lines.zip(line_views).each do |line, line_view|
         assert_kind_of LineView, line_view
         assert_equal line, line_view.model
-        # TODO: is there a better way to test that line_view.element was added and line_view was rendered?
-        assert_equal 2, view.element.find("line[x1=#{line.dot1.col}][y1=#{line.dot1.row}][x2=#{line.dot2.col}][y2=#{line.dot2.row}]").length
       end
+      assert_equal lines.length, el.find('line[cursor=pointer]').length
     end
 
     test 'renders fixed lines first so that they have lower z-index' do
       model.lines.last.state = :fixed
       view.render
       assert_equal 'gray', view.element.find(:line).first[:stroke]
+    end
+
+    test 'dot is not overlapped by clickable line' do
+      # The bounding rect of an element can only be calculated if the element is already part of the document, so
+      # we have to add the SVG to the page before rendering.
+      el.append_to_body
+      view.render
+
+      dot = el.find('circle').first
+      raw_dot = Native(`dot[0]`)
+      r = raw_dot.getBoundingClientRect
+
+      # Focus on a point to the right of center.
+      x = r.left + 2*r.width/3
+      y = r.top + r.height/2
+      el_at_xy = `document.elementFromPoint(x,y)`
+
+      assert_equal raw_dot, el_at_xy, 'Clicking on a dot would not trigger the dot'
     end
   end
 end
