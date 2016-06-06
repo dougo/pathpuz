@@ -68,23 +68,5 @@ module Monorail
       view.render
       assert_equal 'gray', view.element.find(:line).first[:stroke]
     end
-
-    test 'dot is not overlapped by clickable line' do
-      # The bounding rect of an element can only be calculated if the element is already part of the document, so
-      # we have to add the SVG to the page before rendering.
-      el.append_to_body
-      view.render
-
-      dot = el.find('circle').first
-      raw_dot = Native(`dot[0]`)
-      r = raw_dot.getBoundingClientRect
-
-      # Focus on a point to the right of center.
-      x = r.left + 2*r.width/3
-      y = r.top + r.height/2
-      el_at_xy = `document.elementFromPoint(x,y)`
-
-      assert_equal raw_dot, el_at_xy, 'Clicking on a dot would not trigger the dot'
-    end
   end
 end
