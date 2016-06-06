@@ -10,9 +10,10 @@ module Monorail
       self.el = view.element
     end
 
-    test 'element is a SVG circle' do
+    test 'element is a clickable SVG circle' do
       assert_equal :circle, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+      assert_equal :pointer, el[:cursor]
     end
 
     test 'initialize' do
@@ -25,6 +26,13 @@ module Monorail
       assert_equal '0.15', el[:r]
       assert_equal '2', el[:cx]
       assert_equal '1', el[:cy]
+    end
+
+    test 'click completes the dot' do
+      model.lines << Line.new << Line.new
+      el.trigger(:click)
+      assert model.lines.first.present?
+      assert model.lines.last.present?
     end
   end
 end

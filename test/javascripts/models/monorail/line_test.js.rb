@@ -31,6 +31,13 @@ module Monorail
       assert Line.new(state: :absent).absent?
     end
 
+    test 'unknown?' do
+      assert Line.new.unknown?
+      refute Line.new(state: :present).unknown?
+      refute Line.new(state: :fixed).unknown?
+      refute Line.new(state: :absent).unknown?
+    end
+
     test 'add to dots' do
       dot1 = Dot.new
       dot2 = Dot.new

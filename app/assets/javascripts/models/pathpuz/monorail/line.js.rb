@@ -25,6 +25,10 @@ module Monorail
       state == :absent
     end
 
+    def unknown?
+      state == nil
+    end
+
     def other_dot(dot)
       dot == dot1 ? dot2 : dot1
     end

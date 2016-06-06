@@ -5,7 +5,8 @@ module Monorail
     tag_name :circle
 
     def create_element
-      SVGElement.new(tag_name)
+      el = SVGElement.new(tag_name)
+      el[:cursor] = :pointer
     end
 
     attr_accessor :model
@@ -21,5 +22,7 @@ module Monorail
       element[:cy] = model.row
       self
     end
+
+    on(:click) { model.complete! }
   end
 end
