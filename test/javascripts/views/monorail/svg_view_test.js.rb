@@ -18,8 +18,6 @@ module Monorail
       assert_equal :svg, el.tag_name
       assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
       assert_equal SVGElement::NS, el[:xmlns]
-      assert_equal '500', el[:height]
-      assert_equal '500', el[:width]
       assert_equal '-1 -1 3 3', `#{el}[0].getAttribute('viewBox')`
     end
 
