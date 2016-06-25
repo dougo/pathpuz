@@ -50,7 +50,7 @@ namespace :test do
     %w(lib app vendor).each { |d| Opal.append_path(p.join(d, 'assets/javascripts').to_s) }
   end
 
-  Opal::Minitest::RakeTask.new(:name => :javascripts, :port => 2839,
+  Opal::Minitest::RakeTask.new(:name => :javascripts, :port => 2845,
                                :requires_glob => 'test/javascripts/{test_helper,**/*_test}.js.rb')
   Rake::Task['test'].enhance ['test:javascripts']
 end
