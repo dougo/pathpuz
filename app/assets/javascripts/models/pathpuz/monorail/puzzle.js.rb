@@ -2,7 +2,7 @@ require 'vienna'
 
 module Monorail
   class Puzzle < Vienna::Model
-    attributes :dot_rows, :lines
+    attributes :lines
 
     def self.of_size(size)
       new.make!(size)
@@ -25,11 +25,12 @@ module Monorail
     end
 
     def attributes=(attrs)
-      self.dot_rows = attrs[:dot_rows].map do |dot_row|
+      dots = attrs[:dot_rows].flat_map do |dot_row|
         dot_row.map do |dot|
           Dot.new(row: dot[:row], col: dot[:col])
         end
       end
+      @dots = dots.map { |dot| [dot.as_json, dot] }.to_h
 
       self.lines = attrs[:lines]
     end
@@ -76,19 +77,19 @@ module Monorail
     public
 
     def dot(r, c)
-      dot_rows[r][c]
+      @dots[{ row: r, col: c }]
     end
 
     def dots
-      dot_rows.flatten
+      @dots.values
     end
 
     def height
-      dot_rows.length
+      dots.map(&:row).max + 1
     end
 
     def width
-      dot_rows.first.length
+      dots.map(&:col).max + 1
     end
 
     # Is there a single looping path that visits every dot?

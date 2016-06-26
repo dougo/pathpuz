@@ -26,7 +26,9 @@ module Monorail
       el = SVGView.new(model).element
       assert_equal '-1 -1 4 4', `#{el}[0].getAttribute('viewBox')`
 
-      model.dot_rows << [Dot.new(row: 3, col: 1)]
+      json = Puzzle.json_for_size(3)
+      json[:dot_rows] << [{ row: 3, col: 1 }]
+      model = Puzzle.new(json)
       el = SVGView.new(model).element
       assert_equal '-1 -1 4 5', `#{el}[0].getAttribute('viewBox')`
     end
