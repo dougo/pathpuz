@@ -12,6 +12,45 @@ module Monorail
       assert_nil subject.lines
     end
 
+    test 'attributes= creates Dot and Line models' do
+      subject = Puzzle.new
+      subject.attributes = {
+        dot_rows: [[{row: 0, col: 0}, {row: 0, col: 1}],
+                   [{row: 1, col: 0}, {row: 1, col: 1}]],
+        lines: [{dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}, state: :present},
+                {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}]
+      }
+      assert_has_grid_of_dots subject, 2
+      assert_equal 4, subject.lines.length
+      assert_adjacent_dots_are_connected subject
+      assert_equal :present, subject.lines[2].state
+    end
+
+    test 'lines= adds observers' do
+      subject = Puzzle.new
+      subject.attributes = {
+        dot_rows: [[{row: 0, col: 0}, {row: 0, col: 1}],
+                   [{row: 1, col: 0}, {row: 1, col: 1}]],
+        lines: []
+      }
+      subject.lines = [{dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                       {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                       {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}, state: :present},
+                       {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}]
+      assert_equal 4, subject.lines.length
+      assert_adjacent_dots_are_connected subject
+      assert_equal :present, subject.lines[2].state
+
+      event = false
+      subject.on(:solved) { event = true }
+      subject.lines[0].state = :present
+      subject.lines[1].state = :present
+      subject.lines[3].state = :present
+      assert event
+    end
+
     test 'size 2' do
       subject = Puzzle.of_size(2)
       assert_has_grid_of_dots subject, 2
@@ -76,11 +115,12 @@ module Monorail
     end
 
     test 'solved? for 2x3' do
-      subject = Puzzle.of_size(2)
-      subject.dot_rows << [Dot.new(row: 2, col: 0), Dot.new(row: 2, col: 1)]
-      subject.connect(subject.dot(1, 0), subject.dot(2, 0))
-      subject.connect(subject.dot(1, 1), subject.dot(2, 1))
-      subject.connect(subject.dot(2, 0), subject.dot(2, 1))
+      json = Puzzle.json_for_size(2)
+      json[:dot_rows] << [{ row: 2, col: 0}, { row: 2, col: 1 }]
+      json[:lines] << { dot1: { row: 1, col: 0 }, dot2: { row: 2, col: 0 } }
+      json[:lines] << { dot1: { row: 1, col: 1 }, dot2: { row: 2, col: 1 } }
+      json[:lines] << { dot1: { row: 2, col: 0 }, dot2: { row: 2, col: 1 } }
+      subject = Puzzle.new(json)
 
       (0..3).each { |i| subject.lines[i].state = :present }
       refute subject.solved?, 'Not all dots are connected.'

@@ -8,54 +8,76 @@ module Monorail
       new.make!(size)
     end
 
+    def lines=(lines)
+      @lines = lines.map do |line|
+        dot1 = line[:dot1]
+        dot2 = line[:dot2]
+        Line.new(dot1: dot(dot1[:row], dot1[:col]), dot2: dot(dot2[:row], dot2[:col]), state: line[:state])
+      end
+
+      @lines.each do |line|
+        line.add_observer(:state) do
+          trigger(:solved) if solved?
+        end
+      end
+
+      @lines
+    end
+
+    def attributes=(attrs)
+      self.dot_rows = attrs[:dot_rows].map do |dot_row|
+        dot_row.map do |dot|
+          Dot.new(row: dot[:row], col: dot[:col])
+        end
+      end
+
+      self.lines = attrs[:lines]
+    end
+
     private
 
-    def make!(size = 2)
+    def make!(size)
+      self.attributes = self.class.json_for_size(size)
+      self
+    end
+
+    def self.json_for_size(size = 2)
       maxrow = size - 1
-      self.dot_rows = (0..maxrow).map do |row|
+      dot_rows = (0..maxrow).map do |row|
         maxcol = size - 1
         if size.odd?
           # To make an even number of dots total, omit the last dot of the last row.
           maxcol -= 1 if row == maxrow
         end
         (0..maxcol).map do |col|
-          Dot.new(row: row, col: col)
+          { row: row, col: col }
         end
       end
 
-      self.lines = []
-      (0...height).each do |r|
+      lines = []
+      (0...size).each do |r|
         row = dot_rows[r]
         (0...row.length).each do |c|
-          connect(dot(r, c), dot(r, c+1)) unless c+1 == row.length
-          connect(dot(r, c), dot(r+1, c)) unless r+1 == height || c == dot_rows[r+1].length
-        end
-      end
-
-      lines.each do |line|
-        line.add_observer(:state) do
-          trigger(:solved) if solved?
+          lines << { dot1: { row: r, col: c }, dot2: { row: r, col: c+1 } } unless c+1 == row.length
+          lines << { dot1: { row: r, col: c }, dot2: { row: r+1, col: c } } unless (r+1 == size ||
+                                                                                    c == dot_rows[r+1].length)
         end
       end
 
       if size == 4
         # Add some fixed lines to make a unique solution.
         # TODO: load these from JSON...
-        [2, 12, 16].each { |i| lines[i].state = :fixed }
+        [2, 12, 16].each { |i| lines[i][:state] = :fixed }
       end
 
-      self
+      { dot_rows: dot_rows, lines: lines }
     end
 
-    def connect(dot1, dot2)
-      lines << Line.new(dot1: dot1, dot2: dot2)
-    end
+    public
 
     def dot(r, c)
       dot_rows[r][c]
     end
-
-    public
 
     def dots
       dot_rows.flatten
