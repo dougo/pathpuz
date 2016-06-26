@@ -9,10 +9,11 @@ module Monorail
     end
 
     def lines=(lines)
+      dots = lines.map { |l| l[:dot1] } + lines.map { |l| l[:dot2] }
+      @dots = dots.uniq.map { |dot| [dot, Dot.new(dot)] }.to_h
+
       @lines = lines.map do |line|
-        dot1 = line[:dot1]
-        dot2 = line[:dot2]
-        Line.new(dot1: dot(dot1[:row], dot1[:col]), dot2: dot(dot2[:row], dot2[:col]), state: line[:state])
+        Line.new(dot1: @dots[line[:dot1]], dot2: @dots[line[:dot2]], state: line[:state])
       end
 
       @lines.each do |line|
@@ -24,17 +25,6 @@ module Monorail
       @lines
     end
 
-    def attributes=(attrs)
-      dots = attrs[:dot_rows].flat_map do |dot_row|
-        dot_row.map do |dot|
-          Dot.new(row: dot[:row], col: dot[:col])
-        end
-      end
-      @dots = dots.map { |dot| [dot.as_json, dot] }.to_h
-
-      self.lines = attrs[:lines]
-    end
-
     private
 
     def make!(size)
@@ -43,25 +33,16 @@ module Monorail
     end
 
     def self.json_for_size(size = 2)
-      maxrow = size - 1
-      dot_rows = (0..maxrow).map do |row|
-        maxcol = size - 1
-        if size.odd?
-          # To make an even number of dots total, omit the last dot of the last row.
-          maxcol -= 1 if row == maxrow
-        end
-        (0..maxcol).map do |col|
-          { row: row, col: col }
-        end
-      end
-
       lines = []
       (0...size).each do |r|
-        row = dot_rows[r]
-        (0...row.length).each do |c|
-          lines << { dot1: { row: r, col: c }, dot2: { row: r, col: c+1 } } unless c+1 == row.length
-          lines << { dot1: { row: r, col: c }, dot2: { row: r+1, col: c } } unless (r+1 == size ||
-                                                                                    c == dot_rows[r+1].length)
+        (0...size).each do |c|
+          # To make an even number of dots total, if size is odd, omit the last dot of the last row.
+          unless c+1 == size || size.odd? && r == size-1 && c+1 == size-1
+            lines << { dot1: { row: r, col: c }, dot2: { row: r, col: c+1 } }
+          end
+          unless r+1 == size || size.odd? && r+1 == size-1 && c == size-1
+            lines << { dot1: { row: r, col: c }, dot2: { row: r+1, col: c } }
+          end
         end
       end
 
@@ -71,7 +52,7 @@ module Monorail
         [2, 12, 16].each { |i| lines[i][:state] = :fixed }
       end
 
-      { dot_rows: dot_rows, lines: lines }
+      { lines: lines }
     end
 
     public

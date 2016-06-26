@@ -6,33 +6,13 @@ module Monorail
       assert_equal %i(lines), Puzzle.columns
     end
 
-    test 'attributes= creates Dot and Line models' do
+    test 'lines= creates models and adds observers' do
       subject = Puzzle.new
-      subject.attributes = {
-        dot_rows: [[{row: 0, col: 0}, {row: 0, col: 1}],
-                   [{row: 1, col: 0}, {row: 1, col: 1}]],
-        lines: [{dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
-                {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
-                {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}, state: :present},
-                {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}]
-      }
-      assert_has_grid_of_dots subject, 2
-      assert_equal 4, subject.lines.length
-      assert_adjacent_dots_are_connected subject
-      assert_equal :present, subject.lines[2].state
-    end
-
-    test 'lines= adds observers' do
-      subject = Puzzle.new
-      subject.attributes = {
-        dot_rows: [[{row: 0, col: 0}, {row: 0, col: 1}],
-                   [{row: 1, col: 0}, {row: 1, col: 1}]],
-        lines: []
-      }
       subject.lines = [{dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
                        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
                        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}, state: :present},
                        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}]
+      assert_has_grid_of_dots subject, 2
       assert_equal 4, subject.lines.length
       assert_adjacent_dots_are_connected subject
       assert_equal :present, subject.lines[2].state
@@ -102,12 +82,12 @@ module Monorail
       assert_equal 3, subject.width
       assert_equal 3, subject.height
 
-      json[:dot_rows] << [{ row: 3, col: 2 }]
+      json[:lines] << { dot1: { row: 2, col: 2 }, dot2: { row: 3, col: 2 } }
       subject = Puzzle.new(json)
       assert_equal 3, subject.width
       assert_equal 4, subject.height
 
-      json[:dot_rows].first << { row: 0, col: 3 }
+      json[:lines] << { dot1: { row: 0, col: 2 }, dot2: { row: 0, col: 3 } }
       subject = Puzzle.new(json)
       assert_equal 4, subject.width
       assert_equal 4, subject.height
@@ -127,7 +107,6 @@ module Monorail
 
     test 'solved? for 2x3' do
       json = Puzzle.json_for_size(2)
-      json[:dot_rows] << [{ row: 2, col: 0}, { row: 2, col: 1 }]
       json[:lines] << { dot1: { row: 1, col: 0 }, dot2: { row: 2, col: 0 } }
       json[:lines] << { dot1: { row: 1, col: 1 }, dot2: { row: 2, col: 1 } }
       json[:lines] << { dot1: { row: 2, col: 0 }, dot2: { row: 2, col: 1 } }
