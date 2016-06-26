@@ -5,7 +5,7 @@ module Monorail
     attr_accessor :model, :view, :el
 
     def setup
-      self.model = Puzzle.new
+      self.model = Puzzle.of_size(2)
       self.view = SolvedView.new(model)
       self.el = view.element
     end

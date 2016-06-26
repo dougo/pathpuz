@@ -4,7 +4,13 @@ module Monorail
   class Puzzle < Vienna::Model
     attributes :dot_rows, :lines
 
-    def initialize(size = 2)
+    def self.of_size(size)
+      new.make!(size)
+    end
+
+    private
+
+    def make!(size = 2)
       maxrow = size - 1
       self.dot_rows = (0..maxrow).map do |row|
         maxcol = size - 1
@@ -33,9 +39,12 @@ module Monorail
       end
 
       if size == 4
-        # Add some fixed lines to make a unique solution. TODO: load these from JSON...
+        # Add some fixed lines to make a unique solution.
+        # TODO: load these from JSON...
         [2, 12, 16].each { |i| lines[i].state = :fixed }
       end
+
+      self
     end
 
     def connect(dot1, dot2)
@@ -45,6 +54,8 @@ module Monorail
     def dot(r, c)
       dot_rows[r][c]
     end
+
+    public
 
     def dots
       dot_rows.flatten
@@ -60,7 +71,7 @@ module Monorail
 
     # Is there a single looping path that visits every dot?
     def solved?
-      first_dot = dot(0, 0)
+      first_dot = dots.first
       dot = first_dot
       num_dots_visited = 1
       line = dot.present_lines.first

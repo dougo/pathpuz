@@ -5,7 +5,7 @@ module Monorail
     attr_accessor :model, :view, :el
 
     def setup
-      self.model = Puzzle.new
+      self.model = Puzzle.of_size(2)
       self.view = SVGView.new(model)
       self.el = view.element
     end
@@ -22,7 +22,7 @@ module Monorail
     end
 
     test 'viewBox depends on puzzle size' do
-      model = Puzzle.new(3)
+      model = Puzzle.of_size(3)
       el = SVGView.new(model).element
       assert_equal '-1 -1 4 4', `#{el}[0].getAttribute('viewBox')`
 

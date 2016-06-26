@@ -6,22 +6,28 @@ module Monorail
       assert_equal %i(dot_rows lines), Puzzle.columns
     end
 
-    test 'size 2' do
+    test 'new does not initialize attributes' do
       subject = Puzzle.new
+      assert_nil subject.dot_rows
+      assert_nil subject.lines
+    end
+
+    test 'size 2' do
+      subject = Puzzle.of_size(2)
       assert_has_grid_of_dots subject, 2
       assert_equal 4, subject.lines.length
       assert_adjacent_dots_are_connected subject
     end
 
     test 'size 3' do
-      subject = Puzzle.new(3)
+      subject = Puzzle.of_size(3)
       assert_bottom_right_dot_is_omitted subject, 3
       assert_equal 10, subject.lines.length
       assert_adjacent_dots_are_connected subject
     end
 
     test 'size 4' do
-      subject = Puzzle.new(4)
+      subject = Puzzle.of_size(4)
       assert_has_grid_of_dots subject, 4
       assert_equal 24, subject.lines.length
       assert_adjacent_dots_are_connected subject
@@ -32,38 +38,19 @@ module Monorail
     end
 
     test 'size 5' do
-      subject = Puzzle.new(5)
+      subject = Puzzle.of_size(5)
       assert_bottom_right_dot_is_omitted subject, 5
       assert_equal 38, subject.lines.length
       assert_adjacent_dots_are_connected subject
     end
 
-    test 'connect' do
-      subject = Puzzle.new
-      dot1 = Dot.new(row: 1, col: 2)
-      dot2 = Dot.new(row: 3, col: 4)
-      subject.connect(dot1, dot2)
-      line = subject.lines.last
-      assert_kind_of Line, line
-      assert_equal dot1, line.dot1
-      assert_equal dot2, line.dot2
-    end
-
-    test 'dot' do
-      subject = Puzzle.new
-      dot = subject.dot(1, 0)
-      assert_equal 1, dot.row
-      assert_equal 0, dot.col
-      assert_equal subject.dot_rows[1][0], dot
-    end
-
     test 'dots' do
-      subject = Puzzle.new
-      assert_equal [subject.dot(0, 0), subject.dot(0, 1), subject.dot(1, 0), subject.dot(1, 1)], subject.dots
+      subject = Puzzle.of_size(2)
+      assert_equal subject.dot_rows.flatten, subject.dots
     end
 
     test 'width and height' do
-      subject = Puzzle.new(3)
+      subject = Puzzle.of_size(3)
       assert_equal 3, subject.width
       assert_equal 3, subject.height
 
@@ -77,7 +64,7 @@ module Monorail
     end
 
     test 'solved?' do
-      subject = Puzzle.new
+      subject = Puzzle.of_size(2)
       event = nil
       subject.on(:solved) { event = true }
       (0..2).each { |i| subject.lines[i].state = :present }
@@ -89,7 +76,7 @@ module Monorail
     end
 
     test 'solved? for 2x3' do
-      subject = Puzzle.new
+      subject = Puzzle.of_size(2)
       subject.dot_rows << [Dot.new(row: 2, col: 0), Dot.new(row: 2, col: 1)]
       subject.connect(subject.dot(1, 0), subject.dot(2, 0))
       subject.connect(subject.dot(1, 1), subject.dot(2, 1))
