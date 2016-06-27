@@ -23,6 +23,14 @@ module Monorail
       assert event
     end
 
+    test 'find uses identity map' do
+      p1 = Puzzle.find(0)
+      lines = p1.lines
+      p2 = Puzzle.find(0)
+      assert_same p1, p2
+      assert_same lines, p2.lines
+    end
+
     test 'puzzle 0' do
       subject = Puzzle.find(0)
       assert_equal 0, subject.id
