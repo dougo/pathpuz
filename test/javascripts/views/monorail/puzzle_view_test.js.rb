@@ -5,7 +5,7 @@ module Monorail
     attr_accessor :model, :view, :el
 
     def setup
-      self.model = Puzzle.of_size(2)
+      self.model = Puzzle.find(0)
       self.view = PuzzleView.new(model)
       view.render
       self.el = view.element
@@ -31,7 +31,7 @@ module Monorail
 
     test 'render when the model changes' do
       svg = view.svg
-      view.model = Puzzle.of_size(2)
+      view.model = Puzzle.find(1)
       refute_equal svg, view.svg
     end
   end

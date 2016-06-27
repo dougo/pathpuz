@@ -4,8 +4,29 @@ module Monorail
   class Puzzle < Vienna::Model
     attributes :lines
 
+    def self.find(id)
+      return load(puzzles[id]) if id <= 2
+      of_size(id+2).tap { |puzzle| puzzle.id = id }
+    end
+
     def self.of_size(size)
       new(json_for_size(size))
+    end
+
+    def self.json_for_size(size = 2)
+      lines = []
+      (0...size).each do |r|
+        (0...size).each do |c|
+          # To make an even number of dots total, if size is odd, omit the last dot of the last row.
+          unless c+1 == size || size.odd? && r == size-1 && c+1 == size-1
+            lines << { dot1: { row: r, col: c }, dot2: { row: r, col: c+1 } }
+          end
+          unless r+1 == size || size.odd? && r+1 == size-1 && c == size-1
+            lines << { dot1: { row: r, col: c }, dot2: { row: r+1, col: c } }
+          end
+        end
+      end
+      { lines: lines }
     end
 
     def lines=(lines)
@@ -24,31 +45,6 @@ module Monorail
 
       @lines
     end
-
-    private
-
-    def self.json_for_size(size = 2)
-      if size <= 4
-        return { lines: grids[size-2] }
-      end
-
-      lines = []
-      (0...size).each do |r|
-        (0...size).each do |c|
-          # To make an even number of dots total, if size is odd, omit the last dot of the last row.
-          unless c+1 == size || size.odd? && r == size-1 && c+1 == size-1
-            lines << { dot1: { row: r, col: c }, dot2: { row: r, col: c+1 } }
-          end
-          unless r+1 == size || size.odd? && r+1 == size-1 && c == size-1
-            lines << { dot1: { row: r, col: c }, dot2: { row: r+1, col: c } }
-          end
-        end
-      end
-
-      { lines: lines }
-    end
-
-    public
 
     def dot(r, c)
       @dots[{ row: r, col: c }]
@@ -94,52 +90,61 @@ module Monorail
 
     private
 
-    def self.grids
+    def self.puzzles
       [
-       [
-        {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
-        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
-        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
-        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}
-       ],
-       [
-        {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
-        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
-        {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}},
-        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
-        {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
-        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
-        {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
-        {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
-        {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
-        {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}}
-       ],
-       [
-        {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
-        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
-        {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}, state: :fixed},
-        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
-        {dot1: {row: 0, col: 2}, dot2: {row: 0, col: 3}},
-        {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
-        {dot1: {row: 0, col: 3}, dot2: {row: 1, col: 3}},
-        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
-        {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
-        {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
-        {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
-        {dot1: {row: 1, col: 2}, dot2: {row: 1, col: 3}},
-        {dot1: {row: 1, col: 2}, dot2: {row: 2, col: 2}, state: :fixed},
-        {dot1: {row: 1, col: 3}, dot2: {row: 2, col: 3}},
-        {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}},
-        {dot1: {row: 2, col: 0}, dot2: {row: 3, col: 0}},
-        {dot1: {row: 2, col: 1}, dot2: {row: 2, col: 2}, state: :fixed},
-        {dot1: {row: 2, col: 1}, dot2: {row: 3, col: 1}},
-        {dot1: {row: 2, col: 2}, dot2: {row: 2, col: 3}},
-        {dot1: {row: 2, col: 2}, dot2: {row: 3, col: 2}},
-        {dot1: {row: 2, col: 3}, dot2: {row: 3, col: 3}},
-        {dot1: {row: 3, col: 0}, dot2: {row: 3, col: 1}},
-        {dot1: {row: 3, col: 1}, dot2: {row: 3, col: 2}},
-        {dot1: {row: 3, col: 2}, dot2: {row: 3, col: 3}}
-       ],
+       {
+         id: 0,
+         lines: [
+                 {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                 {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                 {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+                 {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}
+                ]
+       },
+       {
+         id: 1,
+         lines: [
+                 {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                 {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                 {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}},
+                 {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+                 {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
+                 {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
+                 {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
+                 {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
+                 {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
+                 {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}}
+                ]
+       },
+       {
+         id: 2,
+         lines: [
+                 {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                 {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                 {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}, state: :fixed},
+                 {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+                 {dot1: {row: 0, col: 2}, dot2: {row: 0, col: 3}},
+                 {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
+                 {dot1: {row: 0, col: 3}, dot2: {row: 1, col: 3}},
+                 {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
+                 {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
+                 {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
+                 {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
+                 {dot1: {row: 1, col: 2}, dot2: {row: 1, col: 3}},
+                 {dot1: {row: 1, col: 2}, dot2: {row: 2, col: 2}, state: :fixed},
+                 {dot1: {row: 1, col: 3}, dot2: {row: 2, col: 3}},
+                 {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}},
+                 {dot1: {row: 2, col: 0}, dot2: {row: 3, col: 0}},
+                 {dot1: {row: 2, col: 1}, dot2: {row: 2, col: 2}, state: :fixed},
+                 {dot1: {row: 2, col: 1}, dot2: {row: 3, col: 1}},
+                 {dot1: {row: 2, col: 2}, dot2: {row: 2, col: 3}},
+                 {dot1: {row: 2, col: 2}, dot2: {row: 3, col: 2}},
+                 {dot1: {row: 2, col: 3}, dot2: {row: 3, col: 3}},
+                 {dot1: {row: 3, col: 0}, dot2: {row: 3, col: 1}},
+                 {dot1: {row: 3, col: 1}, dot2: {row: 3, col: 2}},
+                 {dot1: {row: 3, col: 2}, dot2: {row: 3, col: 3}}
+                ]
+       }
       ]
     end
   end

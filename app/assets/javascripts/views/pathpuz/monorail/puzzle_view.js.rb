@@ -20,7 +20,7 @@ module Monorail
     end
 
     on :click, :button do
-      self.model = Puzzle.of_size(model.height + 1)
+      self.model = Puzzle.find(model.id + 1)
     end
 
     def model=(model)

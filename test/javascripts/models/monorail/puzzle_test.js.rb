@@ -12,10 +12,8 @@ module Monorail
                        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
                        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}, state: :present},
                        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}]
-      assert_has_grid_of_dots subject, 2
-      assert_equal 4, subject.lines.length
-      assert_adjacent_dots_are_connected subject
-      assert_equal :present, subject.lines[2].state
+      assert_square_of_size(subject, 2)
+      assert subject.lines[2].present?
 
       event = false
       subject.on(:solved) { event = true }
@@ -25,25 +23,22 @@ module Monorail
       assert event
     end
 
-    test 'size 2' do
-      subject = Puzzle.of_size(2)
-      assert_has_grid_of_dots subject, 2
-      assert_equal 4, subject.lines.length
-      assert_adjacent_dots_are_connected subject
+    test 'puzzle 0' do
+      subject = Puzzle.find(0)
+      assert_equal 0, subject.id
+      assert_square_of_size(subject, 2)
     end
 
-    test 'size 3' do
-      subject = Puzzle.of_size(3)
-      assert_bottom_right_dot_is_omitted subject, 3
-      assert_equal 10, subject.lines.length
-      assert_adjacent_dots_are_connected subject
+    test 'puzzle 1' do
+      subject = Puzzle.find(1)
+      assert_equal 1, subject.id
+      assert_square_of_size(subject, 3)
     end
 
-    test 'size 4' do
-      subject = Puzzle.of_size(4)
-      assert_has_grid_of_dots subject, 4
-      assert_equal 24, subject.lines.length
-      assert_adjacent_dots_are_connected subject
+    test 'puzzle 2' do
+      subject = Puzzle.find(2)
+      assert_equal 2, subject.id
+      assert_square_of_size(subject, 4)
       [[[0,1],[0,2]], [[1,2],[2,2]], [[2,1],[2,2]]].each do |dot1, dot2|
         line = subject.lines.select do |line|
           line.dot1.row == dot1[0] && line.dot1.col == dot1[1] && line.dot2.row == dot2[0] && line.dot2.col == dot2[1]
@@ -53,11 +48,18 @@ module Monorail
       end
     end
 
-    test 'size 5' do
-      subject = Puzzle.of_size(5)
-      assert_bottom_right_dot_is_omitted subject, 5
-      assert_equal 38, subject.lines.length
-      assert_adjacent_dots_are_connected subject
+    test 'puzzle 3' do
+      subject = Puzzle.find(3)
+      assert_equal 3, subject.id
+      assert_square_of_size(subject, 5)
+    end
+
+    test 'of_size' do
+      (2..7).each do |size|
+        subject = Puzzle.of_size(size)
+        assert_square_of_size(subject, size)
+        assert_equal subject.lines, subject.lines.select(&:unknown?)
+      end
     end
 
     test 'dot' do
@@ -127,6 +129,13 @@ module Monorail
 
     private
 
+    def assert_square_of_size(puzzle, size)
+      assert_has_grid_of_dots(puzzle, size)
+      assert_bottom_right_dot_is_omitted(puzzle, size) if size.odd?
+      assert_has_expected_num_lines(puzzle, size)
+      assert_adjacent_dots_are_connected(puzzle)
+    end
+
     def assert_has_grid_of_dots(puzzle, size)
       (0...size).each do |r|
         (0...size).each do |c|
@@ -143,6 +152,12 @@ module Monorail
       assert_equal size, puzzle.height
       assert_equal size, puzzle.width
       assert_nil puzzle.dot(size-1, size-1)
+    end
+
+    def assert_has_expected_num_lines(puzzle, size)
+      expected_num_lines = 2*(size-1)**2 + 2*(size-1)
+      expected_num_lines -= 2 if size.odd?
+      assert_equal expected_num_lines, puzzle.lines.length
     end
 
     def assert_adjacent_dots_are_connected(puzzle)
