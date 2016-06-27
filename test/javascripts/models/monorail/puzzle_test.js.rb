@@ -44,9 +44,12 @@ module Monorail
       assert_has_grid_of_dots subject, 4
       assert_equal 24, subject.lines.length
       assert_adjacent_dots_are_connected subject
-      [2, 12, 16].each do |i|
-        assert subject.lines[i].present?, "Line #{i} should be present."
-        assert subject.lines[i].fixed?,   "Line #{i} should be fixed."
+      [[[0,1],[0,2]], [[1,2],[2,2]], [[2,1],[2,2]]].each do |dot1, dot2|
+        line = subject.lines.select do |line|
+          line.dot1.row == dot1[0] && line.dot1.col == dot1[1] && line.dot2.row == dot2[0] && line.dot2.col == dot2[1]
+        end.first
+        assert line.present?, "Line #{dot1},#{dot2} should be present."
+        assert line.fixed?,   "Line #{dot1},#{dot2} should be fixed."
       end
     end
 

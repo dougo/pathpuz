@@ -5,7 +5,7 @@ module Monorail
     attributes :lines
 
     def self.of_size(size)
-      new.make!(size)
+      new(json_for_size(size))
     end
 
     def lines=(lines)
@@ -27,12 +27,11 @@ module Monorail
 
     private
 
-    def make!(size)
-      self.attributes = self.class.json_for_size(size)
-      self
-    end
-
     def self.json_for_size(size = 2)
+      if size <= 4
+        return { lines: grids[size-2] }
+      end
+
       lines = []
       (0...size).each do |r|
         (0...size).each do |c|
@@ -44,12 +43,6 @@ module Monorail
             lines << { dot1: { row: r, col: c }, dot2: { row: r+1, col: c } }
           end
         end
-      end
-
-      if size == 4
-        # Add some fixed lines to make a unique solution.
-        # TODO: load these from JSON...
-        [2, 12, 16].each { |i| lines[i][:state] = :fixed }
       end
 
       { lines: lines }
@@ -97,6 +90,57 @@ module Monorail
         end
         line = lines.first
       end
+    end
+
+    private
+
+    def self.grids
+      [
+       [
+        {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}
+       ],
+       [
+        {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+        {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}},
+        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+        {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
+        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
+        {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
+        {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
+        {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
+        {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}}
+       ],
+       [
+        {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+        {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}, state: :fixed},
+        {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+        {dot1: {row: 0, col: 2}, dot2: {row: 0, col: 3}},
+        {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
+        {dot1: {row: 0, col: 3}, dot2: {row: 1, col: 3}},
+        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
+        {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
+        {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
+        {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
+        {dot1: {row: 1, col: 2}, dot2: {row: 1, col: 3}},
+        {dot1: {row: 1, col: 2}, dot2: {row: 2, col: 2}, state: :fixed},
+        {dot1: {row: 1, col: 3}, dot2: {row: 2, col: 3}},
+        {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}},
+        {dot1: {row: 2, col: 0}, dot2: {row: 3, col: 0}},
+        {dot1: {row: 2, col: 1}, dot2: {row: 2, col: 2}, state: :fixed},
+        {dot1: {row: 2, col: 1}, dot2: {row: 3, col: 1}},
+        {dot1: {row: 2, col: 2}, dot2: {row: 2, col: 3}},
+        {dot1: {row: 2, col: 2}, dot2: {row: 3, col: 2}},
+        {dot1: {row: 2, col: 3}, dot2: {row: 3, col: 3}},
+        {dot1: {row: 3, col: 0}, dot2: {row: 3, col: 1}},
+        {dot1: {row: 3, col: 1}, dot2: {row: 3, col: 2}},
+        {dot1: {row: 3, col: 2}, dot2: {row: 3, col: 3}}
+       ],
+      ]
     end
   end
 end
