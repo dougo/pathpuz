@@ -60,7 +60,8 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_text page, 'SOLVED'
   end
 
-  test 'solve the 4x4 puzzle' do
+  test 'solve the harder 4x4 puzzle' do
+    next_puzzle!
     next_puzzle!
     next_puzzle!
     assert_equal 16, dots.length

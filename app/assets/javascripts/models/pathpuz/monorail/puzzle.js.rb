@@ -85,10 +85,10 @@ module Monorail
 
     class Adapter < Vienna::Adapter
       def find(record, id, &block)
-        if id <= 2
+        if id <= 3
           attrs = puzzles[id]
         else
-          attrs = record.class.json_for_size(id+2)
+          attrs = record.class.json_for_size(id+1)
           attrs[:id] = id
         end
         model = record.class.load(attrs)
@@ -124,6 +124,35 @@ module Monorail
          },
          {
            id: 2,
+           lines: [
+                   {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                   {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                   {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}},
+                   {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+                   {dot1: {row: 0, col: 2}, dot2: {row: 0, col: 3}},
+                   {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
+                   {dot1: {row: 0, col: 3}, dot2: {row: 1, col: 3}},
+                   {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
+                   {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
+                   {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
+                   {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
+                   {dot1: {row: 1, col: 2}, dot2: {row: 1, col: 3}, state: :fixed},
+                   {dot1: {row: 1, col: 2}, dot2: {row: 2, col: 2}, state: :fixed},
+                   {dot1: {row: 1, col: 3}, dot2: {row: 2, col: 3}},
+                   {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}},
+                   {dot1: {row: 2, col: 0}, dot2: {row: 3, col: 0}},
+                   {dot1: {row: 2, col: 1}, dot2: {row: 2, col: 2}},
+                   {dot1: {row: 2, col: 1}, dot2: {row: 3, col: 1}},
+                   {dot1: {row: 2, col: 2}, dot2: {row: 2, col: 3}},
+                   {dot1: {row: 2, col: 2}, dot2: {row: 3, col: 2}},
+                   {dot1: {row: 2, col: 3}, dot2: {row: 3, col: 3}},
+                   {dot1: {row: 3, col: 0}, dot2: {row: 3, col: 1}},
+                   {dot1: {row: 3, col: 1}, dot2: {row: 3, col: 2}},
+                   {dot1: {row: 3, col: 2}, dot2: {row: 3, col: 3}}
+                  ]
+         },
+         {
+           id: 3,
            lines: [
                    {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
                    {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},

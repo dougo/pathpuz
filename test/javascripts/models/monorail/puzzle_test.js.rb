@@ -47,18 +47,19 @@ module Monorail
       subject = Puzzle.find(2)
       assert_equal 2, subject.id
       assert_square_of_size(subject, 4)
-      [[[0,1],[0,2]], [[1,2],[2,2]], [[2,1],[2,2]]].each do |dot1, dot2|
-        line = subject.lines.select do |line|
-          line.dot1.row == dot1[0] && line.dot1.col == dot1[1] && line.dot2.row == dot2[0] && line.dot2.col == dot2[1]
-        end.first
-        assert line.present?, "Line #{dot1},#{dot2} should be present."
-        assert line.fixed?,   "Line #{dot1},#{dot2} should be fixed."
-      end
+      assert_has_fixed_lines(subject, [[1,2],[1,3]], [[1,2],[2,2]])
     end
 
     test 'puzzle 3' do
       subject = Puzzle.find(3)
       assert_equal 3, subject.id
+      assert_square_of_size(subject, 4)
+      assert_has_fixed_lines(subject, [[0,1],[0,2]], [[1,2],[2,2]], [[2,1],[2,2]])
+    end
+
+    test 'puzzle 4' do
+      subject = Puzzle.find(4)
+      assert_equal 4, subject.id
       assert_square_of_size(subject, 5)
     end
 
@@ -181,6 +182,16 @@ module Monorail
             assert_equal 1, dot.lines.select { |line| line.dot2 == below }.length
           end
         end
+      end
+    end
+
+    def assert_has_fixed_lines(puzzle, *lines)
+      assert_equal lines.length, puzzle.lines.select(&:fixed?).length
+      lines.each do |dot1, dot2|
+        line = puzzle.lines.select do |line|
+          line.dot1.row == dot1[0] && line.dot1.col == dot1[1] && line.dot2.row == dot2[0] && line.dot2.col == dot2[1]
+        end.first
+        assert line.fixed?, "Line #{dot1},#{dot2} should be fixed."
       end
     end
   end
