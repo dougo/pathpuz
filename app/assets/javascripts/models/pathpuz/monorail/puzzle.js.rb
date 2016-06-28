@@ -85,7 +85,7 @@ module Monorail
 
     class Adapter < Vienna::Adapter
       def find(record, id, &block)
-        if id <= 3
+        if id <= 4
           attrs = puzzles[id]
         else
           attrs = record.class.json_for_size(id+1)
@@ -178,6 +178,49 @@ module Monorail
                    {dot1: {row: 3, col: 0}, dot2: {row: 3, col: 1}},
                    {dot1: {row: 3, col: 1}, dot2: {row: 3, col: 2}},
                    {dot1: {row: 3, col: 2}, dot2: {row: 3, col: 3}}
+                  ]
+         },
+         {
+           id: 4,
+           lines: [
+                   {dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
+                   {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
+                   {dot1: {row: 0, col: 1}, dot2: {row: 0, col: 2}},
+                   {dot1: {row: 0, col: 1}, dot2: {row: 1, col: 1}},
+                   {dot1: {row: 0, col: 2}, dot2: {row: 0, col: 3}},
+                   {dot1: {row: 0, col: 2}, dot2: {row: 1, col: 2}},
+                   {dot1: {row: 0, col: 3}, dot2: {row: 0, col: 4}},
+                   {dot1: {row: 0, col: 3}, dot2: {row: 1, col: 3}},
+                   {dot1: {row: 0, col: 4}, dot2: {row: 1, col: 4}},
+                   {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}},
+                   {dot1: {row: 1, col: 0}, dot2: {row: 2, col: 0}},
+                   {dot1: {row: 1, col: 1}, dot2: {row: 1, col: 2}},
+                   {dot1: {row: 1, col: 1}, dot2: {row: 2, col: 1}},
+                   {dot1: {row: 1, col: 2}, dot2: {row: 1, col: 3}, state: :fixed},
+                   {dot1: {row: 1, col: 2}, dot2: {row: 2, col: 2}},
+                   {dot1: {row: 1, col: 3}, dot2: {row: 1, col: 4}},
+                   {dot1: {row: 1, col: 3}, dot2: {row: 2, col: 3}},
+                   {dot1: {row: 1, col: 4}, dot2: {row: 2, col: 4}},
+                   {dot1: {row: 2, col: 0}, dot2: {row: 2, col: 1}, state: :fixed},
+                   {dot1: {row: 2, col: 0}, dot2: {row: 3, col: 0}},
+                   {dot1: {row: 2, col: 1}, dot2: {row: 2, col: 2}, state: :fixed},
+                   {dot1: {row: 2, col: 1}, dot2: {row: 3, col: 1}},
+                   {dot1: {row: 2, col: 2}, dot2: {row: 2, col: 3}},
+                   {dot1: {row: 2, col: 2}, dot2: {row: 3, col: 2}},
+                   {dot1: {row: 2, col: 3}, dot2: {row: 2, col: 4}},
+                   {dot1: {row: 2, col: 3}, dot2: {row: 3, col: 3}},
+                   {dot1: {row: 2, col: 4}, dot2: {row: 3, col: 4}},
+                   {dot1: {row: 3, col: 0}, dot2: {row: 3, col: 1}},
+                   {dot1: {row: 3, col: 0}, dot2: {row: 4, col: 0}},
+                   {dot1: {row: 3, col: 1}, dot2: {row: 3, col: 2}},
+                   {dot1: {row: 3, col: 1}, dot2: {row: 4, col: 1}},
+                   {dot1: {row: 3, col: 2}, dot2: {row: 3, col: 3}},
+                   {dot1: {row: 3, col: 2}, dot2: {row: 4, col: 2}},
+                   {dot1: {row: 3, col: 3}, dot2: {row: 3, col: 4}},
+                   {dot1: {row: 3, col: 3}, dot2: {row: 4, col: 3}},
+                   {dot1: {row: 4, col: 0}, dot2: {row: 4, col: 1}},
+                   {dot1: {row: 4, col: 1}, dot2: {row: 4, col: 2}},
+                   {dot1: {row: 4, col: 2}, dot2: {row: 4, col: 3}}
                   ]
          }
         ]
