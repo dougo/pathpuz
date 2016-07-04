@@ -1,6 +1,4 @@
-# TODO: this require causes a warning, but removing it causes an error...
 require 'jquery'
-
 require 'opal-jquery'
 require 'opal-haml'
 
@@ -10,3 +8,6 @@ class Minitest::Test
   # Add the 'test' DSL.
   extend ActiveSupport::Testing::Declarative
 end
+
+# TODO: get this from the environment? I don't know why Opal doesn't set this...
+Encoding.default_external = 'UTF-8'
