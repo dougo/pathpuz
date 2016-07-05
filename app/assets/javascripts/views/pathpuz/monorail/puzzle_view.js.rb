@@ -2,10 +2,13 @@ require 'vienna'
 
 module Monorail
   class PuzzleView < Vienna::View
-    attr_accessor :model, :svg
+    attr_accessor :model, :router, :svg
 
     def initialize(model)
       self.model = model
+      self.router = Vienna::Router.new
+      router.route(':id') { |params| self.model_id = params[:id].to_i }
+      router.route('/') { self.model_id = 0 }
     end
 
     def render
@@ -20,13 +23,19 @@ module Monorail
     end
 
     on :click, :button do
-      self.model = Puzzle.find(model.id + 1)
+      router.navigate(model.id + 1)
     end
 
     def model=(model)
       prev_model = self.model
       @model = model
       render if prev_model
+    end
+
+    private
+
+    def model_id=(id)
+      self.model = Puzzle.find(id)
     end
   end
 end

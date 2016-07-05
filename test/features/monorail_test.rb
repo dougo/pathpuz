@@ -33,6 +33,14 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_empty black_lines
   end
 
+  test 'back button' do
+    next_puzzle!
+    # TODO: this causes a Capybara::Poltergeist::TimeoutError
+    # page.go_back
+    page.execute_script("history.back()")
+    assert_equal 4, dots.length
+  end
+
   test 'solve the 3x3 puzzle' do
     next_puzzle!
     click_line([0,0], [0,1])

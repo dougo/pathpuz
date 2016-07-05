@@ -1,4 +1,3 @@
-require 'turbolinks'
 require 'haml-rails'
 require 'opal-rails'
 require 'opal-haml'

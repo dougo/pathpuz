@@ -13,7 +13,6 @@
 require 'opal'
 require 'opal_ujs'
 require 'opal-haml'
-require 'turbolinks'
 require_tree '../models'
 require_tree '../views'
 require_tree '.'
