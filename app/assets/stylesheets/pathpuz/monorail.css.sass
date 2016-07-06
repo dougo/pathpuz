@@ -2,10 +2,18 @@ body
   text-align: center
   background: white
 
-.solved
-  fill: green
-  font-family: Verdana, sans-serif
-  font-weight: bold
+.solved line.present
+  animation: solved 1s infinite
+
+@keyframes solved
+  0%,100%
+    stroke: red
+  25%
+    stroke: yellow
+  50%
+    stroke: green
+  75%
+    stroke: blue
 
 svg
   height: 50vh

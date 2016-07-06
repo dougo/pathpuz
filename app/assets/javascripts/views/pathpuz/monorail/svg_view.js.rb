@@ -9,6 +9,7 @@ module Monorail
 
     def initialize(model)
       self.model = model
+      model.on(:solved) { render }
     end
 
     def create_element
@@ -35,6 +36,8 @@ module Monorail
       end
 
       element.append(solved.render.element)
+
+      element.add_class(:solved) if model.solved?
 
       self
     end

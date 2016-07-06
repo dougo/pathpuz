@@ -87,17 +87,25 @@ module Monorail
       assert_nil view.x_element
     end
 
-    test 'render gets line_element stroke from model' do
+    test 'render gets class and line_element stroke from model' do
       el = view.line_element
       assert_equal view, view.render
+      refute el.has_class? :present
       refute el.has_attribute? :stroke
 
       model.state = :present
       view.render
+      assert el.has_class? :present
       assert_equal :black, el[:stroke]
+
+      model.state = :absent
+      view.render
+      refute el.has_class? :present
+      refute el.has_attribute? :stroke
 
       model.state = :fixed
       view.render
+      assert el.has_class? :present
       assert_equal :gray, el[:stroke]
     end
 
@@ -144,4 +152,3 @@ module Monorail
     end
   end
 end
-

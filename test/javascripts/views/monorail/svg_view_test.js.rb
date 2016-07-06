@@ -68,5 +68,19 @@ module Monorail
       view.render
       assert_equal 'gray', view.element.find(:line).first[:stroke]
     end
+
+    test 'render a solved model' do
+      model.lines.each { |line| line.state = :present }
+      view = SVGView.new(model).render
+      assert view.element.has_class? :solved
+      assert_equal 1, view.element.find('rect[fill="transparent"]').length
+    end
+
+    test 're-render when solved' do
+      refute view.element.has_class? :solved
+      model.lines.each { |line| line.state = :present }
+      assert view.element.has_class? :solved
+      assert_equal 1, el.find('rect[fill="transparent"]').length
+    end
   end
 end

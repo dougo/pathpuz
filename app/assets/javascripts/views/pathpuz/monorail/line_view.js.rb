@@ -25,6 +25,11 @@ module Monorail
 
     def render
       element
+      if model.present?
+        line_element.add_class(:present)
+      else
+        line_element.remove_class(:present)
+      end
       line_element[:stroke] = line_stroke
       if x_element
         x_element[:stroke] = x_stroke

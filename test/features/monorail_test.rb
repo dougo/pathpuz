@@ -11,17 +11,17 @@ class MonorailTest < Capybara::Rails::TestCase
   test 'solve the trivial puzzle' do
     assert_equal 4, dots.length
     assert_equal 4, lines_to_click.length
-    refute_text page, 'SOLVED'
+    refute_solved
     lines_to_click.each &:click
     assert_equal 4, black_lines.length
-    assert_text page, 'SOLVED'
+    assert_solved
   end
 
   test 'solve the trivial puzzle by clicking on dots' do
     click_dot(0, 0)
     click_dot(1, 1)
     assert_equal 4, black_lines.length
-    assert_text page, 'SOLVED'
+    assert_solved
   end
 
   test 'skip to the next puzzle' do
@@ -50,10 +50,10 @@ class MonorailTest < Capybara::Rails::TestCase
     click_line([1,1], [2,1])
     click_line([2,0], [2,1])
     click_line([1,0], [2,0])
-    refute_text page, 'SOLVED'
+    refute_solved
     click_line([0,0], [1,0])
     assert_equal 8, black_lines.length
-    assert_text page, 'SOLVED'
+    assert_solved
   end
 
   test 'solve the 3x3 puzzle by clicking on dots' do
@@ -62,10 +62,10 @@ class MonorailTest < Capybara::Rails::TestCase
     click_dot(0, 2)
     click_dot(1, 2)
     click_dot(2, 0)
-    refute_text page, 'SOLVED'
+    refute_solved
     click_dot(2, 1)
     assert_equal 8, black_lines.length
-    assert_text page, 'SOLVED'
+    assert_solved
   end
 
   test 'solve the harder 4x4 puzzle' do
@@ -104,16 +104,24 @@ class MonorailTest < Capybara::Rails::TestCase
 
     assert_equal 6, red_exes.length
     assert_equal 11, black_lines.length
-    refute_text page, 'SOLVED'
+    refute_solved
 
     # If lines [1,0],[2,0] and [1,1],[2,1] were present, there would be two separate loops,
     # so [1,0],[1,1] and [2,0],[2,1] must be present.
     click_line([1,0], [1,1])
     click_line([2,0], [2,1])
-    assert_text page, 'SOLVED'
+    assert_solved
   end
 
   private
+
+  def assert_solved
+    assert_selector '.solved'
+  end
+
+  def refute_solved
+    refute_selector '.solved'
+  end
 
   def dots
     @dots ||= all('circle')
