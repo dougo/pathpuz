@@ -22,11 +22,14 @@ module Monorail
       assert_kind_of SVGView, view.svg
       assert_equal model, view.svg.model
       assert view.element.find('svg')
-      assert_equal 'Next puzzle', el.find(:button).text
+      buttons = el.find(:button)
+      assert_equal 2, buttons.length
+      assert_equal 'Hint', buttons.first.text
+      assert_equal 'Next puzzle', buttons.last.text
     end
 
     test 'new puzzle on button click' do
-      el.find(:button).trigger(:click)
+      next_button.trigger(:click)
       view.router.update # TODO: shouldn't the hashchange event do this?
       refute_equal model, view.model
       assert_equal 10, view.model.lines.length
@@ -34,7 +37,7 @@ module Monorail
     end
 
     test 'return to old puzzle on back button' do
-      el.find(:button).trigger(:click)
+      next_button.trigger(:click)
       view.router.update
       # `history.back()` # TODO: why doesn't this work?
       $global.location.hash = ''
@@ -46,6 +49,24 @@ module Monorail
       svg = view.svg
       view.model = Puzzle.find(1)
       refute_equal svg, view.svg
+    end
+
+    test 'hint button completes a dot' do
+      hint_button.trigger(:click)
+      assert_equal 2, model.dots.first.present_lines.length
+
+      model.lines.each { |l| l.state = :present }
+      hint_button.trigger(:click) # does nothing, but test that it doesn't raise an error
+    end
+
+    private
+
+    def hint_button
+      el.find('button:contains("Hint")')
+    end
+
+    def next_button
+      el.find('button:contains("Next puzzle")')
     end
   end
 end

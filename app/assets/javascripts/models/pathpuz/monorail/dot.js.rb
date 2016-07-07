@@ -11,20 +11,32 @@ module Monorail
       @lines = []
     end
 
+    def unknown_lines
+      lines.select(&:unknown?)
+    end
+
     def present_lines
       lines.select(&:present?)
     end
 
-    # Since each dot must have exactly two lines present, sometimes we can mark the remaining unknown lines.
-    def complete!
-      unknown = lines.select(&:unknown?)
+    # Since each dot must have exactly two lines present, sometimes we know how to mark the remaining unknown lines.
+    def completable?
+      unknown = unknown_lines
+      return false if unknown.empty?
       present = present_lines
       if present.length == 2
-        # The route is already determined for this dot; mark the other lines as absent.
-        unknown.each { |l| l.state = :absent }
+        # The route is already determined for this dot; the other lines must be absent.
+        :absent
       elsif unknown.length + present.length <= 2
-        # There's at most 2 possible lines remaining; mark them as present.
-        unknown.each { |l| l.state = :present }
+        # There's at most 2 possible lines remaining; they must be present.
+        :present
+      end
+    end
+
+    def complete!
+      state = completable?
+      if state
+        unknown_lines.each { |l| l.state = state }
       end
     end
   end

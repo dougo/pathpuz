@@ -68,6 +68,13 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_solved
   end
 
+  test 'solve the easier 4x4 puzzle using only hints' do
+    next_puzzle!
+    next_puzzle!
+    15.times { click_on 'Hint' }
+    assert_solved
+  end
+
   test 'solve the harder 4x4 puzzle' do
     next_puzzle!
     next_puzzle!

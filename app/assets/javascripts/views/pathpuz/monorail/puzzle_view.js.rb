@@ -14,16 +14,25 @@ module Monorail
     def render
       instructions = Element.new(:p).text('Build a monorail loop that visits every dot.')
       self.svg = SVGView.new(model)
-      next_button = Element.new(:div).append(Element.new(:button).text('Next puzzle'))
+      buttons = Element.new(:div)
+
+      hint_button = Element.new(:button).text('Hint')
+      hint_button.on(:click) do
+        dot = model.find_completable_dot
+        dot.complete! if dot
+      end
+
+      next_button = Element.new(:button).text('Next puzzle')
+      next_button.on(:click) do
+        router.navigate(model.id + 1)
+      end
+
+      buttons.append(hint_button).append(next_button)
 
       element.empty
       element.append(instructions)
       element.append(svg.render.element)
-      element.append(next_button)
-    end
-
-    on :click, :button do
-      router.navigate(model.id + 1)
+      element.append(buttons)
     end
 
     def model=(model)

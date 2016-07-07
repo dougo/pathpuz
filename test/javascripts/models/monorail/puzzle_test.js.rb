@@ -143,6 +143,23 @@ module Monorail
       assert subject.solved?
     end
 
+    test 'find_completable_dot' do
+      subject = Puzzle.of_size(3)
+      dot = subject.find_completable_dot
+      assert_equal [0, 0], [dot.row, dot.col]
+      assert_equal :present, dot.completable?
+
+      dot.complete!
+      line = subject.lines.find { |l| l.dot1.row == 0 && l.dot1.col == 1 && l.dot2.row == 0 && l.dot2.col == 2 }
+      line.state = :present
+      dot = subject.find_completable_dot
+      assert_equal [0, 1], [dot.row, dot.col]
+      assert_equal :absent, dot.completable?
+      
+      subject.lines.each { |l| l.state = :present }
+      assert_nil subject.find_completable_dot
+    end
+
     private
 
     def assert_square_of_size(puzzle, size)
