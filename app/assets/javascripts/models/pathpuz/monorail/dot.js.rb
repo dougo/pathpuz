@@ -36,7 +36,9 @@ module Monorail
     def complete!
       state = completable?
       if state
-        unknown_lines.each { |l| l.state = state }
+        lines = unknown_lines
+        lines.each { |l| l.state = state }
+        trigger(:completed, state, *lines)
       end
     end
   end

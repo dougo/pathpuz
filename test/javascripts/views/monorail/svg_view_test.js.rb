@@ -79,6 +79,7 @@ module Monorail
     test 're-render when solved' do
       refute view.element.has_class? :solved
       model.lines.each { |line| line.state = :present }
+      model.trigger(:solved)
       assert view.element.has_class? :solved
       assert_equal 1, el.find('rect[fill="transparent"]').length
     end

@@ -52,11 +52,33 @@ module Monorail
     end
 
     test 'hint button completes a dot' do
+      model = view.model = Puzzle.of_size(2)
       hint_button.trigger(:click)
       assert_equal 2, model.dots.first.present_lines.length
 
       model.lines.each { |l| l.state = :present }
       hint_button.trigger(:click) # does nothing, but test that it doesn't raise an error
+    end
+
+    test 'auto-hint checkbox' do
+      autohint = el.find('div.autohint')
+      assert_equal 1, autohint.length
+      label = autohint.find('label')
+      assert_equal 1, label.length
+      assert_equal 'Auto-hint', label.text
+      checkbox = label.find('input:checkbox')
+      assert_equal 1, checkbox.length
+    end
+
+    test 'auto-hint behavior' do
+      events = []
+      model = Puzzle.of_size(2)
+      model.on(:lines_changed) { |*args| events << args }
+      view.model = model
+      autohint = el.find('.autohint input:checkbox')
+      autohint.prop(:checked, true)
+      model.trigger(:lines_changed) # TODO: this shouldn't be needed
+      assert_equal [[], model.dots.first.lines, [model.lines[2]], [model.lines[3]]], events
     end
 
     private

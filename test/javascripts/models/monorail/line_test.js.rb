@@ -53,5 +53,29 @@ module Monorail
       assert_equal dot2, subject.other_dot(dot1)
       assert_equal dot1, subject.other_dot(dot2)
     end
+
+    test 'next_state' do
+      assert_equal :present, Line.new.next_state
+      assert_equal :absent, Line.new(state: :present).next_state
+      assert_nil Line.new(state: :absent).next_state
+    end
+
+    test 'next_state!' do
+      subject = Line.new
+      subject.next_state!
+      assert subject.present?
+      subject.next_state!
+      assert subject.absent?
+      subject.next_state!
+      assert subject.unknown?
+    end
+
+    test 'next_state event' do
+      subject = Line.new
+      triggered = false
+      subject.on(:next_state) { triggered = true }
+      subject.next_state!
+      assert triggered
+    end
   end
 end

@@ -121,16 +121,11 @@ module Monorail
 
     test 'update the model when clickable element is clicked' do
       el = view.clickable_element
-      assert_nil model.state
-
+      event = false
+      model.on(:next_state) { event = true }
       el.trigger(:click)
-      assert_equal :present, model.state
-
-      el.trigger(:click)
-      assert_equal :absent, model.state
-
-      el.trigger(:click)
-      assert_nil model.state
+      assert model.present?
+      assert event
     end
 
     test 'render when the model presence changes' do

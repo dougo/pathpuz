@@ -24,17 +24,29 @@ module Monorail
       { lines: lines }
     end
 
+    def initialize(*args)
+      super
+      on(:lines_changed) do
+        trigger(:solved) if solved?
+      end
+    end
+
     def lines=(lines)
       dots = lines.map { |l| l[:dot1] } + lines.map { |l| l[:dot2] }
       @dots = dots.uniq.map { |dot| [dot, Dot.new(dot)] }.to_h
+      @dots.values.each do |dot|
+        dot.on(:completed) do |state, *lines|
+          trigger(:lines_changed, *lines)
+        end
+      end
 
       @lines = lines.map do |line|
         Line.new(dot1: @dots[line[:dot1]], dot2: @dots[line[:dot2]], state: line[:state])
       end
 
       @lines.each do |line|
-        line.add_observer(:state) do
-          trigger(:solved) if solved?
+        line.on(:next_state) do
+          trigger(:lines_changed, line)
         end
       end
 

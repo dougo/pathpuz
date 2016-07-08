@@ -91,6 +91,19 @@ module Monorail
       assert subject.lines[2].present?
     end
 
+    test 'completed event' do
+      subject.lines << Line.new << Line.new
+      completed_args = nil
+      subject.on(:completed) { |*args| completed_args = args }
+      subject.complete!
+      assert_equal [:present, *subject.lines], completed_args
+    end
+
+    test 'no completed event if not completable' do
+      subject.on(:completed) { flunk }
+      subject.complete!
+    end
+
     private
 
     def subject

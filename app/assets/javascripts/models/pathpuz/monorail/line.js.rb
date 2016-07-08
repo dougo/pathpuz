@@ -32,5 +32,19 @@ module Monorail
     def other_dot(dot)
       dot == dot1 ? dot2 : dot1
     end
+
+    def next_state
+      case state
+      when nil
+        :present
+      when :present
+        :absent
+      end
+    end
+
+    def next_state!
+      self.state = next_state
+      trigger(:next_state)
+    end
   end
 end

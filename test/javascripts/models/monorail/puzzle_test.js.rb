@@ -6,7 +6,7 @@ module Monorail
       assert_equal %i(lines), Puzzle.columns
     end
 
-    test 'lines= creates models and adds observers' do
+    test 'lines= creates models' do
       subject = Puzzle.new
       subject.lines = [{dot1: {row: 0, col: 0}, dot2: {row: 0, col: 1}},
                        {dot1: {row: 0, col: 0}, dot2: {row: 1, col: 0}},
@@ -14,13 +14,6 @@ module Monorail
                        {dot1: {row: 1, col: 0}, dot2: {row: 1, col: 1}}]
       assert_square_of_size(subject, 2)
       assert subject.lines[2].present?
-
-      event = false
-      subject.on(:solved) { event = true }
-      subject.lines[0].state = :present
-      subject.lines[1].state = :present
-      subject.lines[3].state = :present
-      assert event
     end
 
     test 'find uses identity map' do
@@ -116,14 +109,10 @@ module Monorail
 
     test 'solved?' do
       subject = Puzzle.of_size(2)
-      event = nil
-      subject.on(:solved) { event = true }
       (0..2).each { |i| subject.lines[i].state = :present }
       refute subject.solved?
-      refute event
       subject.lines[3].state = :present
       assert subject.solved?
-      assert event
     end
 
     test 'solved? for 2x3' do
@@ -143,6 +132,15 @@ module Monorail
       assert subject.solved?
     end
 
+    test 'solved event' do
+      subject = Puzzle.of_size(2)
+      subject.lines.each { |l| l.state = :present }
+      event = nil
+      subject.on(:solved) { event = true }
+      subject.trigger(:lines_changed)
+      assert event
+    end
+
     test 'find_completable_dot' do
       subject = Puzzle.of_size(3)
       dot = subject.find_completable_dot
@@ -158,6 +156,24 @@ module Monorail
       
       subject.lines.each { |l| l.state = :present }
       assert_nil subject.find_completable_dot
+    end
+
+    test 'lines_changed event when line goes to next state' do
+      subject = Puzzle.of_size(2)
+      lines_changed = nil
+      subject.on(:lines_changed) { |*lines| lines_changed = lines }
+      line = subject.lines.first
+      line.next_state!
+      assert_equal [line], lines_changed
+    end
+
+    test 'lines_changed event when dot completed' do
+      subject = Puzzle.of_size(2)
+      lines_changed = nil
+      subject.on(:lines_changed) { |*lines| lines_changed = lines }
+      dot = subject.dots.first
+      dot.complete!
+      assert_equal dot.lines, lines_changed
     end
 
     private

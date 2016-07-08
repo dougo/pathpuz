@@ -38,12 +38,7 @@ module Monorail
     end
 
     on :click, '[cursor=pointer]' do |evt|
-      model.state = case model.state
-                    when nil
-                      :present
-                    when :present
-                      :absent
-                    end
+      model.next_state!
     end
 
     on :selectstart, &:kill # don't select text on double or triple click!

@@ -120,6 +120,14 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_solved
   end
 
+  test 'solve the 5x5 puzzle with auto-hint' do
+    4.times { next_puzzle! }
+    check 'Auto-hint'
+    click_line([1,1], [1,2])
+    click_line([1,3], [2,3])
+    assert_solved
+  end
+
   private
 
   def assert_solved
