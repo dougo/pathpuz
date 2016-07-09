@@ -10,8 +10,12 @@ module Monorail
       model.add_observer(:puzzle) do |puzzle|
         # TODO: move to Application#next_puzzle!
         # TODO: remove old handler from previous puzzle?
-        puzzle.on(:lines_changed) { puzzle.hint! if autohint? }
+        puzzle.on(:lines_changed) { puzzle.hint! if model.autohint }
         render
+      end
+
+      model.add_observer(:autohint) do |autohint|
+        @autohint_checkbox.prop('checked', autohint)
       end
     end
 
@@ -19,7 +23,10 @@ module Monorail
       instructions = Element.new(:p).text('Build a monorail loop that visits every dot.')
       self.puzzle = PuzzleView.new(model.puzzle)
 
-      @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox')
+      @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox').prop('checked', model.autohint)
+      @autohint_checkbox.on(:change) do
+        model.autohint = @autohint_checkbox.is(':checked')
+      end
       autohint_label = Element.new(:label).text('Auto-hint').prepend(@autohint_checkbox)
       autohint = Element.new(:div).append(autohint_label)
       autohint.class_name = :autohint
@@ -42,12 +49,8 @@ module Monorail
       element.append(puzzle.render.element)
       element.append(autohint)
       element.append(buttons)
-    end
 
-    private
-
-    def autohint?
-      @autohint_checkbox.prop(:checked)
+      self
     end
   end
 end

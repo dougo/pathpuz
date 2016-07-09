@@ -15,6 +15,8 @@ module Monorail
       assert_kind_of Vienna::Router, subject.router
       assert_kind_of Puzzle, subject.puzzle
       assert_equal 0, subject.puzzle.id
+      assert_equal false, subject.autohint
+      assert_equal true, Application.new(autohint: true).autohint
     end
   end
 end

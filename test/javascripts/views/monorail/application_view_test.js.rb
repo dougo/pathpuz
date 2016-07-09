@@ -70,18 +70,51 @@ module Monorail
       assert_equal 1, checkbox.length
     end
 
+    test 'auto-hint checkbox changes the model' do
+      autohint_on!
+      assert model.autohint
+      autohint_off!
+      refute model.autohint
+    end
+
+    test 'auto-hint checkbox reflects the model state' do
+      refute autohint_checkbox.is(':checked')
+      view = ApplicationView.new(Application.new(autohint: true)).render
+      self.el = view.element
+      assert autohint_checkbox.is(':checked')
+    end
+
+    test 'auto-hint checkbox is updated when the model changes' do
+      model.autohint = true
+      assert autohint_checkbox.is(':checked')
+      model.autohint = false
+      refute autohint_checkbox.is(':checked')
+    end
+
+    # TODO: move to ApplicationTest
     test 'auto-hint behavior' do
       events = []
       puzzle = Puzzle.of_size(2)
       puzzle.on(:lines_changed) { |*args| events << args }
       model.puzzle = puzzle
-      autohint = el.find('.autohint input:checkbox')
-      autohint.prop(:checked, true)
+      autohint_on!
       puzzle.trigger(:lines_changed) # TODO: this shouldn't be needed
       assert_equal [[], puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
     end
 
     private
+
+    def autohint_checkbox
+      el.find('.autohint input:checkbox')
+    end
+
+    def autohint_on!
+      autohint_checkbox.prop(:checked, true).trigger(:change)
+    end
+
+    def autohint_off!
+      autohint_checkbox.prop(:checked, false).trigger(:change)
+    end
 
     def hint_button
       el.find('button:contains("Hint")')
