@@ -1,8 +1,11 @@
 require 'opal-jquery'
 
-Document.ready? do
+def welcome
+  return unless root = Element.id(:puzzle)
   model = Monorail::Application.new
   view = Monorail::ApplicationView.new(model)
-  Element['#puzzle'] << view.element
+  root << view.element
   view.render
 end
+
+Document.ready? &:welcome
