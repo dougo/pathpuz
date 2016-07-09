@@ -5,90 +5,83 @@ module Monorail
     attr_accessor :model, :view, :el
 
     def setup
-      $global.location.hash = ''
-      self.model = Puzzle.find(0)
+      self.model = Puzzle.of_size(2)
       self.view = PuzzleView.new(model)
-      view.render
       self.el = view.element
     end
 
     test 'initialize' do
       assert_equal model, view.model
-      assert_kind_of Vienna::Router, view.router
+    end
+
+    test 'element is svg' do
+      assert_equal :svg, el.tag_name
+      assert_equal SVGElement::NS, `#{el}[0].namespaceURI`
+      assert_equal SVGElement::NS, el[:xmlns]
+      assert_equal '-1 -1 3 3', `#{el}[0].getAttribute('viewBox')`
+    end
+
+    test 'viewBox depends on puzzle size' do
+      model = Puzzle.of_size(3)
+      el = PuzzleView.new(model).element
+      assert_equal '-1 -1 4 4', `#{el}[0].getAttribute('viewBox')`
+
+      json = Puzzle.json_for_size(3)
+      json[:lines] << { dot1: { row: 2, col: 1 }, dot2: { row: 3, col: 1 } }
+      model = Puzzle.new(json)
+      el = PuzzleView.new(model).element
+      assert_equal '-1 -1 4 5', `#{el}[0].getAttribute('viewBox')`
     end
 
     test 'render' do
-      assert_equal 'Build a monorail loop that visits every dot.', el.find(:p).first.text
-      assert_kind_of SVGView, view.svg
-      assert_equal model, view.svg.model
-      assert view.element.find('svg')
-      buttons = el.find(:button)
-      assert_equal 2, buttons.length
-      assert_equal 'Hint', buttons.first.text
-      assert_equal 'Next puzzle', buttons.last.text
+      assert_equal view, view.render
+      assert_kind_of SolvedView, view.solved
+      assert_equal model, view.solved.model
+      assert view.element.find('.solved')
     end
 
-    test 'new puzzle on button click' do
-      next_button.trigger(:click)
-      view.router.update # TODO: shouldn't the hashchange event do this?
-      refute_equal model, view.model
-      assert_equal 10, view.model.lines.length
-      assert_equal "##{view.model.id}", $global.location.hash
+    test 'has one DotView per Dot in puzzle' do
+      view.render
+      dot_views = view.dots
+      assert_equal model.dots.length, dot_views.length
+      dot_views.each do |dot_view|
+        assert_kind_of DotView, dot_view
+        dot = dot_view.model
+        assert_equal model.dot(dot.row, dot.col), dot
+      end
+      assert_equal dot_views.length, el.find('circle').length
     end
 
-    test 'return to old puzzle on back button' do
-      next_button.trigger(:click)
-      view.router.update
-      # `history.back()` # TODO: why doesn't this work?
-      $global.location.hash = ''
-      view.router.update
-      assert_equal model, view.model
+    test 'has one LineView per Line in puzzle' do
+      view.render
+      lines = model.lines
+      line_views = view.lines
+      lines.zip(line_views).each do |line, line_view|
+        assert_kind_of LineView, line_view
+        assert_equal line, line_view.model
+      end
+      assert_equal lines.length, el.find('line[cursor=pointer]').length
     end
 
-    test 'render when the model changes' do
-      svg = view.svg
-      view.model = Puzzle.find(1)
-      refute_equal svg, view.svg
+    test 'renders fixed lines first so that they have lower z-index' do
+      model.lines.last.state = :fixed
+      view.render
+      assert_equal 'gray', view.element.find(:line).first[:stroke]
     end
 
-    test 'hint button completes a dot' do
-      model = view.model = Puzzle.of_size(2)
-      hint_button.trigger(:click)
-      assert_equal 2, model.dots.first.present_lines.length
-
-      model.lines.each { |l| l.state = :present }
-      hint_button.trigger(:click) # does nothing, but test that it doesn't raise an error
+    test 'render a solved model' do
+      model.lines.each { |line| line.state = :present }
+      view = PuzzleView.new(model).render
+      assert view.element.has_class? :solved
+      assert_equal 1, view.element.find('rect[fill="transparent"]').length
     end
 
-    test 'auto-hint checkbox' do
-      autohint = el.find('div.autohint')
-      assert_equal 1, autohint.length
-      label = autohint.find('label')
-      assert_equal 1, label.length
-      assert_equal 'Auto-hint', label.text
-      checkbox = label.find('input:checkbox')
-      assert_equal 1, checkbox.length
-    end
-
-    test 'auto-hint behavior' do
-      events = []
-      model = Puzzle.of_size(2)
-      model.on(:lines_changed) { |*args| events << args }
-      view.model = model
-      autohint = el.find('.autohint input:checkbox')
-      autohint.prop(:checked, true)
-      model.trigger(:lines_changed) # TODO: this shouldn't be needed
-      assert_equal [[], model.dots.first.lines, [model.lines[2]], [model.lines[3]]], events
-    end
-
-    private
-
-    def hint_button
-      el.find('button:contains("Hint")')
-    end
-
-    def next_button
-      el.find('button:contains("Next puzzle")')
+    test 're-render when solved' do
+      refute view.element.has_class? :solved
+      model.lines.each { |line| line.state = :present }
+      model.trigger(:solved)
+      assert view.element.has_class? :solved
+      assert_equal 1, el.find('rect[fill="transparent"]').length
     end
   end
 end

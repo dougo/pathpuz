@@ -137,7 +137,7 @@ module Monorail
     end
 
     test 'double click does not select text' do
-      el = (SVGView.new(Puzzle.of_size(2)).render).element
+      el = (PuzzleView.new(Puzzle.of_size(2)).render).element
       # I don't know how to actually cause text to be selected, so let's just test that the selectstart event is
       # not propagated:
       selection = nil
