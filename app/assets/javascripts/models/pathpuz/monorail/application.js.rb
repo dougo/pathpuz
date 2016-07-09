@@ -19,6 +19,16 @@ module Monorail
       self.autohint ||= false
     end
 
+    def next_puzzle!
+      router.navigate(puzzle.id + 1)
+    end
+
+    def puzzle=(puzzle)
+      @puzzle = puzzle
+      # TODO: remove old handler from previous puzzle?
+      puzzle.on(:lines_changed) { puzzle.hint! if autohint }
+    end
+
     private
 
     def puzzle_id=(id)

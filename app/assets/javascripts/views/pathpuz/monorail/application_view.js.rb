@@ -8,9 +8,6 @@ module Monorail
       self.model = model
 
       model.add_observer(:puzzle) do |puzzle|
-        # TODO: move to Application#next_puzzle!
-        # TODO: remove old handler from previous puzzle?
-        puzzle.on(:lines_changed) { puzzle.hint! if model.autohint }
         render
       end
 
@@ -37,10 +34,7 @@ module Monorail
       hint_button.on(:click) { model.puzzle.hint! }
 
       next_button = Element.new(:button).text('Next puzzle')
-      next_button.on(:click) do
-        # TODO: move to Application
-        model.router.navigate(model.puzzle.id + 1)
-      end
+      next_button.on(:click) { model.next_puzzle! }
 
       buttons.append(hint_button).append(next_button)
 

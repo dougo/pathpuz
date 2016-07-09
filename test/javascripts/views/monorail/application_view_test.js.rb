@@ -32,18 +32,6 @@ module Monorail
       next_button.trigger(:click)
       model.router.update # TODO: shouldn't the hashchange event do this?
       refute_equal puzzle, model.puzzle
-      assert_equal 10, model.puzzle.lines.length
-      assert_equal "##{model.puzzle.id}", $global.location.hash
-    end
-
-    test 'return to old puzzle on back button' do
-      puzzle = model.puzzle
-      next_button.trigger(:click)
-      model.router.update
-      # `history.back()` # TODO: why doesn't this work?
-      $global.location.hash = ''
-      model.router.update
-      assert_equal puzzle, model.puzzle
     end
 
     test 'render when the model changes' do
@@ -89,17 +77,6 @@ module Monorail
       assert autohint_checkbox.is(':checked')
       model.autohint = false
       refute autohint_checkbox.is(':checked')
-    end
-
-    # TODO: move to ApplicationTest
-    test 'auto-hint behavior' do
-      events = []
-      puzzle = Puzzle.of_size(2)
-      puzzle.on(:lines_changed) { |*args| events << args }
-      model.puzzle = puzzle
-      autohint_on!
-      puzzle.trigger(:lines_changed) # TODO: this shouldn't be needed
-      assert_equal [[], puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
     end
 
     private
