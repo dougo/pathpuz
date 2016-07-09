@@ -44,8 +44,13 @@ module Monorail
       puzzle.on(:lines_changed) { |*args| events << args }
       subject.puzzle = puzzle
       subject.autohint = true
-      puzzle.trigger(:lines_changed) # TODO: this shouldn't be needed
-      assert_equal [[], puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
+      assert_equal [puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
+    end
+
+    test 'auto-hint when puzzle changes' do
+      subject = Application.new(autohint: true)
+      subject.puzzle = Puzzle.of_size(3)
+      assert_predicate subject.puzzle, :solved?
     end
   end
 end
