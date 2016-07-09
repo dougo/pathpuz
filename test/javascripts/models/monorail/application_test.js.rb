@@ -2,6 +2,10 @@ require 'models/pathpuz/monorail/application'
 
 module Monorail
   class ApplicationTest < Minitest::Test
+    def setup
+      $global.location.hash = ''
+    end
+
     test 'attributes' do
       assert_equal %i(router puzzle autohint), Application.columns
     end
@@ -19,6 +23,12 @@ module Monorail
       assert_equal true, Application.new(autohint: true).autohint
     end
 
+    test 'initialize with non-empty location hash' do
+      $global.location.hash = '#2'
+      subject = Application.new
+      assert_equal 2, subject.puzzle.id
+    end
+
     test 'next_puzzle!' do
       subject = Application.new
       subject.next_puzzle!
@@ -27,11 +37,10 @@ module Monorail
       assert_equal "#1", $global.location.hash
     end
 
-    test 'return to old puzzle on back button' do
+    test 'empty location hash goes to puzzle 0' do
       subject = Application.new
       subject.next_puzzle!
       subject.router.update
-      # `history.back()` # TODO: why doesn't this work?
       $global.location.hash = ''
       subject.router.update
       assert_equal 0, subject.puzzle.id
