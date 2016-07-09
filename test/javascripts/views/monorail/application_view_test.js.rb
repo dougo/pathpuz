@@ -6,6 +6,7 @@ module Monorail
 
     def setup
       $global.location.hash = ''
+      Puzzle.reset!
       self.model = Application.new
       self.view = ApplicationView.new(model)
       view.render
@@ -41,9 +42,8 @@ module Monorail
     end
 
     test 'hint button changes lines' do
-      puzzle = model.puzzle = Puzzle.of_size(2)
       event = false
-      puzzle.on(:lines_changed) { event = true }
+      model.puzzle.on(:lines_changed) { event = true }
       hint_button.trigger(:click)
       assert event
     end

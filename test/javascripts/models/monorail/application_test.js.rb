@@ -4,6 +4,7 @@ module Monorail
   class ApplicationTest < Minitest::Test
     def setup
       $global.location.hash = ''
+      Puzzle.reset!
     end
 
     test 'attributes' do
@@ -47,18 +48,16 @@ module Monorail
     end
 
     test 'auto-hint behavior' do
-      subject = Application.new
       events = []
-      puzzle = Puzzle.of_size(2) # don't use Puzzle.find(0) because modifying it will mess up other tests
+      puzzle = Puzzle.find(0)
       puzzle.on(:lines_changed) { |*args| events << args }
-      subject.puzzle = puzzle
-      subject.autohint = true
+      subject = Application.new(autohint: true)
       assert_equal [puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
     end
 
     test 'auto-hint when puzzle changes' do
       subject = Application.new(autohint: true)
-      subject.puzzle = Puzzle.of_size(3)
+      subject.next_puzzle!
       assert_predicate subject.puzzle, :solved?
     end
   end
