@@ -158,6 +158,15 @@ module Monorail
       assert_nil subject.find_completable_dot
     end
 
+    test 'hint! completes a dot' do
+      subject = Puzzle.of_size(2)
+      subject.hint!
+      assert_equal 2, subject.dots.first.present_lines.length
+
+      subject.lines.each { |l| l.state = :present }
+      subject.hint! # does nothing, but test that it doesn't raise an error
+    end
+
     test 'lines_changed event when line goes to next state' do
       subject = Puzzle.of_size(2)
       lines_changed = nil

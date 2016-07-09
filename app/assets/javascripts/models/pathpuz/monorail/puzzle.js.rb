@@ -99,6 +99,11 @@ module Monorail
       dots.find &:completable?
     end
 
+    def hint!
+      dot = find_completable_dot
+      dot.complete! if dot
+    end
+
     class Adapter < Vienna::Adapter
       def find(record, id, &block)
         if id <= 4

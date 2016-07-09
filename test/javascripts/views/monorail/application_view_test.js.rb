@@ -53,13 +53,12 @@ module Monorail
       refute_equal puzzle_view, view.puzzle
     end
 
-    test 'hint button completes a dot' do
+    test 'hint button changes lines' do
       puzzle = model.puzzle = Puzzle.of_size(2)
+      event = false
+      puzzle.on(:lines_changed) { event = true }
       hint_button.trigger(:click)
-      assert_equal 2, puzzle.dots.first.present_lines.length
-
-      puzzle.lines.each { |l| l.state = :present }
-      hint_button.trigger(:click) # does nothing, but test that it doesn't raise an error
+      assert event
     end
 
     test 'auto-hint checkbox' do

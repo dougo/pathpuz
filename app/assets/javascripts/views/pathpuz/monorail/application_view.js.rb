@@ -8,8 +8,9 @@ module Monorail
       self.model = model
 
       model.add_observer(:puzzle) do |puzzle|
+        # TODO: move to Application#next_puzzle!
         # TODO: remove old handler from previous puzzle?
-        puzzle.on(:lines_changed) { hint! if autohint? }
+        puzzle.on(:lines_changed) { puzzle.hint! if autohint? }
         render
       end
 
@@ -31,10 +32,11 @@ module Monorail
       buttons = Element.new(:div)
 
       hint_button = Element.new(:button).text('Hint')
-      hint_button.on(:click) { hint! }
+      hint_button.on(:click) { model.puzzle.hint! }
 
       next_button = Element.new(:button).text('Next puzzle')
       next_button.on(:click) do
+        # TODO: move to Application
         router.navigate(model.puzzle.id + 1)
       end
 
@@ -56,12 +58,6 @@ module Monorail
 
     def autohint?
       @autohint_checkbox.prop(:checked)
-    end
-
-    # TODO: move to Puzzle
-    def hint!
-      dot = model.puzzle.find_completable_dot
-      dot.complete! if dot
     end
   end
 end
