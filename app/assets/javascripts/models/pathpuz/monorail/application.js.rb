@@ -22,9 +22,9 @@ module Monorail
     end
 
     def puzzle=(puzzle)
+      @puzzle.off(:lines_changed, @handler) if @handler
       @puzzle = puzzle
-      # TODO: remove old handler from previous puzzle?
-      puzzle.on(:lines_changed) { autohint! }
+      @handler = puzzle.on(:lines_changed) { autohint! }
       autohint!
     end
 
