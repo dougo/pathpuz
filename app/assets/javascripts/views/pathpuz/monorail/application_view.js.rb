@@ -6,6 +6,14 @@ module Monorail
 
     def initialize(model)
       self.model = model
+
+      model.add_observer(:puzzle) do |puzzle|
+        # TODO: remove old handler from previous puzzle?
+        puzzle.on(:lines_changed) { hint! if autohint? }
+        render
+      end
+
+      # TODO: move this to Application
       self.router = Vienna::Router.new
       router.route(':id') { |params| self.model_id = params[:id].to_i }
       router.route('/') { self.model_id = 0 }
@@ -13,7 +21,7 @@ module Monorail
 
     def render
       instructions = Element.new(:p).text('Build a monorail loop that visits every dot.')
-      self.puzzle = PuzzleView.new(model)
+      self.puzzle = PuzzleView.new(model.puzzle)
 
       @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox')
       autohint_label = Element.new(:label).text('Auto-hint').prepend(@autohint_checkbox)
@@ -27,7 +35,7 @@ module Monorail
 
       next_button = Element.new(:button).text('Next puzzle')
       next_button.on(:click) do
-        router.navigate(model.id + 1)
+        router.navigate(model.puzzle.id + 1)
       end
 
       buttons.append(hint_button).append(next_button)
@@ -39,26 +47,20 @@ module Monorail
       element.append(buttons)
     end
 
-    def model=(model)
-      prev_model = self.model
-      @model = model
-      # TODO: remove old handler from prev_model?
-      model.on(:lines_changed) { hint! if autohint? }
-      render if prev_model
-    end
-
     private
 
+    # TODO: move to Application?
     def model_id=(id)
-      self.model = Puzzle.find(id)
+      self.model.puzzle = Puzzle.find(id)
     end
 
     def autohint?
       @autohint_checkbox.prop(:checked)
     end
 
+    # TODO: move to Puzzle
     def hint!
-      dot = model.find_completable_dot
+      dot = model.puzzle.find_completable_dot
       dot.complete! if dot
     end
   end

@@ -1,7 +1,7 @@
 require 'opal-jquery'
 
 Document.ready? do
-  model = Monorail::Puzzle.find(0)
+  model = Monorail::Application.new
   view = Monorail::ApplicationView.new(model)
   Element['#puzzle'] << view.element
   view.render

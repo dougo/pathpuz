@@ -6,7 +6,7 @@ module Monorail
 
     def setup
       $global.location.hash = ''
-      self.model = Puzzle.find(0)
+      self.model = Application.new
       self.view = ApplicationView.new(model)
       view.render
       self.el = view.element
@@ -20,7 +20,7 @@ module Monorail
     test 'render' do
       assert_equal 'Build a monorail loop that visits every dot.', el.find(:p).first.text
       assert_kind_of PuzzleView, view.puzzle
-      assert_equal model, view.puzzle.model
+      assert_equal model.puzzle, view.puzzle.model
       assert view.element.find('svg')
       buttons = el.find(:button)
       assert_equal 2, buttons.length
@@ -29,34 +29,36 @@ module Monorail
     end
 
     test 'new puzzle on button click' do
+      puzzle = model.puzzle
       next_button.trigger(:click)
       view.router.update # TODO: shouldn't the hashchange event do this?
-      refute_equal model, view.model
-      assert_equal 10, view.model.lines.length
-      assert_equal "##{view.model.id}", $global.location.hash
+      refute_equal puzzle, model.puzzle
+      assert_equal 10, model.puzzle.lines.length
+      assert_equal "##{model.puzzle.id}", $global.location.hash
     end
 
     test 'return to old puzzle on back button' do
+      puzzle = model.puzzle
       next_button.trigger(:click)
       view.router.update
       # `history.back()` # TODO: why doesn't this work?
       $global.location.hash = ''
       view.router.update
-      assert_equal model, view.model
+      assert_equal puzzle, model.puzzle
     end
 
     test 'render when the model changes' do
       puzzle_view = view.puzzle
-      view.model = Puzzle.find(1)
+      model.puzzle = Puzzle.find(1)
       refute_equal puzzle_view, view.puzzle
     end
 
     test 'hint button completes a dot' do
-      model = view.model = Puzzle.of_size(2)
+      puzzle = model.puzzle = Puzzle.of_size(2)
       hint_button.trigger(:click)
-      assert_equal 2, model.dots.first.present_lines.length
+      assert_equal 2, puzzle.dots.first.present_lines.length
 
-      model.lines.each { |l| l.state = :present }
+      puzzle.lines.each { |l| l.state = :present }
       hint_button.trigger(:click) # does nothing, but test that it doesn't raise an error
     end
 
@@ -72,13 +74,13 @@ module Monorail
 
     test 'auto-hint behavior' do
       events = []
-      model = Puzzle.of_size(2)
-      model.on(:lines_changed) { |*args| events << args }
-      view.model = model
+      puzzle = Puzzle.of_size(2)
+      puzzle.on(:lines_changed) { |*args| events << args }
+      model.puzzle = puzzle
       autohint = el.find('.autohint input:checkbox')
       autohint.prop(:checked, true)
-      model.trigger(:lines_changed) # TODO: this shouldn't be needed
-      assert_equal [[], model.dots.first.lines, [model.lines[2]], [model.lines[3]]], events
+      puzzle.trigger(:lines_changed) # TODO: this shouldn't be needed
+      assert_equal [[], puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
     end
 
     private
