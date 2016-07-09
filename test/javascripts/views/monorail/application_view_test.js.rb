@@ -14,7 +14,6 @@ module Monorail
 
     test 'initialize' do
       assert_equal model, view.model
-      assert_kind_of Vienna::Router, view.router
     end
 
     test 'render' do
@@ -31,7 +30,7 @@ module Monorail
     test 'new puzzle on button click' do
       puzzle = model.puzzle
       next_button.trigger(:click)
-      view.router.update # TODO: shouldn't the hashchange event do this?
+      model.router.update # TODO: shouldn't the hashchange event do this?
       refute_equal puzzle, model.puzzle
       assert_equal 10, model.puzzle.lines.length
       assert_equal "##{model.puzzle.id}", $global.location.hash
@@ -40,10 +39,10 @@ module Monorail
     test 'return to old puzzle on back button' do
       puzzle = model.puzzle
       next_button.trigger(:click)
-      view.router.update
+      model.router.update
       # `history.back()` # TODO: why doesn't this work?
       $global.location.hash = ''
-      view.router.update
+      model.router.update
       assert_equal puzzle, model.puzzle
     end
 

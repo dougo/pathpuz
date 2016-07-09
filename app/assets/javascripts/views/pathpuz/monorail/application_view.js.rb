@@ -2,7 +2,7 @@ require 'vienna'
 
 module Monorail
   class ApplicationView < Vienna::View
-    attr_accessor :model, :router, :puzzle
+    attr_accessor :model, :puzzle
 
     def initialize(model)
       self.model = model
@@ -13,11 +13,6 @@ module Monorail
         puzzle.on(:lines_changed) { puzzle.hint! if autohint? }
         render
       end
-
-      # TODO: move this to Application
-      self.router = Vienna::Router.new
-      router.route(':id') { |params| self.model_id = params[:id].to_i }
-      router.route('/') { self.model_id = 0 }
     end
 
     def render
@@ -37,7 +32,7 @@ module Monorail
       next_button = Element.new(:button).text('Next puzzle')
       next_button.on(:click) do
         # TODO: move to Application
-        router.navigate(model.puzzle.id + 1)
+        model.router.navigate(model.puzzle.id + 1)
       end
 
       buttons.append(hint_button).append(next_button)
@@ -50,11 +45,6 @@ module Monorail
     end
 
     private
-
-    # TODO: move to Application?
-    def model_id=(id)
-      self.model.puzzle = Puzzle.find(id)
-    end
 
     def autohint?
       @autohint_checkbox.prop(:checked)
