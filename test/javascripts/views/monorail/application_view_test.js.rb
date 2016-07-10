@@ -24,7 +24,8 @@ module Monorail
       assert_equal 'Build a monorail loop that visits every dot.', el.find(:p).first.text
       assert_kind_of PuzzleView, view.puzzle
       assert_equal model.puzzle, view.puzzle.model
-      assert_equal 1, view.element.find('svg').length
+      assert_equal 1, el.find('svg').length
+      assert_equal 1, el.find('div.autohint').length
       buttons = el.find(:button)
       assert_equal ['Previous puzzle', 'Hint', 'Next puzzle'], buttons.map(&:text)
       assert buttons.first.prop('disabled')
@@ -47,50 +48,7 @@ module Monorail
       refute_equal puzzle_view, view.puzzle
     end
 
-    test 'auto-hint checkbox' do
-      autohint = el.find('div.autohint')
-      assert_equal 1, autohint.length
-      label = autohint.find('label')
-      assert_equal 1, label.length
-      assert_equal 'Auto-hint', label.text
-      checkbox = label.find('input:checkbox')
-      assert_equal 1, checkbox.length
-    end
-
-    test 'auto-hint checkbox changes the model' do
-      autohint_on!
-      assert model.autohint
-      autohint_off!
-      refute model.autohint
-    end
-
-    test 'auto-hint checkbox reflects the model state' do
-      refute autohint_checkbox.is(':checked')
-      view = ApplicationView.new(Application.new(autohint: true)).render
-      self.el = view.element
-      assert autohint_checkbox.is(':checked')
-    end
-
-    test 'auto-hint checkbox is updated when the model changes' do
-      model.autohint = true
-      assert autohint_checkbox.is(':checked')
-      model.autohint = false
-      refute autohint_checkbox.is(':checked')
-    end
-
     private
-
-    def autohint_checkbox
-      el.find('.autohint input:checkbox')
-    end
-
-    def autohint_on!
-      autohint_checkbox.prop(:checked, true).trigger(:change)
-    end
-
-    def autohint_off!
-      autohint_checkbox.prop(:checked, false).trigger(:change)
-    end
 
     def prev_button
       el.find('button:contains("Previous puzzle")')

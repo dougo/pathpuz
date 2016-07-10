@@ -12,10 +12,6 @@ module Monorail
       model.add_observer(:puzzle) do |puzzle|
         render
       end
-
-      model.add_observer(:autohint) do |autohint|
-        @autohint_checkbox.prop(:checked, autohint)
-      end
     end
 
     def render
@@ -35,12 +31,7 @@ module Monorail
     end
 
     def render_autohint
-      @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox').prop(:checked, model.autohint)
-      @autohint_checkbox.on(:change) do
-        model.autohint = @autohint_checkbox.is(':checked')
-      end
-      label = Element.new(:label).text('Auto-hint').prepend(@autohint_checkbox)
-      Element.new.add_class(:autohint) << label
+      AutohintView.new(model).render.element
     end
 
     def render_buttons
