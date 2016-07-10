@@ -2,22 +2,22 @@ require 'vienna'
 
 module Monorail
   class ApplicationView < Vienna::View
-    attr_accessor :model, :puzzle
+    attr_accessor :model
 
     element '#puzzle'
 
     def initialize(model)
       self.model = model
-
-      model.add_observer(:puzzle) do |puzzle|
-        render
-      end
+      model.add_observer(:puzzle) { render }
     end
 
     def render
       element.empty << render_instructions << render_puzzle << render_autohint << render_buttons
       self
     end
+
+    on(:click, '.prev') { model.prev_puzzle! }
+    on(:click, '.next') { model.next_puzzle! }
 
     private
 
@@ -26,8 +26,7 @@ module Monorail
     end
 
     def render_puzzle
-      self.puzzle = PuzzleView.new(model.puzzle)
-      puzzle.render.element
+      PuzzleView.new(model.puzzle).render.element
     end
 
     def render_autohint
@@ -35,17 +34,10 @@ module Monorail
     end
 
     def render_buttons
-      buttons = Element.new(:div)
-
-      prev_button = Element.new(:button).text('Previous puzzle').prop(:disabled, model.puzzle.id.zero?)
-      prev_button.on(:click) { model.prev_puzzle! }
-
-      hint_button = HintButtonView.new(model).render
-
-      next_button = Element.new(:button).text('Next puzzle')
-      next_button.on(:click) { model.next_puzzle! }
-
-      buttons << prev_button << hint_button.element << next_button
+      prev = Element.new(:button).add_class('prev').text('Previous puzzle').prop(:disabled, model.puzzle.id.zero?)
+      hint = HintButtonView.new(model).render.element
+      nexx = Element.new(:button).add_class('next').text('Next puzzle')
+      Element.new << prev << hint << nexx
     end
   end
 end
