@@ -47,13 +47,6 @@ module Monorail
       refute_equal puzzle_view, view.puzzle
     end
 
-    test 'hint button changes lines' do
-      event = false
-      model.puzzle.on(:lines_changed) { event = true }
-      hint_button.trigger(:click)
-      assert event
-    end
-
     test 'auto-hint checkbox' do
       autohint = el.find('div.autohint')
       assert_equal 1, autohint.length
@@ -71,22 +64,18 @@ module Monorail
       refute model.autohint
     end
 
-    test 'auto-hint checkbox and hint button reflect the model state' do
+    test 'auto-hint checkbox reflects the model state' do
       refute autohint_checkbox.is(':checked')
-      refute hint_button.is(':disabled')
       view = ApplicationView.new(Application.new(autohint: true)).render
       self.el = view.element
       assert autohint_checkbox.is(':checked')
-      assert hint_button.is(':disabled')
     end
 
-    test 'auto-hint checkbox and hint button are updated when the model changes' do
+    test 'auto-hint checkbox is updated when the model changes' do
       model.autohint = true
       assert autohint_checkbox.is(':checked')
-      assert hint_button.is(':disabled')
       model.autohint = false
       refute autohint_checkbox.is(':checked')
-      refute hint_button.is(':disabled')
     end
 
     private
@@ -105,10 +94,6 @@ module Monorail
 
     def prev_button
       el.find('button:contains("Previous puzzle")')
-    end
-
-    def hint_button
-      el.find('button:contains("Hint")')
     end
 
     def next_button
