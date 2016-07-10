@@ -14,7 +14,8 @@ module Monorail
       end
 
       model.add_observer(:autohint) do |autohint|
-        @autohint_checkbox.prop('checked', autohint)
+        @autohint_checkbox.prop(:checked, autohint)
+        @hint_button.prop(:disabled, autohint)
       end
     end
 
@@ -35,7 +36,7 @@ module Monorail
     end
 
     def render_autohint
-      @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox').prop('checked', model.autohint)
+      @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox').prop(:checked, model.autohint)
       @autohint_checkbox.on(:change) do
         model.autohint = @autohint_checkbox.is(':checked')
       end
@@ -49,13 +50,13 @@ module Monorail
       prev_button = Element.new(:button).text('Previous puzzle').prop(:disabled, model.puzzle.id.zero?)
       prev_button.on(:click) { model.prev_puzzle! }
 
-      hint_button = Element.new(:button).text('Hint')
-      hint_button.on(:click) { model.puzzle.hint! }
+      @hint_button = Element.new(:button).text('Hint').prop(:disabled, model.autohint)
+      @hint_button.on(:click) { model.puzzle.hint! }
 
       next_button = Element.new(:button).text('Next puzzle')
       next_button.on(:click) { model.next_puzzle! }
 
-      buttons << prev_button << hint_button << next_button
+      buttons << prev_button << @hint_button << next_button
     end
   end
 end
