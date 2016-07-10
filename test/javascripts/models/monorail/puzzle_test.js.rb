@@ -61,6 +61,14 @@ module Monorail
       subject = Puzzle.find(5)
       assert_equal 5, subject.id
       assert_square_of_size(subject, 6)
+      lines = [[[0,2],[1,2]], [[1,1],[2,1]], [[1,4],[2,4]], [[3,2],[3,3]], [[3,3],[4,3]], [[3,5],[4,5]], [[4,2],[5,2]]]
+      assert_has_fixed_lines(subject, *lines)
+    end
+
+    test 'puzzle 6' do
+      subject = Puzzle.find(6)
+      assert_equal 6, subject.id
+      assert_square_of_size(subject, 7)
     end
 
     test 'of_size' do
