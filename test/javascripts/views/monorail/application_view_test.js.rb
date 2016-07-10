@@ -26,17 +26,19 @@ module Monorail
       assert_equal model.puzzle, view.puzzle.model
       assert_equal 1, view.element.find('svg').length
       buttons = el.find(:button)
-      assert_equal 2, buttons.length
-      assert_equal 'Hint', buttons.first.text
-      assert_equal 'Next puzzle', buttons.last.text
+      assert_equal ['Previous puzzle', 'Hint', 'Next puzzle'], buttons.map(&:text)
+      assert buttons.first.prop('disabled')
     end
 
-    test 'new puzzle on button click' do
-      puzzle = model.puzzle
+    test 'next/prev buttons' do
       next_button.trigger(:click)
       model.router.update # TODO: shouldn't the hashchange event do this?
-      refute_equal puzzle, model.puzzle
-      assert_equal 1, view.element.find('svg').length
+      assert_equal 1, model.puzzle.id
+      assert_equal 1, view.element.find('svg').length, 'view element should be emptied'
+
+      refute prev_button.prop('disabled')
+      prev_button.trigger(:click); model.router.update
+      assert_equal 0, model.puzzle.id
     end
 
     test 'render when the model changes' do
@@ -95,6 +97,10 @@ module Monorail
 
     def autohint_off!
       autohint_checkbox.prop(:checked, false).trigger(:change)
+    end
+
+    def prev_button
+      el.find('button:contains("Previous puzzle")')
     end
 
     def hint_button

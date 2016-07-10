@@ -3,7 +3,7 @@ require 'models/pathpuz/monorail/application'
 module Monorail
   class ApplicationTest < Minitest::Test
     def setup
-      $global.location.hash = ''
+      $$.location.hash = ''
       Puzzle.reset!
     end
 
@@ -25,7 +25,7 @@ module Monorail
     end
 
     test 'initialize with non-empty location hash' do
-      $global.location.hash = '#2'
+      $$.location.hash = '#2'
       subject = Application.new
       assert_equal 2, subject.puzzle.id
     end
@@ -35,15 +35,25 @@ module Monorail
       subject.next_puzzle!
       subject.router.update # TODO: shouldn't the hashchange event do this?
       assert_equal 1, subject.puzzle.id
-      assert_equal "#1", $global.location.hash
+      assert_equal "#1", $$.location.hash
+    end
+
+    test 'prev_puzzle!' do
+      subject = Application.new
+      subject.puzzle = Puzzle.find(2)
+      subject.prev_puzzle!; subject.router.update
+      assert_equal 1, subject.puzzle.id
+      assert_equal '#1', $$.location.hash
+
+      subject.prev_puzzle!; subject.router.update
+      assert_equal 0, subject.puzzle.id
+      assert_empty $$.location.hash
     end
 
     test 'empty location hash goes to puzzle 0' do
       subject = Application.new
-      subject.next_puzzle!
-      subject.router.update
-      $global.location.hash = ''
-      subject.router.update
+      subject.next_puzzle!; subject.router.update
+      $$.location.hash = ''; subject.router.update
       assert_equal 0, subject.puzzle.id
     end
 

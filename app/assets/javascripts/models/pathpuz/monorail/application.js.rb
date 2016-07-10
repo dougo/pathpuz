@@ -21,6 +21,14 @@ module Monorail
       router.navigate(puzzle.id + 1)
     end
 
+    def prev_puzzle!
+      if puzzle.id > 1
+        router.navigate(puzzle.id - 1)
+      else
+        router.navigate('')
+      end
+    end
+
     def puzzle=(puzzle)
       @puzzle.off(:lines_changed, @handler) if @handler
       @puzzle = puzzle

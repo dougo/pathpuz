@@ -19,18 +19,35 @@ module Monorail
     end
 
     def render
-      instructions = Element.new(:p).text('Build a monorail loop that visits every dot.')
-      self.puzzle = PuzzleView.new(model.puzzle)
+      element.empty << render_instructions << render_puzzle << render_autohint << render_buttons
+      self
+    end
 
+    private
+
+    def render_instructions
+      Element.new(:p).text('Build a monorail loop that visits every dot.')
+    end
+
+    def render_puzzle
+      self.puzzle = PuzzleView.new(model.puzzle)
+      puzzle.render.element
+    end
+
+    def render_autohint
       @autohint_checkbox = Element.new(:input).attr(:type, 'checkbox').prop('checked', model.autohint)
       @autohint_checkbox.on(:change) do
         model.autohint = @autohint_checkbox.is(':checked')
       end
-      autohint_label = Element.new(:label).text('Auto-hint').prepend(@autohint_checkbox)
-      autohint = Element.new(:div).append(autohint_label)
-      autohint.class_name = :autohint
-      
+      label = Element.new(:label).text('Auto-hint').prepend(@autohint_checkbox)
+      Element.new.add_class(:autohint) << label
+    end
+
+    def render_buttons
       buttons = Element.new(:div)
+
+      prev_button = Element.new(:button).text('Previous puzzle').prop(:disabled, model.puzzle.id.zero?)
+      prev_button.on(:click) { model.prev_puzzle! }
 
       hint_button = Element.new(:button).text('Hint')
       hint_button.on(:click) { model.puzzle.hint! }
@@ -38,15 +55,7 @@ module Monorail
       next_button = Element.new(:button).text('Next puzzle')
       next_button.on(:click) { model.next_puzzle! }
 
-      buttons.append(hint_button).append(next_button)
-
-      element.empty
-      element.append(instructions)
-      element.append(puzzle.render.element)
-      element.append(autohint)
-      element.append(buttons)
-
-      self
+      buttons << prev_button << hint_button << next_button
     end
   end
 end
