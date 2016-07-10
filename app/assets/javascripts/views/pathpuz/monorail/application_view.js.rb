@@ -4,6 +4,8 @@ module Monorail
   class ApplicationView < Vienna::View
     attr_accessor :model, :puzzle
 
+    element '#puzzle'
+
     def initialize(model)
       self.model = model
 

@@ -5,11 +5,13 @@ module Monorail
     attr_accessor :model, :view, :el
 
     def setup
-      $global.location.hash = ''
+      $$.location.hash = ''
       Puzzle.reset!
+      unless Element.id(:puzzle)
+        Element.new.send(:id=, :puzzle).append_to(Document.body)
+      end
       self.model = Application.new
-      self.view = ApplicationView.new(model)
-      view.render
+      self.view = ApplicationView.new(model).render
       self.el = view.element
     end
 
@@ -18,10 +20,11 @@ module Monorail
     end
 
     test 'render' do
+      assert_equal :puzzle, el.id
       assert_equal 'Build a monorail loop that visits every dot.', el.find(:p).first.text
       assert_kind_of PuzzleView, view.puzzle
       assert_equal model.puzzle, view.puzzle.model
-      assert view.element.find('svg')
+      assert_equal 1, view.element.find('svg').length
       buttons = el.find(:button)
       assert_equal 2, buttons.length
       assert_equal 'Hint', buttons.first.text
@@ -33,6 +36,7 @@ module Monorail
       next_button.trigger(:click)
       model.router.update # TODO: shouldn't the hashchange event do this?
       refute_equal puzzle, model.puzzle
+      assert_equal 1, view.element.find('svg').length
     end
 
     test 'render when the model changes' do

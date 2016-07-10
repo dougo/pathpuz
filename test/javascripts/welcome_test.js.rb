@@ -4,9 +4,7 @@ class WelcomeTest < Minitest::Test
   attr_accessor :el
 
   def setup
-    self.el = Element.new(:div)
-    el.id = :puzzle
-    Document.body << el
+    self.el = Element.id(:puzzle) || Element.new.send(:id=, :puzzle).append_to(Document.body)
   end
 
   test 'welcome' do
