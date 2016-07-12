@@ -10,7 +10,7 @@ RDoc::Task.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'Pathpuz'
   rdoc.options << '--line-numbers'
-  rdoc.rdoc_files.include('README.rdoc')
+  rdoc.rdoc_files.include('README.md')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
@@ -22,7 +22,7 @@ load 'rails/tasks/statistics.rake'
 
 
 
-Bundler::GemHelper.install_tasks
+require 'bundler/gem_tasks'
 
 require 'rake/testtask'
 
@@ -40,8 +40,9 @@ task default: :test
 require 'opal/minitest/rake_task'
 
 namespace :test do
-  Rails::TestTask.new(:features) do |t|
-    t.pattern = 'test/features/**/*_test.rb'
+  task :features => 'test:prepare' do
+    $: << 'test'
+    Minitest.rake_run(['test/features'])
   end
 
   # Add all gem asset paths to Opal, so that require works in tests like it does in the Rails app.
