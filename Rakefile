@@ -40,7 +40,7 @@ task default: :test
 require 'opal/minitest/rake_task'
 
 namespace :test do
-  task :features => 'test:prepare' do
+  task :features => 'app:test:prepare' do
     $: << 'test'
     Minitest.rake_run(['test/features'])
   end
