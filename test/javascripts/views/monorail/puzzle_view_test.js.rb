@@ -1,13 +1,9 @@
-require 'views/pathpuz/monorail/puzzle_view'
-
 module Monorail
-  class PuzzleViewTest < Minitest::Test
-    attr_accessor :model, :view, :el
+  class PuzzleViewTest < ViewTest
+    self.view_class = PuzzleView
 
     def setup
-      self.model = Puzzle.of_size(2)
-      self.view = PuzzleView.new(model)
-      self.el = view.element
+      @model = Puzzle.of_size(2)
     end
 
     test 'initialize' do
@@ -22,8 +18,7 @@ module Monorail
     end
 
     test 'viewBox depends on puzzle size' do
-      model = Puzzle.of_size(3)
-      el = PuzzleView.new(model).element
+      @model = Puzzle.of_size(3)
       assert_equal '-1 -1 4 4', `#{el}[0].getAttribute('viewBox')`
 
       json = Puzzle.json_for_size(3)
@@ -34,10 +29,9 @@ module Monorail
     end
 
     test 'render' do
-      assert_equal view, view.render
       assert_kind_of SolvedView, view.solved
       assert_equal model, view.solved.model
-      assert view.element.find('.solved')
+      assert el.find('.solved')
     end
 
     test 'has one DotView per Dot in puzzle' do
@@ -66,21 +60,20 @@ module Monorail
     test 'renders fixed lines first so that they have lower z-index' do
       model.lines.last.state = :fixed
       view.render
-      assert_equal 'gray', view.element.find(:line).first[:stroke]
+      assert_equal 'gray', el.find(:line).first[:stroke]
     end
 
     test 'render a solved model' do
       model.lines.each { |line| line.state = :present }
-      view = PuzzleView.new(model).render
-      assert view.element.has_class? :solved
-      assert_equal 1, view.element.find('rect[fill="transparent"]').length
+      assert el.has_class? :solved
+      assert_equal 1, el.find('rect[fill="transparent"]').length
     end
 
     test 're-render when solved' do
-      refute view.element.has_class? :solved
+      refute el.has_class? :solved
       model.lines.each { |line| line.state = :present }
       model.trigger(:solved)
-      assert view.element.has_class? :solved
+      assert el.has_class? :solved
       assert_equal 1, el.find('rect[fill="transparent"]').length
     end
   end

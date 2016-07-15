@@ -1,14 +1,10 @@
-require 'views/pathpuz/monorail/autohint_view'
-
 module Monorail
-  class AutohintViewTest < Minitest::Test
-    attr_accessor :model, :view, :el
+  class AutohintViewTest < ViewTest
+    self.model_class = Application
+    self.view_class = AutohintView
 
     def setup
       Puzzle.reset!
-      self.model = Application.new
-      self.view = AutohintView.new(model).render
-      self.el = view.element
     end
 
     test 'initialize' do
@@ -32,13 +28,17 @@ module Monorail
       refute model.autohint
     end
 
-    test 'checkbox reflects the model' do
+    test 'unchecked if no autohint' do
       refute checked?
-      self.el = AutohintView.new(Application.new(autohint: true)).render.element
+    end
+
+    test 'checked if autohint' do
+      model.autohint = true
       assert checked?
     end
 
     test 're-render when autohint changes' do
+      view.render
       model.autohint = true
       assert checked?
       model.autohint = false

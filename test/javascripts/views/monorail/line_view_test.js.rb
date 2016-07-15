@@ -1,14 +1,10 @@
-require 'views/pathpuz/monorail/line_view'
-
 module Monorail
-  class LineViewTest < Minitest::Test
-    attr_accessor *%i(view el model)
+  class LineViewTest < ViewTest
+    self.view_class = LineView
 
     def setup
-      self.model = Line.new(dot1: Dot.new(row: 0, col: 1),
-                            dot2: Dot.new(row: 2, col: 3))
-      self.view = LineView.new(model)
-      self.el = view.element
+      @model = Line.new(dot1: Dot.new(row: 0, col: 1),
+                        dot2: Dot.new(row: 2, col: 3))
     end
 
     test 'initialize' do
@@ -37,7 +33,7 @@ module Monorail
 
     test 'clickable_element is straight when horizontal' do
       model.dot2.row = 0
-      el = view.create_clickable_element
+      el = view.clickable_element
       assert_equal 1+0.15, el[:x1].to_f
       assert_equal 0,      el[:y1].to_f
       assert_equal 3-0.15, el[:x2].to_f
@@ -46,7 +42,7 @@ module Monorail
 
     test 'clickable_element is straight when vertical' do
       model.dot2.col = 1
-      el = view.create_clickable_element
+      el = view.clickable_element
       assert_equal 1,      el[:x1].to_f
       assert_equal 0+0.15, el[:y1].to_f
       assert_equal 1,      el[:x2].to_f
@@ -79,8 +75,6 @@ module Monorail
 
     test 'fixed line has no clickable element or X element' do
       model.state = :fixed
-      view = LineView.new(model)
-      el = view.element
       assert_equal 1, el.find('line').length
       assert_nil view.clickable_element
       assert_empty el.find('path')
@@ -89,7 +83,6 @@ module Monorail
 
     test 'render gets class and line_element stroke from model' do
       el = view.line_element
-      assert_equal view, view.render
       refute el.has_class? :present
       refute el.has_attribute? :stroke
 
@@ -111,7 +104,6 @@ module Monorail
 
     test 'render gets x_element stroke from model' do
       el = view.x_element
-      view.render
       refute el.has_attribute? :stroke
 
       model.state = :absent
@@ -137,7 +129,7 @@ module Monorail
     end
 
     test 'double click does not select text' do
-      el = (PuzzleView.new(Puzzle.of_size(2)).render).element
+      el = PuzzleView.new(Puzzle.of_size(2)).render.element
       # I don't know how to actually cause text to be selected, so let's just test that the selectstart event is
       # not propagated:
       selection = nil

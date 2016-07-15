@@ -1,8 +1,7 @@
-require 'views/pathpuz/monorail/application_view'
-
 module Monorail
-  class ApplicationViewTest < Minitest::Test
-    attr_accessor :model, :view, :el
+  class ApplicationViewTest < ViewTest
+    self.model_class = Application
+    self.view_class = ApplicationView
 
     def setup
       $$.location.hash = ''
@@ -10,9 +9,6 @@ module Monorail
       unless Element.id(:puzzle)
         Element.new.send(:id=, :puzzle).append_to(Document.body)
       end
-      self.model = Application.new
-      self.view = ApplicationView.new(model).render
-      self.el = view.element
     end
 
     test 'initialize' do

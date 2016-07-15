@@ -1,14 +1,10 @@
-require 'views/pathpuz/monorail/hint_button_view'
-
 module Monorail
-  class HintButtonViewTest < Minitest::Test
-    attr_accessor :model, :view, :el
+  class HintButtonViewTest < ViewTest
+    self.model_class = Application
+    self.view_class = HintButtonView
 
     def setup
       Puzzle.reset!
-      self.model = Application.new
-      self.view = HintButtonView.new(model).render
-      self.el = view.element
     end
 
     test 'initialize' do
@@ -27,13 +23,17 @@ module Monorail
       assert event
     end
 
-    test 'disabled if autohint' do
+    test 'enabled if not autohint' do
       refute el.is(':disabled')
-      view = HintButtonView.new(Application.new(autohint: true)).render
-      assert view.element.is(':disabled')
+    end
+
+    test 'disabled if autohint' do
+      model.autohint = true
+      assert el.is(':disabled')
     end
 
     test 're-render when autohint changes' do
+      view.render
       model.autohint = true
       assert el.is(':disabled')
       model.autohint = false

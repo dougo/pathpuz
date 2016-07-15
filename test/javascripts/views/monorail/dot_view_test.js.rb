@@ -1,13 +1,9 @@
-require 'views/pathpuz/monorail/dot_view'
-
 module Monorail
-  class DotViewTest < Minitest::Test
-    attr_accessor *%i(model view el)
+  class DotViewTest < ViewTest
+    self.view_class = DotView
 
     def setup
-      self.model = Dot.new(row: 1, col: 2)
-      self.view = DotView.new(model)
-      self.el = view.element
+      @model = Dot.new(row: 1, col: 2)
     end
 
     test 'element is a clickable SVG circle' do
@@ -21,7 +17,6 @@ module Monorail
     end
 
     test 'render' do
-      assert_equal view, view.render
       assert_equal :gray, el[:fill]
       assert_equal '0.15', el[:r]
       assert_equal '2', el[:cx]
@@ -30,9 +25,10 @@ module Monorail
 
     test 'click completes the dot' do
       model.lines << Line.new << Line.new
+      completed = false
+      model.on(:completed) { completed = true }
       el.trigger(:click)
-      assert model.lines.first.present?
-      assert model.lines.last.present?
+      assert completed
     end
   end
 end
