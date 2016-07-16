@@ -33,22 +33,29 @@ module Monorail
       end
     end
 
+    class LineChange
+      attr_accessor :line, :prev_state
+
+      def initialize(line, prev_state = nil)
+        @line, @prev_state = line, prev_state
+      end
+    end
+
     def lines=(lines)
       dots = lines.map { |l| l[:dot1] } + lines.map { |l| l[:dot2] }
       @dots = dots.uniq.map { |dot| [dot, Dot.new(dot)] }.to_h
-      @dots.values.each do |dot|
-        dot.on(:completed) do |state, *lines|
-          trigger(:lines_changed, *lines)
-        end
-      end
-
       @lines = lines.map do |line|
         Line.new(dot1: @dots[line[:dot1]], dot2: @dots[line[:dot2]], state: line[:state])
       end
 
       @lines.each do |line|
-        line.on(:next_state) do
-          trigger(:lines_changed, line)
+        line.on(:next_state) do |prev_state|
+          trigger(:lines_changed, LineChange.new(line, prev_state))
+        end
+      end
+      @dots.values.each do |dot|
+        dot.on(:completed) do |state, *lines|
+          trigger(:lines_changed, *lines.map { |line| LineChange.new(line) })
         end
       end
 
@@ -76,16 +83,7 @@ module Monorail
     end
 
     def undo!
-      lines = @history.pop
-      lines.each do |line|
-        if line.present?
-          line.state = nil
-        elsif line.absent?
-          line.state = :present
-        else
-          line.state = :absent
-        end
-      end
+      @history.pop.each { |change| change.line.state = change.prev_state }
       trigger(:undone)
     end
 

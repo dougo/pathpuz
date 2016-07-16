@@ -43,8 +43,9 @@ module Monorail
     end
 
     def next_state!
+      prev_state = self.state
       self.state = next_state
-      trigger(:next_state)
+      trigger(:next_state, prev_state)
     end
   end
 end

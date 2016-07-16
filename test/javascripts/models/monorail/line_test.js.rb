@@ -73,9 +73,14 @@ module Monorail
     test 'next_state event' do
       subject = Line.new
       triggered = false
-      subject.on(:next_state) { triggered = true }
+      prev_state = :fail
+      subject.on(:next_state) { |prev| triggered = true; prev_state = prev }
       subject.next_state!
       assert triggered
+      assert_nil prev_state
+      
+      subject.next_state!
+      assert_equal :present, prev_state
     end
   end
 end

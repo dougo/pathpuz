@@ -66,7 +66,8 @@ module Monorail
       puzzle = Puzzle.find(0)
       puzzle.on(:lines_changed) { |*args| events << args }
       subject = Application.new(autohint: true)
-      assert_equal [puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]], events
+      expected = [puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]]
+      assert_equal expected, events.map { |changes| changes.map &:line }
     end
 
     test 'auto-hint when puzzle changes' do

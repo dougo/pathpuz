@@ -151,7 +151,15 @@ module Monorail
       refute subject.can_undo?
     end
 
-    # TODO: undo! absent lines via dot completion
+    test 'undo! absent lines via dot completion' do
+      subject = Puzzle.of_size(3)
+      subject.dots[0].complete!
+      subject.dots[2].complete!
+      subject.dots[1].complete!
+      line = subject.lines.find &:absent?
+      subject.undo!
+      assert line.unknown?
+    end
 
     test 'undone event' do
       subject = Puzzle.of_size(2)
@@ -224,20 +232,24 @@ module Monorail
 
     test 'lines_changed event when line goes to next state' do
       subject = Puzzle.of_size(2)
-      lines_changed = nil
-      subject.on(:lines_changed) { |*lines| lines_changed = lines }
+      changes = nil
+      subject.on(:lines_changed) { |*ch| changes = ch }
       line = subject.lines.first
       line.next_state!
-      assert_equal [line], lines_changed
+      assert_equal [line], changes.map(&:line)
+      assert_equal [nil], changes.map(&:prev_state)
+      line.next_state!
+      assert_equal [:present], changes.map(&:prev_state)
     end
 
     test 'lines_changed event when dot completed' do
       subject = Puzzle.of_size(2)
-      lines_changed = nil
-      subject.on(:lines_changed) { |*lines| lines_changed = lines }
+      changes = nil
+      subject.on(:lines_changed) { |*ch| changes = ch }
       dot = subject.dots.first
       dot.complete!
-      assert_equal dot.lines, lines_changed
+      assert_equal dot.lines, changes.map(&:line)
+      assert_equal [nil, nil], changes.map(&:prev_state)
     end
 
     private
