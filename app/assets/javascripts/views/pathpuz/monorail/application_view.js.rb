@@ -35,9 +35,10 @@ module Monorail
 
     def render_buttons
       prev = Element.new(:button).add_class('prev').text('Previous puzzle').prop(:disabled, model.puzzle.id.zero?)
+      undo = UndoButtonView.new(model.puzzle).render.element
       hint = HintButtonView.new(model).render.element
       nexx = Element.new(:button).add_class('next').text('Next puzzle')
-      Element.new << prev << hint << nexx
+      Element.new << prev << undo << hint << nexx
     end
   end
 end

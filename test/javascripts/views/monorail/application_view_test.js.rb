@@ -21,13 +21,14 @@ module Monorail
       assert_equal 1, el.find('svg').length
       assert_equal 1, el.find('div.autohint').length
       buttons = el.find(:button)
-      assert_equal ['Previous puzzle', 'Hint', 'Next puzzle'], buttons.map(&:text)
-      assert buttons.first.prop('disabled')
+      assert_equal ['Previous puzzle', 'Undo', 'Hint', 'Next puzzle'], buttons.map(&:text)
       assert_equal 'prev', buttons.first.class_name
       assert_equal 'next', buttons.last.class_name
     end
 
     test 'next/prev buttons' do
+      prev = el.find('.prev')
+      assert prev.prop('disabled')
       el.find('.next').trigger(:click)
       model.router.update # TODO: shouldn't the hashchange event do this?
       assert_equal 1, model.puzzle.id

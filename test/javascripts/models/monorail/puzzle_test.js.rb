@@ -115,6 +115,53 @@ module Monorail
       assert_equal 4, subject.height
     end
 
+    test 'can_undo?' do
+      subject = Puzzle.of_size(2)
+      refute subject.can_undo?
+      subject.lines.first.next_state!
+      assert subject.can_undo?
+    end
+
+    test 'undo! line state changes' do
+      subject = Puzzle.of_size(2)
+      line = subject.lines.first
+      line.next_state!
+      line.next_state!
+      line.next_state!
+
+      subject.undo!
+      assert line.absent?
+      assert subject.can_undo?
+
+      subject.undo!
+      assert line.present?
+      assert subject.can_undo?
+
+      subject.undo!
+      assert line.unknown?
+      refute subject.can_undo?
+    end
+
+    test 'undo! a complete dot' do
+      subject = Puzzle.of_size(2)
+      subject.dots.first.complete!
+      subject.undo!
+      assert subject.dots.first.lines.first.unknown?
+      assert subject.dots.first.lines.last.unknown?
+      refute subject.can_undo?
+    end
+
+    # TODO: undo! absent lines via dot completion
+
+    test 'undone event' do
+      subject = Puzzle.of_size(2)
+      subject.lines.first.next_state!
+      undone = false
+      subject.on(:undone) { undone = true }
+      subject.undo!
+      assert undone
+    end
+
     test 'solved?' do
       subject = Puzzle.of_size(2)
       (0..2).each { |i| subject.lines[i].state = :present }

@@ -26,7 +26,9 @@ module Monorail
 
     def initialize(*args)
       super
-      on(:lines_changed) do
+      @history ||= []
+      on(:lines_changed) do |*lines|
+        @history << lines
         trigger(:solved) if solved?
       end
     end
@@ -67,6 +69,24 @@ module Monorail
 
     def width
       dots.map(&:col).max + 1
+    end
+
+    def can_undo?
+      @history.any?
+    end
+
+    def undo!
+      lines = @history.pop
+      lines.each do |line|
+        if line.present?
+          line.state = nil
+        elsif line.absent?
+          line.state = :present
+        else
+          line.state = :absent
+        end
+      end
+      trigger(:undone)
     end
 
     # Is there a single looping path that visits every dot?

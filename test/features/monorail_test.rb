@@ -24,6 +24,16 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_solved
   end
 
+  test 'undo' do
+    click_dot(0, 0)
+    click_line([0,1], [1,1])
+    assert_equal 3, black_lines.length
+    click_on 'Undo'
+    assert_equal 2, black_lines.length
+    click_on 'Undo'
+    assert_empty black_lines
+  end
+
   test 'skip to the next puzzle' do
     click_line([0,0], [0,1])
     assert_equal 1, black_lines.length
