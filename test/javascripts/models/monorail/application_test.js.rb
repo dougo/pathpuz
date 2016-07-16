@@ -33,7 +33,11 @@ module Monorail
     test 'next_puzzle!' do
       subject = Application.new
       subject.next_puzzle!
-      subject.router.update # TODO: shouldn't the hashchange event do this?
+
+      # The hashchange event has been pushed onto the queue, but won't be handled until the test exits!
+      # So we have to update the router ourselves.
+      subject.router.update
+
       assert_equal 1, subject.puzzle.id
       assert_equal "#1", $$.location.hash
     end

@@ -29,8 +29,7 @@ module Monorail
     test 'next/prev buttons' do
       prev = el.find('.prev')
       assert prev.prop('disabled')
-      el.find('.next').trigger(:click)
-      model.router.update # TODO: shouldn't the hashchange event do this?
+      el.find('.next').trigger(:click); model.router.update
       assert_equal 1, model.puzzle.id
       assert_equal 1, view.element.find('svg').length, 'view element should be emptied'
 
