@@ -13,7 +13,7 @@ module Monorail
     end
 
     def render
-      element.text('Undo').prop(:disabled, !model.can_undo?)
+      element.text('Undo').prop(:disabled, !model.can_undo? || model.solved?)
       self
     end
 

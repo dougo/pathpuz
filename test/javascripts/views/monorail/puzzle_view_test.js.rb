@@ -76,7 +76,5 @@ module Monorail
       assert el.has_class? :solved
       assert_equal 1, el.find('rect[fill="transparent"]').length
     end
-
-    # TODO: re-render when undone after solving? or disallow undo after solving?
   end
 end

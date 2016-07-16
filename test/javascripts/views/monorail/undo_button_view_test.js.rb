@@ -24,6 +24,12 @@ module Monorail
       refute el.prop('disabled')
     end
 
+    test 'disabled if solved' do
+      model.dots.first.complete!
+      model.dots.last.complete!
+      assert el.prop('disabled')
+    end
+
     test 're-render when model changes' do
       view.render
       model.lines.first.next_state!

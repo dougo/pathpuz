@@ -32,12 +32,25 @@ module Monorail
       assert el.is(':disabled')
     end
 
+    test 'disabled if solved' do
+      model.puzzle.lines.each { |l| l.state = :present }
+      assert el.is(':disabled')
+    end
+
     test 're-render when autohint changes' do
+      model.puzzle = Puzzle.find(4) # so that it won't be auto-solved!
       view.render
       model.autohint = true
       assert el.is(':disabled')
       model.autohint = false
       refute el.is(':disabled')
+    end
+
+    test 're-render when solved' do
+      view.render
+      model.puzzle.dots.first.complete!
+      model.puzzle.dots.last.complete!
+      assert el.is(':disabled')
     end
   end
 end

@@ -9,10 +9,11 @@ module Monorail
     def initialize(model)
       self.model = model
       model.add_observer(:autohint) { render }
+      model.puzzle.on(:solved) { render }
     end
 
     def render
-      element.text('Hint').prop(:disabled, model.autohint)
+      element.text('Hint').prop(:disabled, model.autohint || model.puzzle.solved?)
       self
     end
 
