@@ -148,6 +148,16 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_empty black_lines
   end
 
+  test 'auto-undo auto-hint when marking a line absent' do
+    # If you want to mark an unknown line as absent, you have to click it twice. But if auto-hint is on, the first
+    # click might cause some other lines to be marked; these should be undone before the second click.
+    3.times { next_puzzle! }
+    check 'Auto-hint'
+    click_line([1,0], [2,0])
+    click_line([1,0], [2,0])
+    assert_solved
+  end
+
   private
 
   def assert_solved

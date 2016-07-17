@@ -122,21 +122,10 @@ module Monorail
       assert subject.can_undo?
     end
 
-    test 'undo! line state changes' do
+    test 'undo! line state change' do
       subject = Puzzle.of_size(2)
       line = subject.lines.first
       line.next_state!
-      line.next_state!
-      line.next_state!
-
-      subject.undo!
-      assert line.absent?
-      assert subject.can_undo?
-
-      subject.undo!
-      assert line.present?
-      assert subject.can_undo?
-
       subject.undo!
       assert line.unknown?
       refute subject.can_undo?
@@ -238,6 +227,9 @@ module Monorail
       line.next_state!
       assert_equal [line], changes.map(&:line)
       assert_equal [nil], changes.map(&:prev_state)
+
+      subject.undo!
+      line.state = :present
       line.next_state!
       assert_equal [:present], changes.map(&:prev_state)
     end
@@ -258,7 +250,26 @@ module Monorail
       subject.autohint!
       assert subject.solved?
       subject.undo!
-      assert_empty subject.lines.select(&:present?)
+      assert subject.lines.none?(&:present?)
+    end
+
+    test 'changing the same line twice undoes autohint from first change' do
+      subject = Puzzle.of_size(2)
+      line = subject.lines.first
+      line.next_state!
+      subject.autohint!
+      line.next_state!
+      assert line.absent?
+      assert subject.lines.none?(&:present?)
+      subject.undo!
+      assert subject.lines.all?(&:unknown?)
+    end
+
+    test 'cycling a line through all states is a no-op' do
+      subject = Puzzle.of_size(2)
+      line = subject.lines.first
+      3.times { line.next_state! }
+      refute subject.can_undo?
     end
 
     private

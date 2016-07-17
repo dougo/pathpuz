@@ -131,6 +131,12 @@ module Monorail
     private
 
     def record_changes!(changes)
+      if can_undo? && @history.last.first.line == changes.first.line
+        # If the same line changes multiple times in a row, treat it as a single change.
+        changes.first.prev_state = @history.last.shift.prev_state
+        undo!
+        return if changes.first.line.state == changes.first.prev_state
+      end
       if @autohinting
         @history.push([]) if @history.empty?
         @history.last.push(*changes)
