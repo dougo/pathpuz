@@ -138,6 +138,16 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_solved
   end
 
+  test 'undo auto-hint' do
+    check 'Auto-hint'
+    4.times { next_puzzle! }
+    click_line([1,1], [1,2])
+    click_on 'Undo'
+    assert_equal 10, black_lines.length
+    click_on 'Undo'
+    assert_empty black_lines
+  end
+
   private
 
   def assert_solved

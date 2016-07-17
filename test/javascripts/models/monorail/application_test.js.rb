@@ -68,6 +68,8 @@ module Monorail
       subject = Application.new(autohint: true)
       expected = [puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]]
       assert_equal expected, events.map { |changes| changes.map &:line }
+      puzzle.undo!
+      refute puzzle.can_undo?
     end
 
     test 'auto-hint when puzzle changes' do

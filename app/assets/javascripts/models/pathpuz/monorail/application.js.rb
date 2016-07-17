@@ -48,8 +48,7 @@ module Monorail
     end
 
     def autohint!
-      puzzle.hint! if autohint && puzzle
+      puzzle.autohint! if autohint && puzzle
     end
   end
 end
-

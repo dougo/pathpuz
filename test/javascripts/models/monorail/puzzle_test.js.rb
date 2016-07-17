@@ -252,6 +252,15 @@ module Monorail
       assert_equal [nil, nil], changes.map(&:prev_state)
     end
 
+    test 'autohint! combines history' do
+      subject = Puzzle.of_size(2)
+      subject.dots.last.complete!
+      subject.autohint!
+      assert subject.solved?
+      subject.undo!
+      assert_empty subject.lines.select(&:present?)
+    end
+
     private
 
     def assert_square_of_size(puzzle, size)

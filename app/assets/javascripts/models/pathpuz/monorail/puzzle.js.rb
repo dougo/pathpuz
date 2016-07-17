@@ -27,8 +27,8 @@ module Monorail
     def initialize(*args)
       super
       @history ||= []
-      on(:lines_changed) do |*lines|
-        @history << lines
+      on(:lines_changed) do |*changes|
+        record_changes!(changes)
         trigger(:solved) if solved?
       end
     end
@@ -120,6 +120,23 @@ module Monorail
     def hint!
       dot = find_completable_dot
       dot.complete! if dot
+    end
+
+    def autohint!
+      @autohinting = true
+      hint!
+      @autohinting = false
+    end
+
+    private
+
+    def record_changes!(changes)
+      if @autohinting
+        @history.push([]) if @history.empty?
+        @history.last.push(*changes)
+      else
+        @history.push(changes)
+      end
     end
 
     class Adapter < Vienna::Adapter
