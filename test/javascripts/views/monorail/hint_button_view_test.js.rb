@@ -3,10 +3,6 @@ module Monorail
     self.model_class = Application
     self.view_class = HintButtonView
 
-    def setup
-      Puzzle.reset!
-    end
-
     test 'initialize' do
       assert_equal model, view.model
     end

@@ -7,7 +7,19 @@ require 'active_support/core_ext/class/attribute'
 
 require 'pathpuz/application'
 
+module Monorail
+  module MinitestPlugin
+    def before_setup
+      super
+      $$.location.hash = ''
+      Puzzle.reset!
+    end
+  end
+end
+
 class Minitest::Test
+  include Monorail::MinitestPlugin
+
   # Add the 'test' DSL.
   extend ActiveSupport::Testing::Declarative
 end

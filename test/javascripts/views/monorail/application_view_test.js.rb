@@ -4,8 +4,6 @@ module Monorail
     self.view_class = ApplicationView
 
     def setup
-      $$.location.hash = ''
-      Puzzle.reset!
       unless Element.id(:puzzle)
         Element.new.send(:id=, :puzzle).append_to(Document.body)
       end

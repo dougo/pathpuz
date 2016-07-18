@@ -2,11 +2,6 @@ require 'models/pathpuz/monorail/application'
 
 module Monorail
   class ApplicationTest < Minitest::Test
-    def setup
-      $$.location.hash = ''
-      Puzzle.reset!
-    end
-
     test 'attributes' do
       assert_equal %i(router puzzle autohint), Application.columns
     end
