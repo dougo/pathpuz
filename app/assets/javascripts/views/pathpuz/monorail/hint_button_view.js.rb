@@ -8,15 +8,15 @@ module Monorail
 
     def initialize(model)
       self.model = model
-      model.add_observer(:autohint) { render }
-      model.puzzle.on(:solved) { render }
+      model.on(:lines_changed) { render }
+      model.on(:undone) { render }
     end
 
     def render
-      element.text('Hint').prop(:disabled, model.autohint || model.puzzle.solved?)
+      element.text('Hint').prop(:disabled, !model.can_hint? || model.solved?)
       self
     end
 
-    on(:click) { model.puzzle.hint! }
+    on(:click) { model.hint! }
   end
 end

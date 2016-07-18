@@ -1,7 +1,10 @@
 module Monorail
   class HintButtonViewTest < ViewTest
-    self.model_class = Application
     self.view_class = HintButtonView
+
+    def setup
+      @model = Puzzle.of_size(2)
+    end
 
     test 'initialize' do
       assert_equal model, view.model
@@ -14,39 +17,41 @@ module Monorail
 
     test 'hint button changes lines' do
       event = false
-      model.puzzle.on(:lines_changed) { event = true }
+      model.on(:lines_changed) { event = true }
       el.trigger(:click)
       assert event
     end
 
-    test 'enabled if not autohint' do
+    test 'enabled if hints available' do
+      assert model.can_hint?
+      refute model.solved?
       refute el.is(':disabled')
     end
 
-    test 'disabled if autohint' do
-      model.autohint = true
+    test 'disabled if no hints available' do
+      @model = Puzzle.of_size(3)
+      model.lines.each &:next_state!
+      refute model.can_hint?
+      refute model.solved?
       assert el.is(':disabled')
     end
 
     test 'disabled if solved' do
-      model.puzzle.lines.each { |l| l.state = :present }
+      @model = Puzzle.of_size(3)
+      model.hint! while model.can_hint?
+      model.lines.select(&:absent?).each { |l| l.state = nil }
+      assert model.can_hint?
+      assert model.solved?
       assert el.is(':disabled')
     end
 
-    test 're-render when autohint changes' do
-      model.puzzle = Puzzle.find(4) # so that it won't be auto-solved!
+    test 're-render when lines changed or undone' do
+      @model = Puzzle.find(4)
       view.render
-      model.autohint = true
+      model.hint! while model.can_hint?
       assert el.is(':disabled')
-      model.autohint = false
+      model.undo!
       refute el.is(':disabled')
-    end
-
-    test 're-render when solved' do
-      view.render
-      model.puzzle.dots.first.complete!
-      model.puzzle.dots.last.complete!
-      assert el.is(':disabled')
     end
   end
 end

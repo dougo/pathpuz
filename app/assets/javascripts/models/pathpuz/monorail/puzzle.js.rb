@@ -117,6 +117,10 @@ module Monorail
       dots.find &:completable?
     end
 
+    def can_hint?
+      find_completable_dot
+    end
+
     def hint!
       dot = find_completable_dot
       dot.complete! if dot

@@ -210,6 +210,13 @@ module Monorail
       assert_nil subject.find_completable_dot
     end
 
+    test 'can_hint?' do
+      subject = Puzzle.of_size(2)
+      assert subject.can_hint?
+      subject.lines.each &:next_state!
+      refute subject.can_hint?
+    end
+
     test 'hint! completes a dot' do
       subject = Puzzle.of_size(2)
       subject.hint!
