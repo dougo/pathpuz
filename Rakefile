@@ -53,5 +53,17 @@ namespace :test do
 
   Opal::Minitest::RakeTask.new(:name => :javascripts, :port => 2845,
                                :requires_glob => 'test/javascripts/{test_helper,**/*_test}.js.rb')
-  Rake::Task['test'].enhance ['test:javascripts']
+  Rake::Task[:test].enhance ['test:javascripts']
+end
+
+
+# Add directories to 'rake stats'
+task :stats => 'pathpuz:stats'
+namespace :pathpuz do
+  task :stats do
+    require 'rails/code_statistics'
+    ::STATS_DIRECTORIES << ['Feature Tests', 'test/features']
+    ::STATS_DIRECTORIES << ['Javascript Tests', 'test/javascripts']
+    CodeStatistics::TEST_TYPES << 'Feature Tests' << 'Javascript Tests'
+  end
 end
