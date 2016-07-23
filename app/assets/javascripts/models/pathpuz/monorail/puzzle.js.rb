@@ -113,10 +113,6 @@ module Monorail
       end
     end
 
-    def find_completable_dot
-      dots.find &:completable?
-    end
-
     def with_changes_combined
       @combining_changes = true
       yield
