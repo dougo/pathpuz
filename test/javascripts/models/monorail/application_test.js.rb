@@ -62,28 +62,17 @@ module Monorail
       assert_kind_of HintRule, rule
     end
 
-    test 'can_hint?' do
+    test 'can_hint? if hint rule is applicable' do
       subject = Application.new
       assert subject.can_hint?
       subject.puzzle.lines.each &:next_state!
       refute subject.can_hint?
     end
 
-    test 'hint! completes a dot' do
+    test 'hint! applies hint rule' do
       subject = Application.new
       subject.hint!
       assert_equal 2, subject.puzzle.dots.first.present_lines.length
-
-      subject.puzzle.lines.each { |l| l.state = :present }
-      subject.hint! # does nothing, but test that it doesn't raise an error
-    end
-
-    test 'disabled hint rule prevents hints' do
-      subject = Application.new
-      subject.hint_rule(:completable_dot).disabled = true
-      refute subject.can_hint?
-      subject.hint!
-      assert subject.puzzle.dots.first.completable?
     end
 
     test 'auto-hint behavior' do

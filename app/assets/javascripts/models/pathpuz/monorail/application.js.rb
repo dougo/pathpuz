@@ -43,14 +43,11 @@ module Monorail
     end
 
     def can_hint?
-      puzzle.find_completable_dot unless hint_rule(:completable_dot).disabled
+      @hint_rules.first.applicable?(puzzle)
     end
 
     def hint!
-      unless hint_rule(:completable_dot).disabled
-        dot = puzzle.find_completable_dot
-        dot.complete! if dot
-      end
+      @hint_rules.first.apply(puzzle)
     end
 
     def autohint=(autohint)
