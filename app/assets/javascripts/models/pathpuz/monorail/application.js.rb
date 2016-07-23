@@ -4,12 +4,13 @@ module Monorail
   class Application < Vienna::Model
     include Vienna::Observable
 
-    attributes :router, :puzzle, :autohint
+    attributes :router, :puzzle, :autohint, :hint_rules
 
     def initialize(*args)
       super
 
-      @hint_rules = [HintRule.new]
+      self.hint_rules ||= [HintRule.new(type: :every_dot_has_two_lines),
+                           HintRule.new(type: :every_dot_has_only_two_lines)]
 
       self.autohint ||= false
 
@@ -38,16 +39,13 @@ module Monorail
       autohint!
     end
 
-    def hint_rule(name)
-      @hint_rules.first
-    end
-
     def can_hint?
-      @hint_rules.first.applicable?(puzzle)
+      hint_rules.any? { |rule| rule.applicable?(puzzle) }
     end
 
     def hint!
-      @hint_rules.first.apply(puzzle)
+      rule = hint_rules.find { |rule| rule.applicable?(puzzle) }
+      rule.apply(puzzle) if rule
     end
 
     def autohint=(autohint)

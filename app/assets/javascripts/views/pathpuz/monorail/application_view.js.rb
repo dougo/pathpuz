@@ -44,8 +44,10 @@ module Monorail
     def render_hint_rules
       # TODO: fieldset with legend?
       title = Element.new(:h3).text('Hint Rules')
-      rule = HintRuleView.new(model.hint_rule(:completable_dot)).render.element
-      Element.new.add_class(:hint_rules) << title << rule
+      rules = model.hint_rules.map do |rule|
+        HintRuleView.new(rule).render.element
+      end
+      Element.new.add_class(:hint_rules).append(title).append(*rules)
     end
   end
 end

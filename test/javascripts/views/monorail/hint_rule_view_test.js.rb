@@ -7,14 +7,22 @@ module Monorail
       assert_equal model, view.model
     end
 
-    test 'render' do
-      assert_equal :label, el.tag_name
-      assert_equal 'Complete a completable dot', el.text
+    test 'render every_dot_has_two_lines' do
+      model.type = :every_dot_has_two_lines
+      assert_equal :div, el.tag_name
+
+      label = el.children.first
+      assert_equal 'Every dot has two lines', label.text
 
       Element.expose :contents
-      checkbox = el.contents.first
+      checkbox = label.contents.first
       assert_equal :input, checkbox.tag_name
       assert_equal :checkbox, checkbox[:type]
+    end
+
+    test 'render every_dot_has_only_two_lines' do
+      model.type = :every_dot_has_only_two_lines
+      assert_equal 'Every dot has only two lines', el.text
     end
 
     test 'checkbox is checked if model is enabled' do

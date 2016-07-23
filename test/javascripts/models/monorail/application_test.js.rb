@@ -3,7 +3,7 @@ require 'models/pathpuz/monorail/application'
 module Monorail
   class ApplicationTest < Minitest::Test
     test 'attributes' do
-      assert_equal %i(router puzzle autohint), Application.columns
+      assert_equal %i(router puzzle autohint hint_rules), Application.columns
     end
 
     test 'Observable' do
@@ -56,23 +56,32 @@ module Monorail
       assert_equal 0, subject.puzzle.id
     end
 
-    test 'hint_rule' do
+    test 'hint_rules' do
       subject = Application.new
-      rule = subject.hint_rule(:completable_dot)
-      assert_kind_of HintRule, rule
+      subject.hint_rules.each { |rule| assert_kind_of HintRule, rule }
+      assert_equal %i(every_dot_has_two_lines every_dot_has_only_two_lines), subject.hint_rules.map(&:type)
     end
 
-    test 'can_hint? if hint rule is applicable' do
+    test 'can_hint? if any hint rule is applicable' do
       subject = Application.new
+      subject.puzzle = Puzzle.find(1)
       assert subject.can_hint?
-      subject.puzzle.lines.each &:next_state!
+      rule1, rule2 = subject.hint_rules
+      rule1.apply(subject.puzzle) while rule1.applicable?(subject.puzzle)
+      assert subject.can_hint?
+      rule2.apply(subject.puzzle) while rule2.applicable?(subject.puzzle)
       refute subject.can_hint?
     end
 
-    test 'hint! applies hint rule' do
+    test 'hint! applies applicable hint rule' do
       subject = Application.new
+      subject.puzzle = Puzzle.find(1)
       subject.hint!
       assert_equal 2, subject.puzzle.dots.first.present_lines.length
+      rule = subject.hint_rules.first
+      rule.apply(subject.puzzle) while rule.applicable?(subject.puzzle)
+      subject.hint!
+      refute_empty subject.puzzle.lines.select(&:absent?)
     end
 
     test 'auto-hint behavior' do

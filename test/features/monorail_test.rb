@@ -81,7 +81,15 @@ class MonorailTest < Capybara::Rails::TestCase
   test 'solve the easier 4x4 puzzle using only hints' do
     next_puzzle!
     next_puzzle!
-    15.times { click_on 'Hint' }
+    14.times { click_on 'Hint' }
+    assert_solved
+  end
+
+  test 'solve the 3x3 puzzle using only first hint rule' do
+    next_puzzle!
+    assert_checked_field 'Every dot has two lines'
+    uncheck 'Every dot has only two lines'
+    5.times { click_on 'Hint' }
     assert_solved
   end
 

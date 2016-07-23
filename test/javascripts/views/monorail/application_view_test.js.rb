@@ -55,7 +55,10 @@ module Monorail
       assert_equal 'Hint Rules', hint_rules_elt.text
 
       rule = hint_rules_elt.next
-      assert_equal 'Complete a completable dot', rule.text
+      assert_equal 'Every dot has two lines', rule.text
+
+      rule = rule.next
+      assert_equal 'Every dot has only two lines', rule.text
     end
 
     test 'next/prev buttons' do
