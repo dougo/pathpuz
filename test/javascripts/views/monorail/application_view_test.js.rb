@@ -15,13 +15,36 @@ module Monorail
 
     test 'render' do
       assert_equal :puzzle, el.id
-      assert_equal 'Build a monorail loop that visits every dot.', el.find(:p).first.text
-      assert_equal 1, el.find('svg').length
-      assert_equal 1, el.find('div.autohint').length
-      buttons = el.find(:button)
-      assert_equal ['Previous puzzle', 'Undo', 'Hint', 'Next puzzle'], buttons.map(&:text)
-      assert_equal 'prev', buttons.first.class_name
-      assert_equal 'next', buttons.last.class_name
+
+      child = el.children.first
+      assert_equal :p, child.tag_name
+      assert_equal 'Build a monorail loop that visits every dot.', child.text
+
+      child = child.next
+      assert_equal :svg, child.tag_name
+
+      child = child.next
+      assert_equal :div, child.tag_name
+      assert_equal :autohint, child.class_name
+
+      child = child.next
+      assert_equal :div, child.tag_name
+
+      button = child.children.first
+      assert_equal :button, button.tag_name
+      assert_equal 'Previous puzzle', button.text
+      assert_equal :prev, button.class_name
+
+      button = button.next
+      assert_equal 'Undo', button.text
+
+      button = button.next
+      assert_equal 'Hint', button.text
+
+      button = button.next
+      assert_equal :button, button.tag_name
+      assert_equal 'Next puzzle', button.text
+      assert_equal :next, button.class_name
     end
 
     test 'next/prev buttons' do
