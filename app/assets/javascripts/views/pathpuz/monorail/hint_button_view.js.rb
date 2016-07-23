@@ -8,12 +8,12 @@ module Monorail
 
     def initialize(model)
       self.model = model
-      model.on(:lines_changed) { render }
-      model.on(:undone) { render }
+      model.puzzle.on(:lines_changed) { render }
+      model.puzzle.on(:undone) { render }
     end
 
     def render
-      element.text('Hint').prop(:disabled, !model.can_hint? || model.solved?)
+      element.text('Hint').prop(:disabled, !model.can_hint? || model.puzzle.solved?)
       self
     end
 

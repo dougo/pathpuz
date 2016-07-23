@@ -117,19 +117,10 @@ module Monorail
       dots.find &:completable?
     end
 
-    def can_hint?
-      find_completable_dot
-    end
-
-    def hint!
-      dot = find_completable_dot
-      dot.complete! if dot
-    end
-
-    def autohint!
-      @autohinting = true
-      hint!
-      @autohinting = false
+    def with_changes_combined
+      @combining_changes = true
+      yield
+      @combining_changes = false
     end
 
     private
@@ -141,7 +132,7 @@ module Monorail
         undo!
         return if changes.first.line.state == changes.first.prev_state
       end
-      if @autohinting
+      if @combining_changes
         @history.push([]) if @history.empty?
         @history.last.push(*changes)
       else

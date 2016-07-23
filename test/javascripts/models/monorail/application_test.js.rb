@@ -56,6 +56,22 @@ module Monorail
       assert_equal 0, subject.puzzle.id
     end
 
+    test 'can_hint?' do
+      subject = Application.new
+      assert subject.can_hint?
+      subject.puzzle.lines.each &:next_state!
+      refute subject.can_hint?
+    end
+
+    test 'hint! completes a dot' do
+      subject = Application.new
+      subject.hint!
+      assert_equal 2, subject.puzzle.dots.first.present_lines.length
+
+      subject.puzzle.lines.each { |l| l.state = :present }
+      subject.hint! # does nothing, but test that it doesn't raise an error
+    end
+
     test 'auto-hint behavior' do
       events = []
       puzzle = Puzzle.find(0)

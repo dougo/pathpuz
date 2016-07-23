@@ -210,22 +210,6 @@ module Monorail
       assert_nil subject.find_completable_dot
     end
 
-    test 'can_hint?' do
-      subject = Puzzle.of_size(2)
-      assert subject.can_hint?
-      subject.lines.each &:next_state!
-      refute subject.can_hint?
-    end
-
-    test 'hint! completes a dot' do
-      subject = Puzzle.of_size(2)
-      subject.hint!
-      assert_equal 2, subject.dots.first.present_lines.length
-
-      subject.lines.each { |l| l.state = :present }
-      subject.hint! # does nothing, but test that it doesn't raise an error
-    end
-
     test 'lines_changed event when line goes to next state' do
       subject = Puzzle.of_size(2)
       changes = nil
@@ -251,20 +235,20 @@ module Monorail
       assert_equal [nil, nil], changes.map(&:prev_state)
     end
 
-    test 'autohint! combines history' do
+    test 'with_changes_combined combines history' do
       subject = Puzzle.of_size(2)
-      subject.dots.last.complete!
-      subject.autohint!
+      subject.dots.first.complete!
+      subject.with_changes_combined { subject.dots.last.complete! }
       assert subject.solved?
       subject.undo!
       assert subject.lines.none?(&:present?)
     end
 
-    test 'changing the same line twice undoes autohint from first change' do
+    test 'changing the same line twice undoes first combined changes' do
       subject = Puzzle.of_size(2)
       line = subject.lines.first
       line.next_state!
-      subject.autohint!
+      subject.with_changes_combined { subject.dots.first.complete! }
       line.next_state!
       assert line.absent?
       assert subject.lines.none?(&:present?)

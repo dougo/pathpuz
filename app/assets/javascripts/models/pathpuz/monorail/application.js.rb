@@ -36,6 +36,15 @@ module Monorail
       autohint!
     end
 
+    def can_hint?
+      puzzle.find_completable_dot
+    end
+
+    def hint!
+      dot = puzzle.find_completable_dot
+      dot.complete! if dot
+    end
+
     def autohint=(autohint)
       @autohint = autohint
       autohint!
@@ -48,7 +57,9 @@ module Monorail
     end
 
     def autohint!
-      puzzle.autohint! if autohint && puzzle
+      if autohint && puzzle
+        puzzle.with_changes_combined { hint! }
+      end
     end
   end
 end
