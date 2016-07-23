@@ -9,12 +9,14 @@ module Monorail
     def initialize(*args)
       super
 
+      @hint_rules = [HintRule.new]
+
+      self.autohint ||= false
+
       self.router = Vienna::Router.new
       router.route(':id') { |params| self.puzzle_id = params[:id].to_i }
       router.route('/') { self.puzzle_id = 0 }
       router.update
-
-      self.autohint ||= false
     end
 
     def next_puzzle!
@@ -36,13 +38,19 @@ module Monorail
       autohint!
     end
 
+    def hint_rule(name)
+      @hint_rules.first
+    end
+
     def can_hint?
-      puzzle.find_completable_dot
+      puzzle.find_completable_dot unless hint_rule(:completable_dot).disabled
     end
 
     def hint!
-      dot = puzzle.find_completable_dot
-      dot.complete! if dot
+      unless hint_rule(:completable_dot).disabled
+        dot = puzzle.find_completable_dot
+        dot.complete! if dot
+      end
     end
 
     def autohint=(autohint)

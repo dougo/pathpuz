@@ -56,6 +56,12 @@ module Monorail
       assert_equal 0, subject.puzzle.id
     end
 
+    test 'hint_rule' do
+      subject = Application.new
+      rule = subject.hint_rule(:completable_dot)
+      assert_kind_of HintRule, rule
+    end
+
     test 'can_hint?' do
       subject = Application.new
       assert subject.can_hint?
@@ -70,6 +76,14 @@ module Monorail
 
       subject.puzzle.lines.each { |l| l.state = :present }
       subject.hint! # does nothing, but test that it doesn't raise an error
+    end
+
+    test 'disabled hint rule prevents hints' do
+      subject = Application.new
+      subject.hint_rule(:completable_dot).disabled = true
+      refute subject.can_hint?
+      subject.hint!
+      assert subject.puzzle.dots.first.completable?
     end
 
     test 'auto-hint behavior' do

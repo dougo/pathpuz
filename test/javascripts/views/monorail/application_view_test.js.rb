@@ -45,6 +45,17 @@ module Monorail
       assert_equal :button, button.tag_name
       assert_equal 'Next puzzle', button.text
       assert_equal :next, button.class_name
+
+      child = child.next
+      assert_equal :div, child.tag_name
+      assert_equal :hint_rules, child.class_name
+
+      hint_rules_elt = child.children.first
+      assert_equal :h3, hint_rules_elt.tag_name
+      assert_equal 'Hint Rules', hint_rules_elt.text
+
+      rule = hint_rules_elt.next
+      assert_equal 'Complete a completable dot', rule.text
     end
 
     test 'next/prev buttons' do
@@ -60,7 +71,7 @@ module Monorail
       assert_equal 0, model.puzzle.id
     end
 
-    test 'render when the model changes' do
+    test 'render when the model changes its puzzle' do
       svg = el.find('svg')
       model.puzzle = Puzzle.find(1)
       refute_equal svg, el.find('svg')

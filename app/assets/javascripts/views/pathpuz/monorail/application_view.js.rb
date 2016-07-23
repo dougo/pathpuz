@@ -12,7 +12,7 @@ module Monorail
     end
 
     def render
-      element.empty << render_instructions << render_puzzle << render_autohint << render_buttons
+      element.empty << render_instructions << render_puzzle << render_autohint << render_buttons << render_hint_rules
       self
     end
 
@@ -39,6 +39,13 @@ module Monorail
       hint = HintButtonView.new(model).render.element
       nexx = Element.new(:button).add_class('next').text('Next puzzle')
       Element.new << prev << undo << hint << nexx
+    end
+
+    def render_hint_rules
+      # TODO: fieldset with legend?
+      title = Element.new(:h3).text('Hint Rules')
+      rule = HintRuleView.new(model.hint_rule(:completable_dot)).render.element
+      Element.new.add_class(:hint_rules) << title << rule
     end
   end
 end
