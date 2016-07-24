@@ -49,7 +49,7 @@ module Monorail
       end
 
       @lines.each do |line|
-        line.on(:next_state) do |prev_state|
+        line.on(:state_changed) do |prev_state|
           trigger(:lines_changed, LineChange.new(line, prev_state))
         end
       end

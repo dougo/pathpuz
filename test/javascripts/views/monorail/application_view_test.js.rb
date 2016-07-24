@@ -54,11 +54,7 @@ module Monorail
       assert_equal :h3, hint_rules_elt.tag_name
       assert_equal 'Hint Rules', hint_rules_elt.text
 
-      rule = hint_rules_elt.next
-      assert_equal 'Every dot has two lines', rule.text
-
-      rule = rule.next
-      assert_equal 'Every dot has only two lines', rule.text
+      assert_equal 3, hint_rules_elt.JS.nextAll.length
     end
 
     test 'next/prev buttons' do

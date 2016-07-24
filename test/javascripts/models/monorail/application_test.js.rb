@@ -59,7 +59,8 @@ module Monorail
     test 'hint_rules' do
       subject = Application.new
       subject.hint_rules.each { |rule| assert_kind_of HintRule, rule }
-      assert_equal %i(every_dot_has_two_lines every_dot_has_only_two_lines), subject.hint_rules.map(&:type)
+      rule_types = %i(every_dot_has_two_lines every_dot_has_only_two_lines single_loop)
+      assert_equal rule_types, subject.hint_rules.map(&:type)
     end
 
     test 'can_hint? if any hint rule is applicable' do

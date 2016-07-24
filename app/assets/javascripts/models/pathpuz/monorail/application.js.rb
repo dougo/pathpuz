@@ -10,7 +10,8 @@ module Monorail
       super
 
       self.hint_rules ||= [HintRule.new(type: :every_dot_has_two_lines),
-                           HintRule.new(type: :every_dot_has_only_two_lines)]
+                           HintRule.new(type: :every_dot_has_only_two_lines),
+                           HintRule.new(type: :single_loop)]
 
       self.autohint ||= false
 

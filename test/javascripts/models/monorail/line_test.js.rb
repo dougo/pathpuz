@@ -70,16 +70,34 @@ module Monorail
       assert subject.unknown?
     end
 
-    test 'next_state event' do
+    test 'mark_present!' do
+      subject = Line.new
+      subject.mark_present!
+      assert subject.present?
+    end
+
+    test 'mark_absent!' do
+      subject = Line.new
+      subject.mark_absent!
+      assert subject.absent?
+    end
+
+    test 'state_changed event' do
       subject = Line.new
       triggered = false
       prev_state = :fail
-      subject.on(:next_state) { |prev| triggered = true; prev_state = prev }
+      subject.on(:state_changed) { |prev| triggered = true; prev_state = prev }
       subject.next_state!
       assert triggered
       assert_nil prev_state
       
       subject.next_state!
+      assert_equal :present, prev_state
+
+      subject.mark_present!
+      assert_equal :absent, prev_state
+
+      subject.mark_absent!
       assert_equal :present, prev_state
     end
   end

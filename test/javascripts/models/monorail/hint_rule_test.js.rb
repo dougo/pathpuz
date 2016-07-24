@@ -56,6 +56,40 @@ module Monorail
       assert_empty dot.unknown_lines
     end
 
+    test 'single_loop type' do
+      puzzle = Puzzle.of_size(3)
+      subject = HintRule.new(type: :single_loop)
+      refute subject.applicable?(puzzle)
+      puzzle.dot(0,0).complete!
+      puzzle.dot(0,2).complete!
+      puzzle.dot(0,1).complete!
+      puzzle.dot(1,2).complete!
+      # Puzzle now looks like this:
+      # o---o---o
+      # |   x   |
+      # o   o---o
+      #
+      # o   o
+      assert subject.applicable?(puzzle)
+
+      event = false
+      puzzle.on(:lines_changed) { event = true }
+      subject.apply(puzzle)
+      assert event
+      lines = puzzle.lines.select(&:absent?)
+      assert_equal 2, lines.length
+      assert lines.find { |line| puzzle.dot(1,0) == line.dot1 && puzzle.dot(1,1) == line.dot2 }
+
+      puzzle.dot(2,0).complete!
+      # Now the loop could be closed, since it touches every dot:
+      # o---o---o
+      # |   x   |
+      # o x o---o
+      # |   
+      # o---o
+      refute subject.applicable?(puzzle)
+    end
+
     test 'not applicable when disabled' do
       puzzle = Puzzle.of_size(2)
       subject = HintRule.new(type: :every_dot_has_two_lines, disabled: true)

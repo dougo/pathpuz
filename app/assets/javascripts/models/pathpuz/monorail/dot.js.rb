@@ -1,4 +1,5 @@
 require 'vienna'
+require 'set'
 
 module Monorail
   class Dot < Vienna::Model
@@ -40,6 +41,20 @@ module Monorail
         lines.each { |l| l.state = state }
         trigger(:completed, state, *lines)
       end
+    end
+
+    def connected_dots
+      visit_connected_dots(Set.new)
+    end
+
+    protected
+
+    def visit_connected_dots(visited_dots)
+      unless visited_dots.include?(self)
+        visited_dots << self
+        present_lines.each { |line| line.other_dot(self).visit_connected_dots(visited_dots) }
+      end
+      visited_dots
     end
   end
 end

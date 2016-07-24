@@ -43,9 +43,23 @@ module Monorail
     end
 
     def next_state!
-      prev_state = self.state
-      self.state = next_state
-      trigger(:next_state, prev_state)
+      change_state! next_state
+    end
+
+    def mark_present!
+      change_state! :present
+    end
+
+    def mark_absent!
+      change_state! :absent
+    end
+
+    private
+
+    def change_state!(new_state)
+      prev_state = state
+      self.state = new_state
+      trigger(:state_changed, prev_state)
     end
   end
 end

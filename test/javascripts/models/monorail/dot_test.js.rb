@@ -104,6 +104,16 @@ module Monorail
       subject.complete!
     end
 
+    test 'connected_dots' do
+      dots = [subject, Dot.new, Dot.new, Dot.new, Dot.new]
+      Line.new(dot1: subject, dot2: dots[1], state: :present)
+      Line.new(dot1: subject, dot2: Dot.new)
+      Line.new(dot1: subject, dot2: dots[2], state: :fixed)
+      Line.new(dot1: dots[2], dot2: dots[3], state: :present)
+      Line.new(dot1: dots[4], dot2: dots[3], state: :present)
+      assert_equal Set.new(dots), subject.connected_dots
+    end
+
     private
 
     def subject

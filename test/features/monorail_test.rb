@@ -140,6 +140,7 @@ class MonorailTest < Capybara::Rails::TestCase
 
   test 'solve the 5x5 puzzle with auto-hint' do
     check 'Auto-hint'
+    uncheck "Don't close a loop"
     4.times { next_puzzle! }
     click_line([1,1], [1,2])
     click_line([1,3], [2,3])
@@ -148,6 +149,7 @@ class MonorailTest < Capybara::Rails::TestCase
 
   test 'undo auto-hint' do
     check 'Auto-hint'
+    uncheck "Don't close a loop"
     4.times { next_puzzle! }
     click_line([1,1], [1,2])
     click_on 'Undo'
