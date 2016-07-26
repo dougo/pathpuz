@@ -3,7 +3,7 @@ require 'models/pathpuz/monorail/application'
 module Monorail
   class ApplicationTest < Minitest::Test
     test 'attributes' do
-      assert_equal %i(router puzzle autohint hint_rules), Application.columns
+      assert_equal %i(router puzzle hint_rules), Application.columns
     end
 
     test 'Observable' do
@@ -15,8 +15,6 @@ module Monorail
       assert_kind_of Vienna::Router, subject.router
       assert_kind_of Puzzle, subject.puzzle
       assert_equal 0, subject.puzzle.id
-      assert_equal false, subject.autohint
-      assert_equal true, Application.new(autohint: true).autohint
     end
 
     test 'initialize with non-empty location hash' do
@@ -56,11 +54,12 @@ module Monorail
       assert_equal 0, subject.puzzle.id
     end
 
+    HINT_RULE_TYPES = %i(every_dot_has_two_lines every_dot_has_only_two_lines single_loop)
+
     test 'hint_rules' do
       subject = Application.new
       subject.hint_rules.each { |rule| assert_kind_of HintRule, rule }
-      rule_types = %i(every_dot_has_two_lines every_dot_has_only_two_lines single_loop)
-      assert_equal rule_types, subject.hint_rules.map(&:type)
+      assert_equal HINT_RULE_TYPES, subject.hint_rules.map(&:type)
     end
 
     test 'can_hint? if any hint rule is applicable' do
@@ -86,20 +85,55 @@ module Monorail
     end
 
     test 'auto-hint behavior' do
+      rules = HINT_RULE_TYPES.map { |type| HintRule.new(type: type, auto: true) }
       events = []
       puzzle = Puzzle.find(0)
       puzzle.on(:lines_changed) { |*args| events << args }
-      subject = Application.new(autohint: true)
+      subject = Application.new(hint_rules: rules)
       expected = [puzzle.dots.first.lines, [puzzle.lines[2]], [puzzle.lines[3]]]
       assert_equal expected, events.map { |changes| changes.map &:line }
       puzzle.undo!
       refute puzzle.can_undo?
     end
 
+    test 'only auto-apply hint rules that are marked auto' do
+      rules = HINT_RULE_TYPES.map { |type| HintRule.new(type: type) }
+      rules[1].auto = true
+      subject = Application.new(hint_rules: rules)
+      subject.puzzle = puzzle = Puzzle.of_size(3)
+      refute puzzle.solved?
+      puzzle.dot(0,0).complete!
+      puzzle.dot(0,2).complete!
+      refute_empty puzzle.lines.select(&:absent?)
+    end
+
     test 'auto-hint when puzzle changes' do
-      subject = Application.new(autohint: true)
+      rules = HINT_RULE_TYPES.map { |type| HintRule.new(type: type, auto: true) }
+      subject = Application.new(hint_rules: rules)
       subject.next_puzzle!
       assert_predicate subject.puzzle, :solved?
+    end
+
+    test 'auto-hint when any hint rule auto is set' do
+      subject = Application.new
+      subject.hint_rules[0].auto = true
+      assert_predicate subject.puzzle, :solved?
+
+      subject.puzzle = Puzzle.find(3)
+      subject.hint_rules[1].auto = true
+      refute_predicate subject.puzzle, :solved?
+      refute_empty subject.puzzle.lines.select(&:absent?)
+
+      subject.hint_rules[2].auto = true
+      assert_predicate subject.puzzle, :solved?
+    end
+
+    test "don't auto-hint when a hint rule auto is unset" do
+      rules = HINT_RULE_TYPES.map { |type| HintRule.new(type: type, auto: true) }
+      subject = Application.new(hint_rules: rules)
+      subject.puzzle.undo!
+      subject.hint_rules[1].auto = false
+      refute_predicate subject.puzzle, :solved?
     end
   end
 end

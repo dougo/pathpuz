@@ -3,7 +3,7 @@ require 'models/pathpuz/monorail/hint_rule'
 module Monorail
   class HintRuleTest < Minitest::Test
     test 'attributes' do
-      assert_equal %i(type disabled), HintRule.columns
+      assert_equal %i(type auto), HintRule.columns
     end
 
     test 'Observable' do
@@ -88,14 +88,6 @@ module Monorail
       # |   
       # o---o
       refute subject.applicable?(puzzle)
-    end
-
-    test 'not applicable when disabled' do
-      puzzle = Puzzle.of_size(2)
-      subject = HintRule.new(type: :every_dot_has_two_lines, disabled: true)
-      refute subject.applicable?(puzzle)
-      subject.apply(puzzle)
-      assert puzzle.dots.first.completable?
     end
   end
 end

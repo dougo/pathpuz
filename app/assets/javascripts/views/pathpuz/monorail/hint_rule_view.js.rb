@@ -6,17 +6,17 @@ module Monorail
 
     def initialize(model)
       @model = model
-      model.add_observer(:disabled) { render }
+      model.add_observer(:auto) { render }
     end
 
     def render
-      checkbox = Element.new(:input).attr(:type, :checkbox).prop(:checked, !model.disabled)
+      checkbox = Element.new(:input).attr(:type, :checkbox).prop(:checked, !!model.auto)
       element.empty << Element.new(:label).text(name).prepend(checkbox)
       self
     end
 
     on(:change, ':checkbox') do |evt|
-      model.disabled = !evt.target.prop(:checked)
+      model.auto = evt.target.prop(:checked)
     end
 
     private

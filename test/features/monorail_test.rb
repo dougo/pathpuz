@@ -86,10 +86,8 @@ class MonorailTest < Capybara::Rails::TestCase
   end
 
   test 'solve the 3x3 puzzle using only first hint rule' do
+    check 'Every dot has two lines'
     next_puzzle!
-    assert_checked_field 'Every dot has two lines'
-    uncheck 'Every dot has only two lines'
-    5.times { click_on 'Hint' }
     assert_solved
   end
 
@@ -139,8 +137,8 @@ class MonorailTest < Capybara::Rails::TestCase
   end
 
   test 'solve the 5x5 puzzle with auto-hint' do
-    check 'Auto-hint'
-    uncheck "Don't close a loop"
+    check 'Every dot has two lines'
+    check 'Every dot has only two lines'
     4.times { next_puzzle! }
     click_line([1,1], [1,2])
     click_line([1,3], [2,3])
@@ -148,8 +146,8 @@ class MonorailTest < Capybara::Rails::TestCase
   end
 
   test 'undo auto-hint' do
-    check 'Auto-hint'
-    uncheck "Don't close a loop"
+    check 'Every dot has two lines'
+    check 'Every dot has only two lines'
     4.times { next_puzzle! }
     click_line([1,1], [1,2])
     click_on 'Undo'
@@ -161,8 +159,9 @@ class MonorailTest < Capybara::Rails::TestCase
   test 'auto-undo auto-hint when marking a line absent' do
     # If you want to mark an unknown line as absent, you have to click it twice. But if auto-hint is on, the first
     # click might cause some other lines to be marked; these should be undone before the second click.
+    check 'Every dot has two lines'
+    check 'Every dot has only two lines'
     3.times { next_puzzle! }
-    check 'Auto-hint'
     click_line([1,0], [2,0])
     click_line([1,0], [2,0])
     assert_solved

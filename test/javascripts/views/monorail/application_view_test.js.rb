@@ -25,10 +25,6 @@ module Monorail
 
       child = child.next
       assert_equal :div, child.tag_name
-      assert_equal :autohint, child.class_name
-
-      child = child.next
-      assert_equal :div, child.tag_name
 
       button = child.children.first
       assert_equal :button, button.tag_name

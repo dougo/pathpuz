@@ -12,7 +12,7 @@ module Monorail
     end
 
     def render
-      element.empty << render_instructions << render_puzzle << render_autohint << render_buttons << render_hint_rules
+      element.empty << render_instructions << render_puzzle << render_buttons << render_hint_rules
       self
     end
 
@@ -27,10 +27,6 @@ module Monorail
 
     def render_puzzle
       PuzzleView.new(model.puzzle).render.element
-    end
-
-    def render_autohint
-      AutohintView.new(model).render.element
     end
 
     def render_buttons

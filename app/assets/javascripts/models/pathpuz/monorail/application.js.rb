@@ -4,7 +4,7 @@ module Monorail
   class Application < Vienna::Model
     include Vienna::Observable
 
-    attributes :router, :puzzle, :autohint, :hint_rules
+    attributes :router, :puzzle, :hint_rules
 
     def initialize(*args)
       super
@@ -12,8 +12,9 @@ module Monorail
       self.hint_rules ||= [HintRule.new(type: :every_dot_has_two_lines),
                            HintRule.new(type: :every_dot_has_only_two_lines),
                            HintRule.new(type: :single_loop)]
-
-      self.autohint ||= false
+      hint_rules.each do |rule|
+        rule.add_observer(:auto) { |auto| autohint! if auto }
+      end
 
       self.router = Vienna::Router.new
       router.route(':id') { |params| self.puzzle_id = params[:id].to_i }
@@ -49,20 +50,22 @@ module Monorail
       rule.apply(puzzle) if rule
     end
 
-    def autohint=(autohint)
-      @autohint = autohint
-      autohint!
-    end
-
     private
 
     def puzzle_id=(id)
       self.puzzle = Puzzle.find(id)
     end
 
+    def autohint_rules
+      hint_rules.select(&:auto)
+    end
+
     def autohint!
-      if autohint && puzzle
-        puzzle.with_changes_combined { hint! }
+      if puzzle
+        rule = autohint_rules.find { |rule| rule.applicable?(puzzle) }
+        if rule
+          puzzle.with_changes_combined { rule.apply(puzzle) }
+        end
       end
     end
   end

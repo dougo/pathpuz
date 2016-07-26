@@ -29,28 +29,28 @@ module Monorail
       assert_equal "Don't close a loop if it doesn't connect all dots", el.text
     end
 
-    test 'checkbox is checked if model is enabled' do
-      assert checked?
+    test 'checkbox is unchecked if model is not auto' do
+      refute checked?
     end
 
-    test 'checkbox is unchecked if model is disabled' do
-      model.disabled = true
-      refute checked?
+    test 'checkbox is checked if model is auto' do
+      model.auto = true
+      assert checked?
     end
 
     test 'checkbox is updated when model changes' do
       view.render
-      model.disabled = true
-      refute checked?
-      model.disabled = false
+      model.auto = true
       assert checked?
+      model.auto = false
+      refute checked?
     end
 
     test 'model is updated when checkbox changes' do
-      uncheck!
-      assert model.disabled
       check!
-      refute model.disabled
+      assert model.auto
+      uncheck!
+      refute model.auto
     end
 
     private
