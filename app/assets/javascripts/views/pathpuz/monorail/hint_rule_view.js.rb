@@ -4,14 +4,18 @@ module Monorail
   class HintRuleView < Vienna::View
     attr_reader :model
 
+    tag_name :tr
+
     def initialize(model)
       @model = model
       model.add_observer(:auto) { render }
     end
 
     def render
+      label = Element.new(:label).text(name).attr(:for, model.type)
       checkbox = Element.new(:input).attr(:type, :checkbox).prop(:checked, !!model.auto)
-      element.empty << Element.new(:label).text(name).prepend(checkbox)
+      checkbox.id = model.type
+      element.empty << Element.new(:td).append(label) << Element.new(:td).append(checkbox)
       self
     end
 

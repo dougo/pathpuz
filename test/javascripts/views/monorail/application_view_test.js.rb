@@ -43,14 +43,26 @@ module Monorail
       assert_equal :next, button.class_name
 
       child = child.next
-      assert_equal :div, child.tag_name
+      assert_equal :table, child.tag_name
       assert_equal :hint_rules, child.class_name
 
-      hint_rules_elt = child.children.first
-      assert_equal :h3, hint_rules_elt.tag_name
-      assert_equal 'Hint Rules', hint_rules_elt.text
+      head = child.children.first
+      assert_equal :thead, head.tag_name
 
-      assert_equal 3, hint_rules_elt.JS.nextAll.length
+      header = head.children.first
+      assert_equal :tr, header.tag_name
+
+      cell = header.children.first
+      assert_equal :th, cell.tag_name
+      assert_equal 'Hint Rules', cell.text
+
+      cell = cell.next
+      assert_equal :th, cell.tag_name
+      assert_equal 'Auto-apply?', cell.text
+
+      body = head.next
+      assert_equal :tbody, body.tag_name
+      assert_equal 3, body.children.length
     end
 
     test 'next/prev buttons' do

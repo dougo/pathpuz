@@ -38,12 +38,11 @@ module Monorail
     end
 
     def render_hint_rules
-      # TODO: fieldset with legend?
-      title = Element.new(:h3).text('Hint Rules')
-      rules = model.hint_rules.map do |rule|
-        HintRuleView.new(rule).render.element
-      end
-      Element.new.add_class(:hint_rules).append(title).append(*rules)
+      header = Element.new(:tr) << Element.new(:th).text('Hint Rules') << Element.new(:th).text('Auto-apply?')
+      head = Element.new(:thead) << header
+      rules = model.hint_rules.map { |rule| HintRuleView.new(rule).render.element }
+      body = Element.new(:tbody).append(rules)
+      Element.new(:table).add_class(:hint_rules) << head << body
     end
   end
 end
