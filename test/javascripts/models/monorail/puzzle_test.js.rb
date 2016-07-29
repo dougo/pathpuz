@@ -68,7 +68,22 @@ module Monorail
     test 'puzzle 6' do
       subject = Puzzle.find(6)
       assert_equal 6, subject.id
-      assert_square_of_size(subject, 7)
+      assert_has_grid_of_dots(subject, 7, [3,3])
+      assert_nil subject.dot(3,3)
+      assert_dot(subject, 6,6)
+      assert_adjacent_dots_are_connected(subject)
+      assert_equal 2*36 + 2*6 - 4, subject.lines.length
+      lines = [[[1,5],[1,6]], [[2,1],[2,2]], [[3,1],[3,2]], [[4,0],[4,1]], [[5,3],[5,4]], [[5,3],[6,3]], [[5,5],[5,6]]]
+      assert_has_fixed_lines(subject, *lines)
+    end
+
+    test 'puzzle 7' do
+      subject = Puzzle.find(7)
+      assert_equal 7, subject.id
+      assert_square_of_size(subject, 8)
+      lines = [[[0,4],[1,4]], [[2,1],[2,2]], [[2,2],[3,2]], [[2,5],[2,6]], [[3,2],[4,2]], [[3,5],[4,5]], [[3,7],[4,7]],
+               [[4,2],[4,3]], [[4,5],[4,6]], [[5,0],[5,1]], [[5,4],[6,4]], [[6,3],[6,4]], [[6,3],[7,3]], [[7,5],[7,6]]]
+      assert_has_fixed_lines(subject, *lines)
     end
 
     test 'of_size' do
@@ -269,16 +284,24 @@ module Monorail
       assert_adjacent_dots_are_connected(puzzle)
     end
 
-    def assert_has_grid_of_dots(puzzle, size)
+    def assert_has_grid_of_dots(puzzle, size, except = nil)
       (0...size).each do |r|
         (0...size).each do |c|
-          unless size.odd? && r == size-1 && c == size-1
-            dot = puzzle.dot(r, c)
-            assert_equal r, dot.row
-            assert_equal c, dot.col
+          next if size.odd? && r == size-1 && c == size-1
+          if except
+            except_r, except_c = except
+            next if r == except_r && c == except_c
           end
+          assert_dot(puzzle, r, c)
         end
       end
+    end
+
+    def assert_dot(puzzle, r, c)
+      dot = puzzle.dot(r, c)
+      assert_kind_of Dot, dot
+      assert_equal r, dot.row
+      assert_equal c, dot.col
     end
 
     def assert_bottom_right_dot_is_omitted(puzzle, size)
@@ -297,13 +320,16 @@ module Monorail
       (0...puzzle.height).each do |r|
         (0...puzzle.width).each do |c|
           dot = puzzle.dot(r, c)
+          next unless dot
           right = puzzle.dot(r, c+1)
           if right
-            assert_equal 1, dot.lines.select { |line| line.dot2 == right }.length
+            msg = "#{dot.inspect} should connect to #{right.inspect}"
+            assert_equal 1, dot.lines.select { |line| line.dot2 == right }.length, msg
           end
           below = puzzle.dot(r+1, c)
           if below
-            assert_equal 1, dot.lines.select { |line| line.dot2 == below }.length
+            msg = "#{dot.inspect} should connect to #{below.inspect}"
+            assert_equal 1, dot.lines.select { |line| line.dot2 == below }.length, msg
           end
         end
       end
@@ -317,6 +343,12 @@ module Monorail
         assert line.fixed?, "Line #{dot1.inspect},#{dot2.inspect} should be fixed."
       end
       assert_equal lines.length, puzzle.lines.select(&:fixed?).length
+    end
+
+    def print_lines(puzzle)
+      puzzle.lines.each do |l|
+        puts "{dot1: {row: #{l.dot1.row}, col: #{l.dot1.col}}, dot2: {row: #{l.dot2.row}, col: #{l.dot2.col}}},"
+      end
     end
   end
 end
