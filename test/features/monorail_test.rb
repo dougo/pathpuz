@@ -145,6 +145,15 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_solved
   end
 
+  test 'solve the 5x5 puzzle with all auto-hints' do
+    4.times { next_puzzle! }
+    check 'Every dot has two lines'
+    check 'Every dot has only two lines'
+    check "Don't close a short loop with a line"
+    check "Don't close a short loop with two lines"
+    assert_solved
+  end
+
   test 'undo auto-hint' do
     check 'Every dot has two lines'
     check 'Every dot has only two lines'

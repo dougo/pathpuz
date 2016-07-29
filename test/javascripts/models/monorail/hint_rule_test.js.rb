@@ -56,9 +56,9 @@ module Monorail
       assert_empty dot.unknown_lines
     end
 
-    test 'single_loop type' do
+    test 'short_loop_line type' do
       puzzle = Puzzle.of_size(3)
-      subject = HintRule.new(type: :single_loop)
+      subject = HintRule.new(type: :short_loop_line)
       refute subject.applicable?(puzzle)
       puzzle.dot(0,0).complete!
       puzzle.dot(0,2).complete!
@@ -76,9 +76,7 @@ module Monorail
       puzzle.on(:lines_changed) { event = true }
       subject.apply(puzzle)
       assert event
-      lines = puzzle.lines.select(&:absent?)
-      assert_equal 2, lines.length
-      assert lines.find { |line| puzzle.dot(1,0) == line.dot1 && puzzle.dot(1,1) == line.dot2 }
+      assert_predicate puzzle.line(1,0, 1,1), :absent?
 
       puzzle.dot(2,0).complete!
       # Now the loop could be closed, since it touches every dot:
@@ -87,6 +85,46 @@ module Monorail
       # o x o---o
       # |   
       # o---o
+      refute subject.applicable?(puzzle)
+    end
+
+    test 'short_loop_dot type' do
+      puzzle = Puzzle.of_size(3)
+      subject = HintRule.new(type: :short_loop_dot)
+      refute subject.applicable?(puzzle)
+      puzzle.line(0,0, 1,0).mark_present!
+      puzzle.dot(2,0).complete!
+      puzzle.dot(2,1).complete!
+      # Puzzle now looks like this:
+      # o   o   o
+      # |        
+      # o   o   o
+      # |   |
+      # o---o
+      # Two of the three lines at 0,1 must be present, but connecting 0,0 and 1,1 would be a short loop.
+      # Thus 0,1--0,2 must be present.
+      assert subject.applicable?(puzzle)
+      subject.apply(puzzle)
+      assert_predicate puzzle.line(0,1, 0,2), :present?
+
+      puzzle.undo!
+      puzzle.dot(0,1).lines.rotate! # order shouldn't matter...
+      subject.apply(puzzle)
+      assert_predicate puzzle.line(0,1, 0,2), :present?
+
+      puzzle.undo!
+      puzzle.dot(0,1).lines.rotate! # one more time!
+      subject.apply(puzzle)
+      assert_predicate puzzle.line(0,1, 0,2), :present?
+
+      puzzle.line(0,2, 1,2).mark_present!
+      # Puzzle now looks like this:
+      # o   o---o
+      # |       |
+      # o   o   o
+      # |   |
+      # o---o
+      # The hint rule should not apply to 1,1, because it doesn't need two lines (it already has one).
       refute subject.applicable?(puzzle)
     end
   end

@@ -54,7 +54,7 @@ module Monorail
       assert_equal 0, subject.puzzle.id
     end
 
-    HINT_RULE_TYPES = %i(every_dot_has_two_lines every_dot_has_only_two_lines single_loop)
+    HINT_RULE_TYPES = %i(every_dot_has_two_lines every_dot_has_only_two_lines short_loop_line short_loop_dot)
 
     test 'hint_rules' do
       subject = Application.new

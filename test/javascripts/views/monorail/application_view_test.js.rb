@@ -62,7 +62,7 @@ module Monorail
 
       body = head.next
       assert_equal :tbody, body.tag_name
-      assert_equal 3, body.children.length
+      assert_equal 4, body.children.length
     end
 
     test 'next/prev buttons' do

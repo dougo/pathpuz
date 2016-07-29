@@ -98,6 +98,20 @@ module Monorail
       end
     end
 
+    test 'line' do
+      subject = Puzzle.of_size(2)
+      line = subject.line(0,0, 0,1)
+      assert_equal subject.dot(0,0), line.dot1
+      assert_equal subject.dot(0,1), line.dot2
+
+      line = subject.line(1,1, 1,0)
+      assert_equal subject.dot(1,0), line.dot1
+      assert_equal subject.dot(1,1), line.dot2
+
+      assert_nil subject.line(0,0, 1,1)
+      assert_nil subject.line(2,2, 1,1)
+    end
+
     test 'width and height' do
       json = Puzzle.json_for_size(3)
       subject = Puzzle.new(json)

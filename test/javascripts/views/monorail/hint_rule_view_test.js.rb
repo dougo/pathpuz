@@ -33,11 +33,14 @@ module Monorail
       assert_equal model.type, el.find(:input).id
     end
 
-    test 'render single_loop' do
-      model.type = :single_loop
-      assert_equal "Don't close a loop if it doesn't connect all dots", el.text
-      assert_equal model.type, el.find(:label)[:for]
-      assert_equal model.type, el.find(:input).id
+    test 'render short_loop_line' do
+      model.type = :short_loop_line
+      assert_equal "Don't close a short loop with a line", el.text
+    end
+
+    test 'render short_loop_dot' do
+      model.type = :short_loop_dot
+      assert_equal "Don't close a short loop with two lines", el.text
     end
 
     test 'checkbox is unchecked if model is not auto' do

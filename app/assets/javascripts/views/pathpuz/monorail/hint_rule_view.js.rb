@@ -31,8 +31,10 @@ module Monorail
         'Every dot has two lines'
       when :every_dot_has_only_two_lines
         'Every dot has only two lines'
-      when :single_loop
-        "Don't close a loop if it doesn't connect all dots"
+      when :short_loop_line
+        "Don't close a short loop with a line"
+      when :short_loop_dot
+        "Don't close a short loop with two lines"
       end
     end
   end

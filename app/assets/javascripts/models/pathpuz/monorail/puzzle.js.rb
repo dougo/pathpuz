@@ -70,6 +70,13 @@ module Monorail
       @dots.values
     end
 
+    def line(r1,c1, r2,c2)
+      dot1, dot2 = dot(r1,c1), dot(r2,c2)
+      if dot1 && dot2
+        dot1.lines.find { |line| line.other_dot(dot1) == dot2 }
+      end
+    end
+
     def height
       dots.map(&:row).max + 1
     end

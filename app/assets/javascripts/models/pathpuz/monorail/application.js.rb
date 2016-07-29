@@ -11,7 +11,8 @@ module Monorail
 
       self.hint_rules ||= [HintRule.new(type: :every_dot_has_two_lines),
                            HintRule.new(type: :every_dot_has_only_two_lines),
-                           HintRule.new(type: :single_loop)]
+                           HintRule.new(type: :short_loop_line),
+                           HintRule.new(type: :short_loop_dot)]
       hint_rules.each do |rule|
         rule.add_observer(:auto) { |auto| autohint! if auto }
       end

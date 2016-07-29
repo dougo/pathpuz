@@ -43,7 +43,7 @@ module Monorail
     end
 
     test 're-render when lines changed or undone' do
-      model.puzzle = Puzzle.find(4)
+      model.puzzle = Puzzle.find(5)
       view.render
       model.hint! while model.can_hint?
       assert el.is(':disabled')
