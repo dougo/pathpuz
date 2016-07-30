@@ -86,8 +86,27 @@ module Monorail
       assert_has_fixed_lines(subject, *lines)
     end
 
+    test 'puzzle 8' do
+      subject = Puzzle.find(8)
+      assert_equal 8, subject.id
+      assert_square_of_size(subject, 12)
+      lines = [[[0,4],[0,5]], [[0,5],[0,6]], [[0,7],[1,7]],
+               [[1,0],[2,0]], [[1,1],[2,1]], [[1,2],[2,2]], [[1,3],[1,4]], [[1,7],[1,8]], [[1,10],[2,10]],
+               [[2,1],[2,2]], [[2,4],[3,4]], [[2,7],[3,7]], [[2,9],[2,10]],
+               [[3,1],[4,1]], [[3,3],[3,4]], [[3,5],[4,5]], [[3,6],[4,6]], [[3,8],[3,9]], [[3,10],[4,10]],
+               [[4,0],[5,0]], [[4,2],[4,3]], [[4,3],[5,3]], [[4,6],[5,6]], [[4,9],[4,10]],
+               [[5,4],[6,4]], [[5,7],[5,8]], [[5,9],[6,9]],
+               [[6,0],[6,1]], [[6,1],[6,2]], [[6,2],[7,2]], [[6,8],[6,9]], [[6,8],[7,8]],
+               [[7,1],[8,1]], [[7,3],[8,3]],
+               [[8,2],[9,2]], [[8,3],[9,3]], [[8,5],[8,6]], [[8,6],[9,6]], [[8,8],[8,9]],
+               [[9,4],[9,5]], [[9,6],[9,7]], [[9,10],[9,11]],
+               [[10,1],[11,1]], [[10,4],[11,4]], [[10,7],[11,7]], [[10,8],[11,8]], [[10,10],[11,10]],
+               [[11,6],[11,7]], [[11,8],[11,9]]]
+      assert_has_fixed_lines(subject, *lines)
+    end
+
     test 'count' do
-      assert_equal 8, Puzzle.count
+      assert_equal 9, Puzzle.count
     end
 
     test 'find returns nil for nonexistent puzzle' do
@@ -354,8 +373,10 @@ module Monorail
     end
 
     def print_lines(puzzle)
+      puts
       puzzle.lines.each do |l|
-        puts "{dot1: {row: #{l.dot1.row}, col: #{l.dot1.col}}, dot2: {row: #{l.dot2.row}, col: #{l.dot2.col}}},"
+        st = l.fixed? ? ', state: :fixed' : ''
+        puts "{dot1: {row: #{l.dot1.row}, col: #{l.dot1.col}}, dot2: {row: #{l.dot2.row}, col: #{l.dot2.col}}#{st}},"
       end
     end
   end
