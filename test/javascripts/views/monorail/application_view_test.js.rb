@@ -78,6 +78,12 @@ module Monorail
       assert_equal 0, model.puzzle.id
     end
 
+    test 'next button is disabled at last puzzle' do
+      model.puzzle = Puzzle.find(Puzzle.count - 1)
+      nxt = el.find('.next')
+      assert nxt.prop(:disabled)
+    end
+
     test 'render when the model changes its puzzle' do
       svg = el.find('svg')
       model.puzzle = Puzzle.find(1)

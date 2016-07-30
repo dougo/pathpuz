@@ -24,6 +24,10 @@ module Monorail
       { lines: lines }
     end
 
+    def self.count
+      Adapter::PUZZLES.length
+    end
+
     def initialize(*args)
       super
       @history ||= []
@@ -145,12 +149,8 @@ module Monorail
 
     class Adapter < Vienna::Adapter
       def find(record, id, &block)
-        if id < PUZZLES.length
-          attrs = PUZZLES[id]
-        else
-          attrs = record.class.json_for_size(id+1)
-          attrs[:id] = id
-        end
+        return nil unless id < PUZZLES.length
+        attrs = PUZZLES[id]
         model = record.class.load(attrs)
         block.call(model) if block
         model

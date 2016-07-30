@@ -86,6 +86,14 @@ module Monorail
       assert_has_fixed_lines(subject, *lines)
     end
 
+    test 'count' do
+      assert_equal 8, Puzzle.count
+    end
+
+    test 'find returns nil for nonexistent puzzle' do
+      assert_nil Puzzle.find(Puzzle.count)
+    end
+
     test 'of_size' do
       (2..7).each do |size|
         subject = Puzzle.of_size(size)

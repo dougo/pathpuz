@@ -34,6 +34,7 @@ module Monorail
       undo = UndoButtonView.new(model.puzzle).render.element
       hint = HintButtonView.new(model).render.element
       nexx = Element.new(:button).add_class('next').text('Next puzzle')
+      nexx.prop(:disabled, model.puzzle.id == Puzzle.count - 1)
       Element.new << prev << undo << hint << nexx
     end
 
