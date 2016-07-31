@@ -105,8 +105,41 @@ module Monorail
       assert_has_fixed_lines(subject, *lines)
     end
 
+    test 'puzzle 9' do
+      subject = Puzzle.find(9)
+      assert_equal 9, subject.id
+      dots = [       [0,1],[0,2],[0,3],
+              [1,0.5],[1,1.5],[1,2.5],[1,3.5],
+               [2,0],[2,1],[2,2],[2,3],[2,4],
+              [3,0.5],[3,1.5],[3,2.5],[3,3.5],
+                     [4,1],[4,2],[4,3]]
+      dots.each do |r,c|
+        assert_dot(subject, r,c)
+        dot = subject.dot(r, c)
+        right = subject.dot(r, c+1)
+        if right
+          msg = "#{dot.inspect} should connect to #{right.inspect}"
+          assert_equal 1, dot.lines.select { |line| line.dot2 == right }.length, msg
+        end
+        below_left = subject.dot(r+1, c-0.5)
+        if below_left
+          msg = "#{dot.inspect} should connect to #{below_left.inspect}"
+          assert_equal 1, dot.lines.select { |line| line.dot2 == below_left }.length, msg
+        end
+        below_right = subject.dot(r+1, c+0.5)
+        if below_right
+          msg = "#{dot.inspect} should connect to #{below_right.inspect}"
+          assert_equal 1, dot.lines.select { |line| line.dot2 == below_right }.length, msg
+        end
+      end
+      assert_equal 14*3, subject.lines.length
+
+      lines = [[[1,0.5],[2,1]], [[1,1.5],[1,2.5]], [[2,2],[2,3]], [[2,3],[2,4]], [[3,1.5],[3,2.5]], [[3,2.5],[4,2]]]
+      assert_has_fixed_lines(subject, *lines)
+    end
+
     test 'count' do
-      assert_equal 9, Puzzle.count
+      assert_equal 10, Puzzle.count
     end
 
     test 'find returns nil for nonexistent puzzle' do
