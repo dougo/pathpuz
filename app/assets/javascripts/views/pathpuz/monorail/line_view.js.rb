@@ -41,8 +41,6 @@ module Monorail
       model.next_state!
     end
 
-    on :selectstart, &:kill # don't select text on double or triple click!
-
     private
 
     def create_clickable_element

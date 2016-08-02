@@ -24,6 +24,14 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_solved
   end
 
+  test 'cannot click after solved' do
+    click_dot(0, 0)
+    click_dot(1, 1)
+    click_line([0,1], [1,1])
+    assert_solved
+    assert_equal 4, black_lines.length
+  end
+
   test 'undo' do
     click_dot(0, 0)
     click_line([0,1], [1,1])

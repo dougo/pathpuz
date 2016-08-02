@@ -28,12 +28,6 @@ module Monorail
       assert_equal '-1 -1 4 5', `#{el}[0].getAttribute('viewBox')`
     end
 
-    test 'render' do
-      assert_kind_of SolvedView, view.solved
-      assert_equal model, view.solved.model
-      assert el.find('.solved')
-    end
-
     test 'has one DotView per Dot in puzzle' do
       view.render
       dot_views = view.dots
@@ -66,7 +60,6 @@ module Monorail
     test 'render a solved model' do
       model.lines.each &:mark_present!
       assert el.has_class? :solved
-      assert_equal 1, el.find('rect[fill="transparent"]').length
     end
 
     test 're-render when solved' do
@@ -74,7 +67,6 @@ module Monorail
       model.lines.each &:mark_present!
       model.trigger(:solved)
       assert el.has_class? :solved
-      assert_equal 1, el.find('rect[fill="transparent"]').length
     end
 
     test 're-render when undone after solving' do
@@ -82,7 +74,18 @@ module Monorail
       view.render
       model.undo!
       refute el.has_class? :solved
-      assert_empty el.find('rect[fill="transparent"]')
+    end
+
+    test 'double click does not select text' do
+      # I don't know how to actually cause text to be selected via double-click, so let's just test that the
+      # selectstart event is not propagated:
+      selection = nil
+      el.append_to_body
+      Document.body.on(:selectstart) { selection = true }
+      el.trigger(:selectstart)
+      assert_nil selection
+      el.find('line[cursor=pointer]').first.trigger(:selectstart)
+      assert_nil selection
     end
   end
 end

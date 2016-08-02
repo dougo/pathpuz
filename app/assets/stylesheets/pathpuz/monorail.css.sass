@@ -5,8 +5,11 @@ body
 button
   margin: 6px
 
-.solved line.present
-  animation: solved 1s infinite
+.solved
+  line,circle
+    pointer-events: none
+  line.present
+    animation: solved 1s infinite
 
 @keyframes solved
   0%,100%

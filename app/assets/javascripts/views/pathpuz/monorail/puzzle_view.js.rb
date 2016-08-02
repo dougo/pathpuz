@@ -5,12 +5,12 @@ module Monorail
   class PuzzleView < Vienna::View
     tag_name :svg
 
-    attr_accessor :model, :dots, :lines, :solved
+    attr_accessor :model, :dots, :lines
 
     def initialize(model)
       self.model = model
-      model.on(:solved) { render }
-      model.on(:undone) { render } # TODO: this is dumb, just remove the class?
+      model.on(:solved) { set_class }
+      model.on(:undone) { set_class }
     end
 
     def create_element
@@ -25,7 +25,6 @@ module Monorail
     def render
       self.dots = model.dots.map { |dot| DotView.new(dot) }
       self.lines = model.lines.map { |line| LineView.new(line) }
-      self.solved = SolvedView.new(model)
 
       element.empty
       dots.each { |dot| element.append(dot.render.element) }
@@ -36,15 +35,21 @@ module Monorail
         lines.each { |line| element.append(line.render.element) }
       end
 
-      element.append(solved.render.element)
+      set_class
 
+      self
+    end
+
+    on :selectstart, &:kill # don't select text on double or triple click!
+
+    private
+
+    def set_class
       if model.solved?
         element.add_class(:solved)
       else
         element.remove_class(:solved)
       end
-
-      self
     end
   end
 end
