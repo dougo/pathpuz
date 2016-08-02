@@ -10,6 +10,7 @@ module Monorail
     def initialize(model)
       self.model = model
       model.on(:solved) { render }
+      model.on(:undone) { render } # TODO: this is dumb, just remove the class?
     end
 
     def create_element
@@ -37,7 +38,11 @@ module Monorail
 
       element.append(solved.render.element)
 
-      element.add_class(:solved) if model.solved?
+      if model.solved?
+        element.add_class(:solved)
+      else
+        element.remove_class(:solved)
+      end
 
       self
     end

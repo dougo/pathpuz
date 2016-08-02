@@ -34,6 +34,15 @@ class MonorailTest < Capybara::Rails::TestCase
     assert_empty black_lines
   end
 
+  test 'reset' do
+    click_dot(0, 0)
+    click_dot(1, 1)
+    click_on 'Reset'
+    refute_solved
+    click_dot(0, 0)
+    assert_equal 2, black_lines.length
+  end
+
   test 'skip to the next puzzle' do
     click_line([0,0], [0,1])
     assert_equal 1, black_lines.length

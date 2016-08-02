@@ -13,9 +13,6 @@ module Monorail
     test 'render' do
       assert_equal :button, el.tag_name
       assert_equal 'Undo', el.text
-    end
-
-    test 'disabled if no history' do
       assert el.prop('disabled')
     end
 

@@ -98,6 +98,12 @@ module Monorail
       trigger(:undone)
     end
 
+    def reset!
+      lines.each { |l| l.state = nil unless l.fixed? }
+      @history = []
+      trigger(:undone)
+    end
+
     # Is there a single looping path that visits every dot?
     def solved?
       first_dot = dots.first

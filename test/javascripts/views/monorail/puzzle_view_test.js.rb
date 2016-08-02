@@ -64,17 +64,25 @@ module Monorail
     end
 
     test 'render a solved model' do
-      model.lines.each { |line| line.state = :present }
+      model.lines.each &:mark_present!
       assert el.has_class? :solved
       assert_equal 1, el.find('rect[fill="transparent"]').length
     end
 
     test 're-render when solved' do
       refute el.has_class? :solved
-      model.lines.each { |line| line.state = :present }
+      model.lines.each &:mark_present!
       model.trigger(:solved)
       assert el.has_class? :solved
       assert_equal 1, el.find('rect[fill="transparent"]').length
+    end
+
+    test 're-render when undone after solving' do
+      model.lines.each &:mark_present!
+      view.render
+      model.undo!
+      refute el.has_class? :solved
+      assert_empty el.find('rect[fill="transparent"]')
     end
   end
 end

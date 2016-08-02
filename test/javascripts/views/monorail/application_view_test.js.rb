@@ -32,6 +32,9 @@ module Monorail
       assert_equal :prev, button.class_name
 
       button = button.next
+      assert_equal 'Reset', button.text
+
+      button = button.next
       assert_equal 'Undo', button.text
 
       button = button.next

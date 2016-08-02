@@ -239,13 +239,25 @@ module Monorail
       assert line.unknown?
     end
 
-    test 'undone event' do
+    %i(undo! reset!).each do |action|
+      test "undone event on #{action}" do
+        subject = Puzzle.of_size(2)
+        subject.lines.first.next_state!
+        undone = false
+        subject.on(:undone) { undone = true }
+        subject.send(action)
+        assert undone
+      end
+    end
+
+    test 'reset!' do
       subject = Puzzle.of_size(2)
-      subject.lines.first.next_state!
-      undone = false
-      subject.on(:undone) { undone = true }
-      subject.undo!
-      assert undone
+      subject.lines.each &:next_state!
+      subject.lines.first.state = :fixed
+      subject.reset!
+      assert_equal 3, subject.lines.select(&:unknown?).length
+      assert_predicate subject.lines.first, :fixed?
+      refute subject.can_undo?
     end
 
     test 'solved?' do
