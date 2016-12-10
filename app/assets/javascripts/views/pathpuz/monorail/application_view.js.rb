@@ -12,7 +12,9 @@ module Monorail
     end
 
     def render
-      element.empty << render_instructions << render_puzzle << render_buttons << render_hint_rules
+      report_time("application view render") do
+        element.empty << render_instructions << render_puzzle << render_buttons << render_hint_rules
+      end
       self
     end
 
@@ -20,6 +22,13 @@ module Monorail
     on(:click, '.next') { model.next_puzzle! }
 
     private
+
+    def report_time(msg)
+      start = Time.now
+      yield
+      elapsed = Time.now - start
+      puts "#{msg}: #{elapsed}s"
+    end
 
     def render_instructions
       Element.new(:p).text('Build a monorail loop that visits every dot.')

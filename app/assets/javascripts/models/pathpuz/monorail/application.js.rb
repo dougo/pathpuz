@@ -39,7 +39,7 @@ module Monorail
       @puzzle.off(:lines_changed, @handler) if @handler
       @puzzle = puzzle
       @handler = puzzle.on(:lines_changed) { autohint! }
-      autohint!
+      report_time('autohint') { autohint! }
     end
 
     def can_hint?
@@ -52,6 +52,13 @@ module Monorail
     end
 
     private
+
+    def report_time(msg)
+      start = Time.now
+      yield
+      elapsed = Time.now - start
+      puts "#{msg}: #{elapsed}s"
+    end
 
     def puzzle_id=(id)
       self.puzzle = Puzzle.find(id)

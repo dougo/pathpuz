@@ -92,5 +92,25 @@ module Monorail
       model.puzzle = Puzzle.find(1)
       refute_equal svg, el.find('svg')
     end
+
+
+    test 'performance' do
+      model.puzzle = Puzzle.find(7)
+
+      el.append_to_body
+      el.find(':checkbox').each do |hr|
+        report_time("#{hr.id} auto") { hr.trigger(:click) }
+      end
+      report_time("next puzzle") { model.puzzle = Puzzle.find(8) }
+    end
+
+    private
+
+    def report_time(msg)
+      start = Time.now
+      yield
+      elapsed = Time.now - start
+      puts "#{msg}: #{elapsed}s"
+    end
   end
 end
